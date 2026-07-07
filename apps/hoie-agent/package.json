@@ -1,0 +1,25 @@
+{
+  "name": "@hermes/hoie-agent",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "lint": "eslint src/**/*.ts",
+    "test": "tsx src/scorer/test-scorer.ts"
+  },
+  "dependencies": {
+    "@hermes/types": "*",
+    "playwright": "^1.44.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.62.1",
+    "@typescript-eslint/parser": "^8.62.1",
+    "eslint": "^10.6.0",
+    "tsx": "^4.15.0",
+    "typescript": "^5.5.0"
+  }
+}

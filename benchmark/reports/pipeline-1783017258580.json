@@ -1,0 +1,258 @@
+[
+  {
+    "asset": {
+      "asset_id": "real-001",
+      "source_id": "encuentra24",
+      "vertical": "real_estate",
+      "status": "active",
+      "price_currency": "USD",
+      "title": "Apartamento en Bella Vista - 35% descuento",
+      "price_amount": 456256,
+      "location": {
+        "province": "",
+        "district": "Bella Vista",
+        "neighborhood": "Bella Vista"
+      },
+      "description": "Apartamento de 2 recámaras en Bella Vista, precio por debajo del mercado",
+      "seller_type": "owner",
+      "tags": [
+        "apartamento"
+      ],
+      "source_listing_url": "https://example.com/property-1",
+      "estimatedMarketValue": 701932
+    },
+    "comparables": [
+      {
+        "price": 683249,
+        "distance_km": 4.1,
+        "age_days": 66,
+        "quality_score": 0.7
+      },
+      {
+        "price": 693782,
+        "distance_km": 0.4,
+        "age_days": 59,
+        "quality_score": 0.95
+      },
+      {
+        "price": 687922,
+        "distance_km": 4,
+        "age_days": 48,
+        "quality_score": 0.68
+      },
+      {
+        "price": 650066,
+        "distance_km": 3.2,
+        "age_days": 62,
+        "quality_score": 0.86
+      }
+    ],
+    "estimatedValue": 678436.0250783699,
+    "discount": 32.748854256774564,
+    "score": 97,
+    "grade": "A+",
+    "confidence": 70,
+    "decision": "WATCH_HIGH_PRIORITY"
+  },
+  {
+    "asset": {
+      "asset_id": "real-002",
+      "source_id": "encuentra24",
+      "vertical": "real_estate",
+      "status": "active",
+      "price_currency": "USD",
+      "title": "Casa en San Francisco - 25% descuento",
+      "price_amount": 542564,
+      "location": {
+        "province": "",
+        "district": "San Francisco",
+        "neighborhood": "San Francisco"
+      },
+      "description": "Casa de 3 recámaras en San Francisco, precio por debajo del mercado",
+      "seller_type": "bank",
+      "tags": [
+        "casa"
+      ],
+      "source_listing_url": "https://example.com/property-2",
+      "estimatedMarketValue": 723419
+    },
+    "comparables": [
+      {
+        "price": 655376,
+        "distance_km": 3.1,
+        "age_days": 60,
+        "quality_score": 0.78
+      },
+      {
+        "price": 783295,
+        "distance_km": 3.6,
+        "age_days": 70,
+        "quality_score": 0.86
+      },
+      {
+        "price": 657838,
+        "distance_km": 2.7,
+        "age_days": 8,
+        "quality_score": 0.72
+      },
+      {
+        "price": 780334,
+        "distance_km": 2,
+        "age_days": 62,
+        "quality_score": 0.69
+      }
+    ],
+    "estimatedValue": 720295.3442622949,
+    "discount": 24.674787318571674,
+    "score": 83,
+    "grade": "A-",
+    "confidence": 70,
+    "decision": "WATCH_HIGH_PRIORITY"
+  },
+  {
+    "asset": {
+      "asset_id": "real-003",
+      "source_id": "encuentra24",
+      "vertical": "real_estate",
+      "status": "active",
+      "price_currency": "USD",
+      "title": "PH en Costa del Este - 20% descuento",
+      "price_amount": 180740,
+      "location": {
+        "province": "",
+        "district": "Costa del Este",
+        "neighborhood": "Costa del Este"
+      },
+      "description": "PH de 4 recámaras en Costa del Este, precio por debajo del mercado",
+      "seller_type": "owner",
+      "tags": [
+        "ph"
+      ],
+      "source_listing_url": "https://example.com/property-3",
+      "estimatedMarketValue": 225925
+    },
+    "comparables": [
+      {
+        "price": 210897,
+        "distance_km": 1,
+        "age_days": 72,
+        "quality_score": 0.84
+      },
+      {
+        "price": 239157,
+        "distance_km": 2.3,
+        "age_days": 30,
+        "quality_score": 0.89
+      },
+      {
+        "price": 225181,
+        "distance_km": 3.4,
+        "age_days": 54,
+        "quality_score": 0.84
+      },
+      {
+        "price": 221228,
+        "distance_km": 1.6,
+        "age_days": 43,
+        "quality_score": 0.85
+      },
+      {
+        "price": 223408,
+        "distance_km": 0.6,
+        "age_days": 23,
+        "quality_score": 0.65
+      },
+      {
+        "price": 226498,
+        "distance_km": 0.8,
+        "age_days": 30,
+        "quality_score": 0.7
+      },
+      {
+        "price": 247226,
+        "distance_km": 3.8,
+        "age_days": 12,
+        "quality_score": 0.75
+      }
+    ],
+    "estimatedValue": 227605.4981884058,
+    "discount": 20.590670507270335,
+    "score": 75,
+    "grade": "B+",
+    "confidence": 85,
+    "decision": "WATCH_HIGH_PRIORITY"
+  },
+  {
+    "asset": {
+      "asset_id": "real-004",
+      "source_id": "encuentra24",
+      "vertical": "real_estate",
+      "status": "active",
+      "price_currency": "USD",
+      "title": "Oficina en El Cangrejo - 15% descuento",
+      "price_amount": 534207,
+      "location": {
+        "province": "",
+        "district": "El Cangrejo",
+        "neighborhood": "El Cangrejo"
+      },
+      "description": "Oficina de 2 recámaras en El Cangrejo, precio por debajo del mercado",
+      "seller_type": "owner",
+      "tags": [
+        "oficina"
+      ],
+      "source_listing_url": "https://example.com/property-4",
+      "estimatedMarketValue": 628479
+    },
+    "comparables": [
+      {
+        "price": 572519,
+        "distance_km": 4.3,
+        "age_days": 75,
+        "quality_score": 0.72
+      },
+      {
+        "price": 611398,
+        "distance_km": 0.7,
+        "age_days": 41,
+        "quality_score": 0.89
+      },
+      {
+        "price": 674441,
+        "distance_km": 1,
+        "age_days": 92,
+        "quality_score": 0.82
+      },
+      {
+        "price": 580130,
+        "distance_km": 2.7,
+        "age_days": 10,
+        "quality_score": 0.94
+      },
+      {
+        "price": 655968,
+        "distance_km": 3.4,
+        "age_days": 50,
+        "quality_score": 0.71
+      },
+      {
+        "price": 672594,
+        "distance_km": 1.5,
+        "age_days": 72,
+        "quality_score": 0.93
+      },
+      {
+        "price": 622429,
+        "distance_km": 2.8,
+        "age_days": 21,
+        "quality_score": 0.68
+      }
+    ],
+    "estimatedValue": 627279.9894551847,
+    "discount": 14.837551176472555,
+    "score": 65,
+    "grade": "B-",
+    "confidence": 85,
+    "decision": "NEGOTIATE"
+  }
+]

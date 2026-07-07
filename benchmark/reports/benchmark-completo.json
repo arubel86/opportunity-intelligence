@@ -1,0 +1,2803 @@
+{
+  "timestamp": "2026-07-02T16:44:13.548Z",
+  "config": {
+    "listingCount": 100,
+    "vehicleCount": 20,
+    "outputDir": "/opt/data/hermes/benchmark/reports"
+  },
+  "metrics": {
+    "scraping": {
+      "successRate": 1,
+      "failedRequests": 0,
+      "avgTime": 1,
+      "listingsFound": 120,
+      "errorsByType": {}
+    },
+    "normalization": {
+      "successRate": 1,
+      "requiredFieldsCompletion": 1,
+      "totalListings": 120,
+      "parsingErrors": 0,
+      "duplicatesDetected": 0,
+      "invalidCoordinates": 0,
+      "invalidPrices": 0
+    },
+    "comparables": {
+      "avgFound": 12.675,
+      "avgQuality": 54.280474533762835,
+      "avgSearchTime": 0.18333333333333332,
+      "discardedCount": 370,
+      "discardReason": {
+        "low_quality": 370
+      }
+    },
+    "scoring": {
+      "avgScore": 54.05,
+      "avgConfidence": 77.45833333333333,
+      "avgTime": 0.008333333333333333,
+      "accuracy": 0.8,
+      "goldenResults": {
+        "total": 15,
+        "scoreInRange": 12,
+        "decisionMatch": 4,
+        "details": [
+          {
+            "id": "RE-001",
+            "title": "Casa Bella Vista - Subasta BNP",
+            "expectedScore": [
+              75,
+              85
+            ],
+            "actualScore": 76,
+            "scoreInRange": true,
+            "expectedConf": [
+              60,
+              75
+            ],
+            "actualConf": 65,
+            "confInRange": true,
+            "expectedDecision": "WATCH_HIGH_PRIORITY",
+            "actualDecision": "NEGOTIATE",
+            "decisionMatch": false
+          },
+          {
+            "id": "RE-002",
+            "title": "Apto San Francisco - Caja Ahorros",
+            "expectedScore": [
+              72,
+              82
+            ],
+            "actualScore": 74,
+            "scoreInRange": true,
+            "expectedConf": [
+              65,
+              75
+            ],
+            "actualConf": 65,
+            "confInRange": true,
+            "expectedDecision": "WATCH_HIGH_PRIORITY",
+            "actualDecision": "NEGOTIATE",
+            "decisionMatch": false
+          },
+          {
+            "id": "RE-003",
+            "title": "Terreno Arraiján - Subasta",
+            "expectedScore": [
+              85,
+              95
+            ],
+            "actualScore": 92,
+            "scoreInRange": true,
+            "expectedConf": [
+              55,
+              70
+            ],
+            "actualConf": 60,
+            "confInRange": true,
+            "expectedDecision": "BUY_NOW",
+            "actualDecision": "MANUAL_REVIEW_REQUIRED",
+            "decisionMatch": false
+          },
+          {
+            "id": "RE-004",
+            "title": "Casa Bethania - Caja Ahorros",
+            "expectedScore": [
+              70,
+              80
+            ],
+            "actualScore": 72,
+            "scoreInRange": true,
+            "expectedConf": [
+              60,
+              70
+            ],
+            "actualConf": 60,
+            "confInRange": true,
+            "expectedDecision": "WATCH_HIGH_PRIORITY",
+            "actualDecision": "MANUAL_REVIEW_REQUIRED",
+            "decisionMatch": false
+          },
+          {
+            "id": "RE-005",
+            "title": "Casa Costa del Este",
+            "expectedScore": [
+              30,
+              45
+            ],
+            "actualScore": 42,
+            "scoreInRange": true,
+            "expectedConf": [
+              72,
+              85
+            ],
+            "actualConf": 65,
+            "confInRange": false,
+            "expectedDecision": "AVOID",
+            "actualDecision": "AVOID",
+            "decisionMatch": true
+          },
+          {
+            "id": "RE-006",
+            "title": "Casa Parque Lefevre",
+            "expectedScore": [
+              60,
+              70
+            ],
+            "actualScore": 59,
+            "scoreInRange": false,
+            "expectedConf": [
+              60,
+              72
+            ],
+            "actualConf": 60,
+            "confInRange": true,
+            "expectedDecision": "NEGOTIATE",
+            "actualDecision": "MANUAL_REVIEW_REQUIRED",
+            "decisionMatch": false
+          },
+          {
+            "id": "RE-007",
+            "title": "Terreno Arraiján 2 - Subasta",
+            "expectedScore": [
+              80,
+              90
+            ],
+            "actualScore": 90,
+            "scoreInRange": true,
+            "expectedConf": [
+              55,
+              68
+            ],
+            "actualConf": 60,
+            "confInRange": true,
+            "expectedDecision": "BUY_NOW",
+            "actualDecision": "MANUAL_REVIEW_REQUIRED",
+            "decisionMatch": false
+          },
+          {
+            "id": "RE-008",
+            "title": "Apto Marbella Ph",
+            "expectedScore": [
+              30,
+              45
+            ],
+            "actualScore": 47,
+            "scoreInRange": false,
+            "expectedConf": [
+              72,
+              85
+            ],
+            "actualConf": 65,
+            "confInRange": false,
+            "expectedDecision": "AVOID",
+            "actualDecision": "AVOID",
+            "decisionMatch": true
+          },
+          {
+            "id": "RE-009",
+            "title": "Casa San Miguelito - Caja de Ahorros",
+            "expectedScore": [
+              78,
+              88
+            ],
+            "actualScore": 82,
+            "scoreInRange": true,
+            "expectedConf": [
+              55,
+              70
+            ],
+            "actualConf": 60,
+            "confInRange": true,
+            "expectedDecision": "BUY_NOW",
+            "actualDecision": "MANUAL_REVIEW_REQUIRED",
+            "decisionMatch": false
+          },
+          {
+            "id": "RE-010",
+            "title": "Terreno La Chorrera - Subasta BNP",
+            "expectedScore": [
+              80,
+              90
+            ],
+            "actualScore": 89,
+            "scoreInRange": true,
+            "expectedConf": [
+              50,
+              65
+            ],
+            "actualConf": 60,
+            "confInRange": true,
+            "expectedDecision": "BUY_NOW",
+            "actualDecision": "MANUAL_REVIEW_REQUIRED",
+            "decisionMatch": false
+          },
+          {
+            "id": "VEH-001",
+            "title": "Toyota Hilux 2019 - BNP",
+            "expectedScore": [
+              75,
+              85
+            ],
+            "actualScore": 78,
+            "scoreInRange": true,
+            "expectedConf": [
+              65,
+              78
+            ],
+            "actualConf": 65,
+            "confInRange": true,
+            "expectedDecision": "WATCH_HIGH_PRIORITY",
+            "actualDecision": "NEGOTIATE",
+            "decisionMatch": false
+          },
+          {
+            "id": "VEH-002",
+            "title": "Honda Civic 2018",
+            "expectedScore": [
+              58,
+              68
+            ],
+            "actualScore": 57,
+            "scoreInRange": false,
+            "expectedConf": [
+              62,
+              75
+            ],
+            "actualConf": 65,
+            "confInRange": true,
+            "expectedDecision": "NEGOTIATE",
+            "actualDecision": "NEGOTIATE",
+            "decisionMatch": true
+          },
+          {
+            "id": "VEH-003",
+            "title": "Honda CRV 2020 - Caja Ahorros",
+            "expectedScore": [
+              68,
+              78
+            ],
+            "actualScore": 71,
+            "scoreInRange": true,
+            "expectedConf": [
+              62,
+              75
+            ],
+            "actualConf": 65,
+            "confInRange": true,
+            "expectedDecision": "WATCH_HIGH_PRIORITY",
+            "actualDecision": "NEGOTIATE",
+            "decisionMatch": false
+          },
+          {
+            "id": "VEH-004",
+            "title": "Toyota Corolla 2021",
+            "expectedScore": [
+              55,
+              65
+            ],
+            "actualScore": 56,
+            "scoreInRange": true,
+            "expectedConf": [
+              65,
+              78
+            ],
+            "actualConf": 65,
+            "confInRange": true,
+            "expectedDecision": "NEGOTIATE",
+            "actualDecision": "NEGOTIATE",
+            "decisionMatch": true
+          },
+          {
+            "id": "VEH-005",
+            "title": "Nissan Frontier 2017",
+            "expectedScore": [
+              60,
+              70
+            ],
+            "actualScore": 62,
+            "scoreInRange": true,
+            "expectedConf": [
+              60,
+              72
+            ],
+            "actualConf": 60,
+            "confInRange": true,
+            "expectedDecision": "NEGOTIATE",
+            "actualDecision": "MANUAL_REVIEW_REQUIRED",
+            "decisionMatch": false
+          }
+        ]
+      }
+    },
+    "decisions": {
+      "BUY_NOW": 32,
+      "WATCH_HIGH_PRIORITY": 17,
+      "NEGOTIATE": 13,
+      "AVOID": 56,
+      "MANUAL_REVIEW_REQUIRED": 2
+    },
+    "explainability": {
+      "coverage": 1
+    },
+    "errors": [],
+    "timing": {
+      "totalMs": 68,
+      "perAssetAvgMs": 0.5666666666666667
+    }
+  },
+  "acceptance": {
+    "results": [
+      {
+        "criterion": "Scraping Success Rate ≥ 95%",
+        "passed": true,
+        "actual": "100.0%"
+      },
+      {
+        "criterion": "Normalization Success ≥ 95%",
+        "passed": true,
+        "actual": "100.0%"
+      },
+      {
+        "criterion": "Required Fields ≥ 90%",
+        "passed": true,
+        "actual": "100.0%"
+      },
+      {
+        "criterion": "Score Accuracy ≥ 80%",
+        "passed": true,
+        "actual": "80.0%"
+      },
+      {
+        "criterion": "Confidence promedio ≥ 75%",
+        "passed": true,
+        "actual": "77.5%"
+      },
+      {
+        "criterion": "Duplicate Rate ≤ 2%",
+        "passed": true,
+        "actual": "0.00%"
+      },
+      {
+        "criterion": "Parsing Errors ≤ 5%",
+        "passed": true,
+        "actual": "0.0%"
+      },
+      {
+        "criterion": "Comparables ≥ 3 por activo",
+        "passed": true,
+        "actual": "12.7 avg"
+      },
+      {
+        "criterion": "Explainability 100% oportunidades",
+        "passed": true,
+        "actual": "100%"
+      }
+    ],
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "overallPassed": true
+  },
+  "assets": [
+    {
+      "assetId": "E24-RE-001",
+      "title": "Venta apartamento en Río Abajo - 2 dorm. 109m²",
+      "price": 114488,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Río Abajo",
+        "neighborhood": "Río Abajo",
+        "lat": 8.994636012528673,
+        "lng": -79.49013128822877
+      },
+      "score": 98,
+      "confidence": 80,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 15,
+      "comparables_avg_quality": 56.654761904761905
+    },
+    {
+      "assetId": "E24-RE-002",
+      "title": "Venta casa en Don Bosco - 5 dorm. 262m²",
+      "price": 231184,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Juan Díaz",
+        "neighborhood": "Don Bosco",
+        "lat": 9.020905141567054,
+        "lng": -79.46780688703372
+      },
+      "score": 97,
+      "confidence": 80,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 15,
+      "comparables_avg_quality": 58.116279069767444
+    },
+    {
+      "assetId": "E24-RE-003",
+      "title": "Condominio en La Cresta, Panamá - 4 hab - 106m²",
+      "price": 237792,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Bella Vista",
+        "neighborhood": "La Cresta",
+        "lat": 8.984747982809912,
+        "lng": -79.5112867693837
+      },
+      "score": 55,
+      "confidence": 80,
+      "grade": "C",
+      "decision": "NEGOTIATE",
+      "comparables_found": 15,
+      "comparables_avg_quality": 58.116279069767444
+    },
+    {
+      "assetId": "E24-RE-004",
+      "title": "Venta apartamento en Colón Centro - 1 dorm. 172m²",
+      "price": 41670,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Colón",
+        "district": "Colón",
+        "corregimiento": "Colón",
+        "neighborhood": "Colón Centro",
+        "lat": 9.363992688737754,
+        "lng": -79.9022449119656
+      },
+      "score": 98,
+      "confidence": 60,
+      "grade": "A+",
+      "decision": "MANUAL_REVIEW_REQUIRED",
+      "comparables_found": 1,
+      "comparables_avg_quality": 67
+    },
+    {
+      "assetId": "E24-RE-005",
+      "title": "Casa en Punta Paitilla, Panamá - 3 hab - 461m²",
+      "price": 1940454,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "San Francisco",
+        "neighborhood": "Punta Paitilla",
+        "lat": 8.968228852067906,
+        "lng": -79.511280625377
+      },
+      "score": 10,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 55.872093023255815
+    },
+    {
+      "assetId": "E24-RE-006",
+      "title": "Venta apartamento en Tocumen - 2 dorm. 190m²",
+      "price": 146833,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Tocumen",
+        "neighborhood": "Tocumen",
+        "lat": 9.070048907591133,
+        "lng": -79.37079259261547
+      },
+      "score": 70,
+      "confidence": 80,
+      "grade": "B-",
+      "decision": "WATCH_HIGH_PRIORITY",
+      "comparables_found": 15,
+      "comparables_avg_quality": 56.294117647058826
+    },
+    {
+      "assetId": "E24-RE-007",
+      "title": "Casa en Punta Paitilla, Panamá - 5 hab - 229m²",
+      "price": 777918,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "San Francisco",
+        "neighborhood": "Punta Paitilla",
+        "lat": 8.973872804601504,
+        "lng": -79.5160402051409
+      },
+      "score": 10,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 58.674418604651166
+    },
+    {
+      "assetId": "E24-RE-008",
+      "title": "Condominio en Pedregal, Panamá - 4 hab - 292m²",
+      "price": 297961,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Pedregal",
+        "neighborhood": "Pedregal",
+        "lat": 9.074037854005315,
+        "lng": -79.44605608029065
+      },
+      "score": 38,
+      "confidence": 80,
+      "grade": "D",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 54.05813953488372
+    },
+    {
+      "assetId": "E24-RE-009",
+      "title": "Venta casa en San Miguelito - 3 dorm. 335m²",
+      "price": 262877,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "San Miguelito",
+        "corregimiento": "San Miguelito",
+        "neighborhood": "San Miguelito",
+        "lat": 9.036319389194654,
+        "lng": -79.50559686181724
+      },
+      "score": 98,
+      "confidence": 80,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 15,
+      "comparables_avg_quality": 45.46666666666667
+    },
+    {
+      "assetId": "E24-RE-010",
+      "title": "Penthouse en Coco del Mar, Panamá - 3 hab - 228m²",
+      "price": 483572,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "San Francisco",
+        "neighborhood": "Coco del Mar",
+        "lat": 8.971521865930958,
+        "lng": -79.48433971429968
+      },
+      "score": 39,
+      "confidence": 75,
+      "grade": "D",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 55.72093023255814
+    },
+    {
+      "assetId": "E24-RE-011",
+      "title": "Terreno en La Chorrera, La Chorrera - 0 hab - 724m²",
+      "price": 587092,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá Oeste",
+        "district": "La Chorrera",
+        "corregimiento": "La Chorrera",
+        "neighborhood": "La Chorrera",
+        "lat": 8.884309781722779,
+        "lng": -79.78176151694629
+      },
+      "score": 10,
+      "confidence": 75,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 3,
+      "comparables_avg_quality": 41.666666666666664
+    },
+    {
+      "assetId": "E24-RE-012",
+      "title": "Venta apartamento en Urb. Los Angeles - 3 dorm. 153m²",
+      "price": 377524,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "San Francisco",
+        "neighborhood": "Urb. Los Angeles",
+        "lat": 8.973056250191986,
+        "lng": -79.49206381055998
+      },
+      "score": 10,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 60.73255813953488
+    },
+    {
+      "assetId": "E24-RE-013",
+      "title": "Venta apartamento en Urb. Los Angeles - 3 dorm. 163m²",
+      "price": 331982,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "San Francisco",
+        "neighborhood": "Urb. Los Angeles",
+        "lat": 8.983064071023,
+        "lng": -79.48089974107741
+      },
+      "score": 10,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 60.72093023255814
+    },
+    {
+      "assetId": "E24-RE-014",
+      "title": "Venta apartamento en Don Bosco - 2 dorm. 175m²",
+      "price": 118977,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Juan Díaz",
+        "neighborhood": "Don Bosco",
+        "lat": 9.02156237045695,
+        "lng": -79.47137910268773
+      },
+      "score": 98,
+      "confidence": 75,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 15,
+      "comparables_avg_quality": 56.09411764705882
+    },
+    {
+      "assetId": "E24-RE-015",
+      "title": "Venta casa en Altos del Golf - 4 dorm. 440m²",
+      "price": 815071,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "San Francisco",
+        "neighborhood": "Altos del Golf",
+        "lat": 8.975083242397588,
+        "lng": -79.50286245921606
+      },
+      "score": 23,
+      "confidence": 75,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 58.56976744186046
+    },
+    {
+      "assetId": "E24-RE-016",
+      "title": "Venta condominio en Río Abajo - 2 dorm. 286m²",
+      "price": 361425,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Río Abajo",
+        "neighborhood": "Río Abajo",
+        "lat": 9.005218820788917,
+        "lng": -79.49240884000629
+      },
+      "score": 23,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 57.44186046511628
+    },
+    {
+      "assetId": "E24-RE-017",
+      "title": "Venta casa en Río Abajo - 5 dorm. 294m²",
+      "price": 263517,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Río Abajo",
+        "neighborhood": "Río Abajo",
+        "lat": 9.006583499507297,
+        "lng": -79.49128637205297
+      },
+      "score": 98,
+      "confidence": 75,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 15,
+      "comparables_avg_quality": 58.94186046511628
+    },
+    {
+      "assetId": "E24-RE-018",
+      "title": "Venta condominio en La Cresta - 2 dorm. 134m²",
+      "price": 331351,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Bella Vista",
+        "neighborhood": "La Cresta",
+        "lat": 8.979974190451417,
+        "lng": -79.50686111013026
+      },
+      "score": 17,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 59.94117647058823
+    },
+    {
+      "assetId": "E24-RE-019",
+      "title": "Apartamento en Campo Alegre, Panamá - 1 hab - 140m²",
+      "price": 237864,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Pueblo Nuevo",
+        "neighborhood": "Campo Alegre",
+        "lat": 9.002812103261972,
+        "lng": -79.51267793257902
+      },
+      "score": 28,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 60.151162790697676
+    },
+    {
+      "assetId": "E24-RE-020",
+      "title": "Casa en Marbella, Panamá - 4 hab - 321m²",
+      "price": 840308,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "San Francisco",
+        "neighborhood": "Marbella",
+        "lat": 8.988512773835257,
+        "lng": -79.49657307020605
+      },
+      "score": 14,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 58.72093023255814
+    },
+    {
+      "assetId": "E24-RE-021",
+      "title": "Venta casa en El Cangrejo - 3 dorm. 488m²",
+      "price": 644912,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Bella Vista",
+        "neighborhood": "El Cangrejo",
+        "lat": 8.978782181457214,
+        "lng": -79.52443707851964
+      },
+      "score": 64,
+      "confidence": 80,
+      "grade": "C+",
+      "decision": "NEGOTIATE",
+      "comparables_found": 15,
+      "comparables_avg_quality": 58.627906976744185
+    },
+    {
+      "assetId": "E24-RE-022",
+      "title": "Venta casa en Obarrio - 4 dorm. 469m²",
+      "price": 1017528,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Obarrio",
+        "neighborhood": "Obarrio",
+        "lat": 8.996359968542357,
+        "lng": -79.50307420850243
+      },
+      "score": 10,
+      "confidence": 75,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 56.95348837209303
+    },
+    {
+      "assetId": "E24-RE-023",
+      "title": "Condominio en Punta Pacífica, Panamá - 4 hab - 215m²",
+      "price": 629822,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Punta Pacífica",
+        "neighborhood": "Punta Pacífica",
+        "lat": 8.97174336355901,
+        "lng": -79.50598254306418
+      },
+      "score": 22,
+      "confidence": 75,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 57.88235294117647
+    },
+    {
+      "assetId": "E24-RE-024",
+      "title": "Casa en Pacora, Arraiján - 4 hab - 187m²",
+      "price": 137640,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá Oeste",
+        "district": "Arraiján",
+        "corregimiento": "Arraiján",
+        "neighborhood": "Pacora",
+        "lat": 8.909630464092857,
+        "lng": -79.63824032370115
+      },
+      "score": 42,
+      "confidence": 80,
+      "grade": "C-",
+      "decision": "AVOID",
+      "comparables_found": 9,
+      "comparables_avg_quality": 54
+    },
+    {
+      "assetId": "E24-RE-025",
+      "title": "Condominio en Juan Díaz, Panamá - 3 hab - 88m²",
+      "price": 91421,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Juan Díaz",
+        "neighborhood": "Juan Díaz",
+        "lat": 9.024804267023468,
+        "lng": -79.47173299773935
+      },
+      "score": 98,
+      "confidence": 75,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 15,
+      "comparables_avg_quality": 49.97674418604651
+    },
+    {
+      "assetId": "E24-RE-026",
+      "title": "Apartamento en Parque Lefevre, Panamá - 3 hab - 188m²",
+      "price": 363188,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Parque Lefevre",
+        "neighborhood": "Parque Lefevre",
+        "lat": 8.984734593196412,
+        "lng": -79.50498424741893
+      },
+      "score": 16,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 62.33720930232558
+    },
+    {
+      "assetId": "E24-RE-027",
+      "title": "Venta apartamento en Villa Cáceres - 3 dorm. 178m²",
+      "price": 274960,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Parque Lefevre",
+        "neighborhood": "Villa Cáceres",
+        "lat": 8.98647783584551,
+        "lng": -79.49312176558408
+      },
+      "score": 32,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 62.54651162790697
+    },
+    {
+      "assetId": "E24-RE-028",
+      "title": "Apartamento en Campo Alegre, Panamá - 1 hab - 89m²",
+      "price": 162134,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Pueblo Nuevo",
+        "neighborhood": "Campo Alegre",
+        "lat": 8.99969881440327,
+        "lng": -79.5203942196293
+      },
+      "score": 64,
+      "confidence": 80,
+      "grade": "C+",
+      "decision": "NEGOTIATE",
+      "comparables_found": 15,
+      "comparables_avg_quality": 56.583333333333336
+    },
+    {
+      "assetId": "E24-RE-029",
+      "title": "Venta condominio en Río Abajo - 4 dorm. 196m²",
+      "price": 261668,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Río Abajo",
+        "neighborhood": "Río Abajo",
+        "lat": 8.99963971510015,
+        "lng": -79.50147504234762
+      },
+      "score": 48,
+      "confidence": 80,
+      "grade": "C-",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 59.26744186046512
+    },
+    {
+      "assetId": "E24-RE-030",
+      "title": "Venta apartamento en Pedregal - 1 dorm. 68m²",
+      "price": 43951,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Pedregal",
+        "neighborhood": "Pedregal",
+        "lat": 9.064727829410536,
+        "lng": -79.45851540284164
+      },
+      "score": 98,
+      "confidence": 75,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 15,
+      "comparables_avg_quality": 49.05952380952381
+    },
+    {
+      "assetId": "E24-RE-031",
+      "title": "Venta apartamento en Altos del Golf - 3 dorm. 54m²",
+      "price": 65609,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "San Francisco",
+        "neighborhood": "Altos del Golf",
+        "lat": 8.979492705993275,
+        "lng": -79.49106505376363
+      },
+      "score": 98,
+      "confidence": 75,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 15,
+      "comparables_avg_quality": 53.872093023255815
+    },
+    {
+      "assetId": "E24-RE-032",
+      "title": "Casa en La Chorrera, La Chorrera - 4 hab - 214m²",
+      "price": 117790,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá Oeste",
+        "district": "La Chorrera",
+        "corregimiento": "La Chorrera",
+        "neighborhood": "La Chorrera",
+        "lat": 8.87926891891184,
+        "lng": -79.77108998693983
+      },
+      "score": 98,
+      "confidence": 80,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 6,
+      "comparables_avg_quality": 50.5
+    },
+    {
+      "assetId": "E24-RE-033",
+      "title": "Venta apartamento en Arraiján - 2 dorm. 151m²",
+      "price": 57895,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá Oeste",
+        "district": "Arraiján",
+        "corregimiento": "Arraiján",
+        "neighborhood": "Arraiján",
+        "lat": 8.943184575908584,
+        "lng": -79.65695166020865
+      },
+      "score": 98,
+      "confidence": 75,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 8,
+      "comparables_avg_quality": 66.625
+    },
+    {
+      "assetId": "E24-RE-034",
+      "title": "Venta townhouse en Vía Argentina - 3 dorm. 223m²",
+      "price": 426813,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Bella Vista",
+        "neighborhood": "Vía Argentina",
+        "lat": 8.986009756903261,
+        "lng": -79.52764100687271
+      },
+      "score": 34,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 58.33720930232558
+    },
+    {
+      "assetId": "E24-RE-035",
+      "title": "Venta townhouse en Pedregal - 4 dorm. 263m²",
+      "price": 227912,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Pedregal",
+        "neighborhood": "Pedregal",
+        "lat": 9.074659274738792,
+        "lng": -79.44814513891843
+      },
+      "score": 50,
+      "confidence": 80,
+      "grade": "C",
+      "decision": "NEGOTIATE",
+      "comparables_found": 15,
+      "comparables_avg_quality": 54.75581395348837
+    },
+    {
+      "assetId": "E24-RE-036",
+      "title": "Apartamento en Vista Alegre, Arraiján - 3 hab - 152m²",
+      "price": 59911,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá Oeste",
+        "district": "Arraiján",
+        "corregimiento": "Vista Alegre",
+        "neighborhood": "Vista Alegre",
+        "lat": 8.9367297491524,
+        "lng": -79.67818132712272
+      },
+      "score": 98,
+      "confidence": 75,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 8,
+      "comparables_avg_quality": 64.5
+    },
+    {
+      "assetId": "E24-RE-037",
+      "title": "Apartamento en Marbella, Panamá - 2 hab - 134m²",
+      "price": 332683,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "San Francisco",
+        "neighborhood": "Marbella",
+        "lat": 8.984784583591637,
+        "lng": -79.49638563055558
+      },
+      "score": 10,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 61.43529411764706
+    },
+    {
+      "assetId": "E24-RE-038",
+      "title": "Venta casa en Paitilla - 5 dorm. 225m²",
+      "price": 711479,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Paitilla",
+        "neighborhood": "Paitilla",
+        "lat": 8.974858771472373,
+        "lng": -79.51851084680942
+      },
+      "score": 22,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 58.83720930232558
+    },
+    {
+      "assetId": "E24-RE-039",
+      "title": "Casa en Marbella, Panamá - 3 hab - 156m²",
+      "price": 226185,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "San Francisco",
+        "neighborhood": "Marbella",
+        "lat": 8.989834335152588,
+        "lng": -79.50436611046581
+      },
+      "score": 71,
+      "confidence": 75,
+      "grade": "B-",
+      "decision": "WATCH_HIGH_PRIORITY",
+      "comparables_found": 15,
+      "comparables_avg_quality": 63.68604651162791
+    },
+    {
+      "assetId": "E24-RE-040",
+      "title": "Casa en Arraiján, Arraiján - 2 hab - 454m²",
+      "price": 482647,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá Oeste",
+        "district": "Arraiján",
+        "corregimiento": "Arraiján",
+        "neighborhood": "Arraiján",
+        "lat": 8.942491358569656,
+        "lng": -79.65475793619242
+      },
+      "score": 10,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 9,
+      "comparables_avg_quality": 52.22222222222222
+    },
+    {
+      "assetId": "E24-RE-041",
+      "title": "Venta apartamento en Pedregal - 1 dorm. 95m²",
+      "price": 56217,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Pedregal",
+        "neighborhood": "Pedregal",
+        "lat": 9.069759093612618,
+        "lng": -79.45213000910357
+      },
+      "score": 98,
+      "confidence": 75,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 15,
+      "comparables_avg_quality": 50.392857142857146
+    },
+    {
+      "assetId": "E24-RE-042",
+      "title": "Venta casa en Pueblo Nuevo - 2 dorm. 224m²",
+      "price": 187722,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Pueblo Nuevo",
+        "neighborhood": "Pueblo Nuevo",
+        "lat": 8.988008582358118,
+        "lng": -79.5266775561234
+      },
+      "score": 75,
+      "confidence": 75,
+      "grade": "B",
+      "decision": "WATCH_HIGH_PRIORITY",
+      "comparables_found": 15,
+      "comparables_avg_quality": 62.73255813953488
+    },
+    {
+      "assetId": "E24-RE-043",
+      "title": "Venta penthouse en Marbella - 3 dorm. 325m²",
+      "price": 897071,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "San Francisco",
+        "neighborhood": "Marbella",
+        "lat": 8.974891060787801,
+        "lng": -79.50524624528656
+      },
+      "score": 10,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 55.13953488372093
+    },
+    {
+      "assetId": "E24-RE-044",
+      "title": "Venta condominio en Don Bosco - 4 dorm. 76m²",
+      "price": 84658,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Juan Díaz",
+        "neighborhood": "Don Bosco",
+        "lat": 9.006222409314558,
+        "lng": -79.47734467682922
+      },
+      "score": 98,
+      "confidence": 80,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 15,
+      "comparables_avg_quality": 50.773809523809526
+    },
+    {
+      "assetId": "E24-RE-045",
+      "title": "Venta apartamento en El Dorado - 3 dorm. 194m²",
+      "price": 170554,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Bethania",
+        "neighborhood": "El Dorado",
+        "lat": 8.986207640987576,
+        "lng": -79.52940590405426
+      },
+      "score": 89,
+      "confidence": 75,
+      "grade": "A-",
+      "decision": "BUY_NOW",
+      "comparables_found": 15,
+      "comparables_avg_quality": 61.08139534883721
+    },
+    {
+      "assetId": "E24-RE-046",
+      "title": "Townhouse en Paitilla, Panamá - 2 hab - 164m²",
+      "price": 606524,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Paitilla",
+        "neighborhood": "Paitilla",
+        "lat": 8.977550444999254,
+        "lng": -79.50990889465064
+      },
+      "score": 16,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 59.654761904761905
+    },
+    {
+      "assetId": "E24-RE-047",
+      "title": "Casa en Colón Centro, Colón - 3 hab - 176m²",
+      "price": 107669,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Colón",
+        "district": "Colón",
+        "corregimiento": "Colón",
+        "neighborhood": "Colón Centro",
+        "lat": 9.364963511617704,
+        "lng": -79.90014385873572
+      },
+      "score": 10,
+      "confidence": 65,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 1,
+      "comparables_avg_quality": 67
+    },
+    {
+      "assetId": "E24-RE-048",
+      "title": "Casa en Arraiján, Arraiján - 3 hab - 378m²",
+      "price": 209996,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá Oeste",
+        "district": "Arraiján",
+        "corregimiento": "Arraiján",
+        "neighborhood": "Arraiján",
+        "lat": 8.955601152154006,
+        "lng": -79.65541078529787
+      },
+      "score": 10,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 9,
+      "comparables_avg_quality": 49.333333333333336
+    },
+    {
+      "assetId": "E24-RE-049",
+      "title": "Apartamento en Urb. Los Angeles, Panamá - 2 hab - 169m²",
+      "price": 200967,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "San Francisco",
+        "neighborhood": "Urb. Los Angeles",
+        "lat": 8.972606593911525,
+        "lng": -79.4917709437544
+      },
+      "score": 54,
+      "confidence": 75,
+      "grade": "C",
+      "decision": "NEGOTIATE",
+      "comparables_found": 15,
+      "comparables_avg_quality": 62.63529411764706
+    },
+    {
+      "assetId": "E24-RE-050",
+      "title": "Apartamento en Bethania, Panamá - 2 hab - 61m²",
+      "price": 82955,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Bethania",
+        "neighborhood": "Bethania",
+        "lat": 8.983438356874268,
+        "lng": -79.52447149715897
+      },
+      "score": 98,
+      "confidence": 80,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 15,
+      "comparables_avg_quality": 55.166666666666664
+    },
+    {
+      "assetId": "E24-RE-051",
+      "title": "Venta townhouse en Parque Lefevre - 2 dorm. 138m²",
+      "price": 228436,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Parque Lefevre",
+        "neighborhood": "Parque Lefevre",
+        "lat": 8.992402358819534,
+        "lng": -79.50134310626851
+      },
+      "score": 59,
+      "confidence": 80,
+      "grade": "C+",
+      "decision": "NEGOTIATE",
+      "comparables_found": 15,
+      "comparables_avg_quality": 59.76744186046512
+    },
+    {
+      "assetId": "E24-RE-052",
+      "title": "Venta penthouse en La Cresta - 5 dorm. 440m²",
+      "price": 438379,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Bella Vista",
+        "neighborhood": "La Cresta",
+        "lat": 8.975657052011213,
+        "lng": -79.5178191109986
+      },
+      "score": 55,
+      "confidence": 75,
+      "grade": "C",
+      "decision": "NEGOTIATE",
+      "comparables_found": 15,
+      "comparables_avg_quality": 54.535714285714285
+    },
+    {
+      "assetId": "E24-RE-053",
+      "title": "Venta apartamento en Las Sabanas - 2 dorm. 106m²",
+      "price": 97818,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Bethania",
+        "neighborhood": "Las Sabanas",
+        "lat": 8.9968388718332,
+        "lng": -79.53832355986387
+      },
+      "score": 98,
+      "confidence": 80,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 15,
+      "comparables_avg_quality": 55.17857142857143
+    },
+    {
+      "assetId": "E24-RE-054",
+      "title": "Venta casa en Tocumen - 5 dorm. 274m²",
+      "price": 164119,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Tocumen",
+        "neighborhood": "Tocumen",
+        "lat": 9.077996680442043,
+        "lng": -79.37308425744523
+      },
+      "score": 98,
+      "confidence": 80,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 15,
+      "comparables_avg_quality": 55.2093023255814
+    },
+    {
+      "assetId": "E24-RE-055",
+      "title": "Casa en Altos del Golf, Panamá - 2 hab - 221m²",
+      "price": 388098,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "San Francisco",
+        "neighborhood": "Altos del Golf",
+        "lat": 8.978499719921343,
+        "lng": -79.50015424028705
+      },
+      "score": 35,
+      "confidence": 75,
+      "grade": "D",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 62.41860465116279
+    },
+    {
+      "assetId": "E24-RE-056",
+      "title": "Venta apartamento en Marbella - 1 dorm. 182m²",
+      "price": 297019,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "San Francisco",
+        "neighborhood": "Marbella",
+        "lat": 8.98212997552038,
+        "lng": -79.49744886170434
+      },
+      "score": 34,
+      "confidence": 75,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 60.81395348837209
+    },
+    {
+      "assetId": "E24-RE-057",
+      "title": "Condominio en San Francisco, Panamá - 3 hab - 153m²",
+      "price": 248675,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "San Francisco",
+        "neighborhood": "San Francisco",
+        "lat": 8.972690256999687,
+        "lng": -79.50464581747518
+      },
+      "score": 27,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 60.7093023255814
+    },
+    {
+      "assetId": "E24-RE-058",
+      "title": "Townhouse en Pedregal, Panamá - 4 hab - 135m²",
+      "price": 162499,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Pedregal",
+        "neighborhood": "Pedregal",
+        "lat": 9.065611815085807,
+        "lng": -79.44675460778336
+      },
+      "score": 80,
+      "confidence": 80,
+      "grade": "B+",
+      "decision": "BUY_NOW",
+      "comparables_found": 15,
+      "comparables_avg_quality": 53.51190476190476
+    },
+    {
+      "assetId": "E24-RE-059",
+      "title": "Venta penthouse en Tocumen - 5 dorm. 336m²",
+      "price": 257836,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Tocumen",
+        "neighborhood": "Tocumen",
+        "lat": 9.081534572203223,
+        "lng": -79.37130192738923
+      },
+      "score": 74,
+      "confidence": 80,
+      "grade": "B",
+      "decision": "WATCH_HIGH_PRIORITY",
+      "comparables_found": 15,
+      "comparables_avg_quality": 51.825581395348834
+    },
+    {
+      "assetId": "E24-RE-060",
+      "title": "Apartamento en El Dorado, Panamá - 3 hab - 125m²",
+      "price": 215608,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Bethania",
+        "neighborhood": "El Dorado",
+        "lat": 8.992798664710902,
+        "lng": -79.54128040320465
+      },
+      "score": 39,
+      "confidence": 80,
+      "grade": "D",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 59.7906976744186
+    },
+    {
+      "assetId": "E24-RE-061",
+      "title": "Venta terreno en Pedregal - 0 dorm. 852m²",
+      "price": 889626,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Pedregal",
+        "neighborhood": "Pedregal",
+        "lat": 9.06059035425584,
+        "lng": -79.44721789389236
+      },
+      "score": 77,
+      "confidence": 80,
+      "grade": "B",
+      "decision": "WATCH_HIGH_PRIORITY",
+      "comparables_found": 15,
+      "comparables_avg_quality": 46.107142857142854
+    },
+    {
+      "assetId": "E24-RE-062",
+      "title": "Venta terreno en Paitilla - 0 dorm. 509m²",
+      "price": 1489774,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Paitilla",
+        "neighborhood": "Paitilla",
+        "lat": 8.988962510138606,
+        "lng": -79.51538213508881
+      },
+      "score": 10,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 49.023809523809526
+    },
+    {
+      "assetId": "E24-RE-063",
+      "title": "Casa en Punta Pacífica, Panamá - 2 hab - 412m²",
+      "price": 874950,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Punta Pacífica",
+        "neighborhood": "Punta Pacífica",
+        "lat": 8.976353758140418,
+        "lng": -79.50978860123868
+      },
+      "score": 14,
+      "confidence": 75,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 59.86046511627907
+    },
+    {
+      "assetId": "E24-RE-064",
+      "title": "Casa en San Miguelito, San Miguelito - 3 hab - 233m²",
+      "price": 219342,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "San Miguelito",
+        "corregimiento": "San Miguelito",
+        "neighborhood": "San Miguelito",
+        "lat": 9.038235560336462,
+        "lng": -79.49050003464971
+      },
+      "score": 42,
+      "confidence": 80,
+      "grade": "C-",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 45.66153846153846
+    },
+    {
+      "assetId": "E24-RE-065",
+      "title": "Casa en Parque Lefevre, Panamá - 2 hab - 209m²",
+      "price": 235891,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Parque Lefevre",
+        "neighborhood": "Parque Lefevre",
+        "lat": 8.990229169368293,
+        "lng": -79.489946260046
+      },
+      "score": 82,
+      "confidence": 75,
+      "grade": "B+",
+      "decision": "BUY_NOW",
+      "comparables_found": 15,
+      "comparables_avg_quality": 63.52325581395349
+    },
+    {
+      "assetId": "E24-RE-066",
+      "title": "Venta apartamento en Pedregal - 1 dorm. 191m²",
+      "price": 204974,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Pedregal",
+        "neighborhood": "Pedregal",
+        "lat": 9.07545427955974,
+        "lng": -79.45169253937473
+      },
+      "score": 46,
+      "confidence": 80,
+      "grade": "C-",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 57.348837209302324
+    },
+    {
+      "assetId": "E24-RE-067",
+      "title": "Casa en El Cangrejo, Panamá - 2 hab - 349m²",
+      "price": 408714,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Bella Vista",
+        "neighborhood": "El Cangrejo",
+        "lat": 8.98510863881879,
+        "lng": -79.51852063011813
+      },
+      "score": 71,
+      "confidence": 80,
+      "grade": "B-",
+      "decision": "WATCH_HIGH_PRIORITY",
+      "comparables_found": 15,
+      "comparables_avg_quality": 61.16279069767442
+    },
+    {
+      "assetId": "E24-RE-068",
+      "title": "Townhouse en El Carmen, Panamá - 2 hab - 126m²",
+      "price": 161577,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Bethania",
+        "neighborhood": "El Carmen",
+        "lat": 8.994178083752972,
+        "lng": -79.53650588544973
+      },
+      "score": 71,
+      "confidence": 80,
+      "grade": "B-",
+      "decision": "WATCH_HIGH_PRIORITY",
+      "comparables_found": 15,
+      "comparables_avg_quality": 56.535714285714285
+    },
+    {
+      "assetId": "E24-RE-069",
+      "title": "Venta apartamento en Obarrio - 1 dorm. 199m²",
+      "price": 613838,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Obarrio",
+        "neighborhood": "Obarrio",
+        "lat": 8.979655294803797,
+        "lng": -79.51968710606691
+      },
+      "score": 10,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 58.77647058823529
+    },
+    {
+      "assetId": "E24-RE-070",
+      "title": "Casa en El Dorado, Panamá - 3 hab - 155m²",
+      "price": 170697,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Bethania",
+        "neighborhood": "El Dorado",
+        "lat": 9.000832557206644,
+        "lng": -79.54042127801375
+      },
+      "score": 64,
+      "confidence": 80,
+      "grade": "C+",
+      "decision": "NEGOTIATE",
+      "comparables_found": 15,
+      "comparables_avg_quality": 60.23255813953488
+    },
+    {
+      "assetId": "E24-RE-071",
+      "title": "Venta terreno en El Carmen - 0 dorm. 1659m²",
+      "price": 1822742,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Bethania",
+        "neighborhood": "El Carmen",
+        "lat": 8.997455033730368,
+        "lng": -79.52531334837364
+      },
+      "score": 10,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 46.833333333333336
+    },
+    {
+      "assetId": "E24-RE-072",
+      "title": "Townhouse en Punta Pacífica, Panamá - 2 hab - 205m²",
+      "price": 739681,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Punta Pacífica",
+        "neighborhood": "Punta Pacífica",
+        "lat": 8.971997889980912,
+        "lng": -79.50883683780829
+      },
+      "score": 10,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 58.05882352941177
+    },
+    {
+      "assetId": "E24-RE-073",
+      "title": "Casa en Villa Cáceres, Panamá - 2 hab - 470m²",
+      "price": 639515,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Parque Lefevre",
+        "neighborhood": "Villa Cáceres",
+        "lat": 8.983781496032568,
+        "lng": -79.49487480403293
+      },
+      "score": 33,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 59.23255813953488
+    },
+    {
+      "assetId": "E24-RE-074",
+      "title": "Venta casa en San Francisco - 4 dorm. 339m²",
+      "price": 510745,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "San Francisco",
+        "neighborhood": "San Francisco",
+        "lat": 8.982688321204717,
+        "lng": -79.50193900355285
+      },
+      "score": 70,
+      "confidence": 80,
+      "grade": "B-",
+      "decision": "WATCH_HIGH_PRIORITY",
+      "comparables_found": 15,
+      "comparables_avg_quality": 59.75581395348837
+    },
+    {
+      "assetId": "E24-RE-075",
+      "title": "Townhouse en Don Bosco, Panamá - 3 hab - 188m²",
+      "price": 254016,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Juan Díaz",
+        "neighborhood": "Don Bosco",
+        "lat": 9.012599899148746,
+        "lng": -79.47481055214462
+      },
+      "score": 46,
+      "confidence": 80,
+      "grade": "C-",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 57.58139534883721
+    },
+    {
+      "assetId": "E24-RE-076",
+      "title": "Condominio en Nuevo Arraiján, Arraiján - 4 hab - 99m²",
+      "price": 32889,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá Oeste",
+        "district": "Arraiján",
+        "corregimiento": "Arraiján",
+        "neighborhood": "Nuevo Arraiján",
+        "lat": 8.951062818480112,
+        "lng": -79.65641631992987
+      },
+      "score": 98,
+      "confidence": 75,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 8,
+      "comparables_avg_quality": 48.375
+    },
+    {
+      "assetId": "E24-RE-077",
+      "title": "Venta condominio en Urb. Los Angeles - 2 dorm. 133m²",
+      "price": 172284,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "San Francisco",
+        "neighborhood": "Urb. Los Angeles",
+        "lat": 8.975923697903172,
+        "lng": -79.49871124900652
+      },
+      "score": 70,
+      "confidence": 75,
+      "grade": "B-",
+      "decision": "WATCH_HIGH_PRIORITY",
+      "comparables_found": 15,
+      "comparables_avg_quality": 59.45882352941177
+    },
+    {
+      "assetId": "E24-RE-078",
+      "title": "Venta condominio en Villa Cáceres - 4 dorm. 282m²",
+      "price": 358026,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Parque Lefevre",
+        "neighborhood": "Villa Cáceres",
+        "lat": 8.991593129010006,
+        "lng": -79.48720292089388
+      },
+      "score": 31,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 57.11764705882353
+    },
+    {
+      "assetId": "E24-RE-079",
+      "title": "Casa en Urb. Los Angeles, Panamá - 5 hab - 395m²",
+      "price": 590766,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "San Francisco",
+        "neighborhood": "Urb. Los Angeles",
+        "lat": 8.978913023513496,
+        "lng": -79.48419430596618
+      },
+      "score": 48,
+      "confidence": 75,
+      "grade": "C-",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 56.97674418604651
+    },
+    {
+      "assetId": "E24-RE-080",
+      "title": "Venta terreno en Obarrio - 0 dorm. 1987m²",
+      "price": 4261478,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Obarrio",
+        "neighborhood": "Obarrio",
+        "lat": 8.983155718387499,
+        "lng": -79.50390438127404
+      },
+      "score": 10,
+      "confidence": 75,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 48.142857142857146
+    },
+    {
+      "assetId": "E24-RE-081",
+      "title": "Casa en Vía Argentina, Panamá - 2 hab - 295m²",
+      "price": 467319,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Bella Vista",
+        "neighborhood": "Vía Argentina",
+        "lat": 8.989805349337736,
+        "lng": -79.53083427536615
+      },
+      "score": 50,
+      "confidence": 80,
+      "grade": "C",
+      "decision": "NEGOTIATE",
+      "comparables_found": 15,
+      "comparables_avg_quality": 59.76744186046512
+    },
+    {
+      "assetId": "E24-RE-082",
+      "title": "Venta townhouse en El Dorado - 2 dorm. 139m²",
+      "price": 189628,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Bethania",
+        "neighborhood": "El Dorado",
+        "lat": 8.993840591489699,
+        "lng": -79.5325792053821
+      },
+      "score": 61,
+      "confidence": 80,
+      "grade": "C+",
+      "decision": "NEGOTIATE",
+      "comparables_found": 15,
+      "comparables_avg_quality": 58.23529411764706
+    },
+    {
+      "assetId": "E24-RE-083",
+      "title": "Venta apartamento en Villa Cáceres - 3 dorm. 169m²",
+      "price": 201218,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Parque Lefevre",
+        "neighborhood": "Villa Cáceres",
+        "lat": 8.985952639046015,
+        "lng": -79.48540802678463
+      },
+      "score": 72,
+      "confidence": 75,
+      "grade": "B",
+      "decision": "WATCH_HIGH_PRIORITY",
+      "comparables_found": 15,
+      "comparables_avg_quality": 62.51162790697674
+    },
+    {
+      "assetId": "E24-RE-084",
+      "title": "Venta casa en Punta Pacífica - 4 dorm. 272m²",
+      "price": 879058,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Punta Pacífica",
+        "neighborhood": "Punta Pacífica",
+        "lat": 8.97913956175254,
+        "lng": -79.50888543707028
+      },
+      "score": 10,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 59.52325581395349
+    },
+    {
+      "assetId": "E24-RE-085",
+      "title": "Apartamento en Vista Alegre, Arraiján - 1 hab - 58m²",
+      "price": 46237,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá Oeste",
+        "district": "Arraiján",
+        "corregimiento": "Vista Alegre",
+        "neighborhood": "Vista Alegre",
+        "lat": 8.927844117170132,
+        "lng": -79.68781773828827
+      },
+      "score": 98,
+      "confidence": 80,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 8,
+      "comparables_avg_quality": 55.5
+    },
+    {
+      "assetId": "E24-RE-086",
+      "title": "Venta casa en Bethania - 4 dorm. 467m²",
+      "price": 405407,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Bethania",
+        "neighborhood": "Bethania",
+        "lat": 8.98641506569523,
+        "lng": -79.52265554498572
+      },
+      "score": 98,
+      "confidence": 75,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 15,
+      "comparables_avg_quality": 59.47674418604651
+    },
+    {
+      "assetId": "E24-RE-087",
+      "title": "Apartamento en Tocumen, Panamá - 1 hab - 134m²",
+      "price": 66010,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Tocumen",
+        "neighborhood": "Tocumen",
+        "lat": 9.0838388814741,
+        "lng": -79.37637084535116
+      },
+      "score": 98,
+      "confidence": 80,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 15,
+      "comparables_avg_quality": 51.773809523809526
+    },
+    {
+      "assetId": "E24-RE-088",
+      "title": "Apartamento en Paitilla, Panamá - 2 hab - 111m²",
+      "price": 439660,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Paitilla",
+        "neighborhood": "Paitilla",
+        "lat": 8.983613098479083,
+        "lng": -79.51769409647557
+      },
+      "score": 10,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 60.23809523809524
+    },
+    {
+      "assetId": "E24-RE-089",
+      "title": "Casa en Tocumen, Panamá - 4 hab - 468m²",
+      "price": 375197,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Tocumen",
+        "neighborhood": "Tocumen",
+        "lat": 9.085113775641084,
+        "lng": -79.3892718763623
+      },
+      "score": 98,
+      "confidence": 80,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 15,
+      "comparables_avg_quality": 55.43023255813954
+    },
+    {
+      "assetId": "E24-RE-090",
+      "title": "Casa en La Cresta, Panamá - 5 hab - 303m²",
+      "price": 583883,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Bella Vista",
+        "neighborhood": "La Cresta",
+        "lat": 8.97860022760095,
+        "lng": -79.51141815103104
+      },
+      "score": 36,
+      "confidence": 80,
+      "grade": "D",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 58.56976744186046
+    },
+    {
+      "assetId": "E24-RE-091",
+      "title": "Venta apartamento en Campo Alegre - 1 dorm. 99m²",
+      "price": 146997,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Pueblo Nuevo",
+        "neighborhood": "Campo Alegre",
+        "lat": 9.002547659709897,
+        "lng": -79.51858319101866
+      },
+      "score": 89,
+      "confidence": 80,
+      "grade": "A-",
+      "decision": "BUY_NOW",
+      "comparables_found": 15,
+      "comparables_avg_quality": 56.035714285714285
+    },
+    {
+      "assetId": "E24-RE-092",
+      "title": "Venta casa en La Exposición - 3 dorm. 437m²",
+      "price": 443814,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Pueblo Nuevo",
+        "neighborhood": "La Exposición",
+        "lat": 8.999451506070244,
+        "lng": -79.51826479319539
+      },
+      "score": 85,
+      "confidence": 80,
+      "grade": "A-",
+      "decision": "BUY_NOW",
+      "comparables_found": 15,
+      "comparables_avg_quality": 60.05813953488372
+    },
+    {
+      "assetId": "E24-RE-093",
+      "title": "Venta condominio en Don Bosco - 3 dorm. 158m²",
+      "price": 164697,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Juan Díaz",
+        "neighborhood": "Don Bosco",
+        "lat": 9.010692904210709,
+        "lng": -79.4826428841609
+      },
+      "score": 73,
+      "confidence": 80,
+      "grade": "B",
+      "decision": "WATCH_HIGH_PRIORITY",
+      "comparables_found": 15,
+      "comparables_avg_quality": 57.395348837209305
+    },
+    {
+      "assetId": "E24-RE-094",
+      "title": "Apartamento en Playa Leona, La Chorrera - 3 hab - 172m²",
+      "price": 119242,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá Oeste",
+        "district": "La Chorrera",
+        "corregimiento": "La Chorrera",
+        "neighborhood": "Playa Leona",
+        "lat": 8.844994817232825,
+        "lng": -79.81140684556756
+      },
+      "score": 76,
+      "confidence": 80,
+      "grade": "B",
+      "decision": "WATCH_HIGH_PRIORITY",
+      "comparables_found": 8,
+      "comparables_avg_quality": 47.5
+    },
+    {
+      "assetId": "E24-RE-095",
+      "title": "Condominio en Pedregal, Panamá - 3 hab - 78m²",
+      "price": 49641,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Pedregal",
+        "neighborhood": "Pedregal",
+        "lat": 9.076945771673985,
+        "lng": -79.45695521724967
+      },
+      "score": 98,
+      "confidence": 75,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 15,
+      "comparables_avg_quality": 48.77906976744186
+    },
+    {
+      "assetId": "E24-RE-096",
+      "title": "Venta townhouse en Bethania - 3 dorm. 202m²",
+      "price": 387422,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Bethania",
+        "neighborhood": "Bethania",
+        "lat": 8.995259049946332,
+        "lng": -79.53750606589966
+      },
+      "score": 32,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 57.31395348837209
+    },
+    {
+      "assetId": "E24-RE-097",
+      "title": "Venta casa en Altos del Golf - 3 dorm. 494m²",
+      "price": 922582,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "San Francisco",
+        "neighborhood": "Altos del Golf",
+        "lat": 8.984007514032124,
+        "lng": -79.50007149218065
+      },
+      "score": 15,
+      "confidence": 75,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 58.906976744186046
+    },
+    {
+      "assetId": "E24-RE-098",
+      "title": "Condominio en Don Bosco, Panamá - 2 hab - 157m²",
+      "price": 179925,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Juan Díaz",
+        "neighborhood": "Don Bosco",
+        "lat": 9.011418071323606,
+        "lng": -79.48200383010438
+      },
+      "score": 65,
+      "confidence": 80,
+      "grade": "B-",
+      "decision": "WATCH_HIGH_PRIORITY",
+      "comparables_found": 15,
+      "comparables_avg_quality": 57.86046511627907
+    },
+    {
+      "assetId": "E24-RE-099",
+      "title": "Apartamento en Arraiján, Arraiján - 2 hab - 57m²",
+      "price": 60320,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá Oeste",
+        "district": "Arraiján",
+        "corregimiento": "Arraiján",
+        "neighborhood": "Arraiján",
+        "lat": 8.95135230839875,
+        "lng": -79.64315183035737
+      },
+      "score": 98,
+      "confidence": 80,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 8,
+      "comparables_avg_quality": 61.25
+    },
+    {
+      "assetId": "E24-RE-100",
+      "title": "Venta casa en Punta Pacífica - 4 dorm. 415m²",
+      "price": 988877,
+      "vertical": "real_estate",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Punta Pacífica",
+        "neighborhood": "Punta Pacífica",
+        "lat": 8.977894385473984,
+        "lng": -79.5048901142053
+      },
+      "score": 10,
+      "confidence": 75,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 15,
+      "comparables_avg_quality": 57.68604651162791
+    },
+    {
+      "assetId": "E24-VH-001",
+      "title": "Hyundai Elantra 2025 - Blanco",
+      "price": 15092,
+      "vertical": "vehicles",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Pedregal",
+        "neighborhood": "Pedregal",
+        "lat": 9.07,
+        "lng": -79.45
+      },
+      "score": 68,
+      "confidence": 80,
+      "grade": "B-",
+      "decision": "WATCH_HIGH_PRIORITY",
+      "comparables_found": 6,
+      "comparables_avg_quality": 40.333333333333336
+    },
+    {
+      "assetId": "E24-VH-002",
+      "title": "Hyundai Santa Fe 2023 - Plateado",
+      "price": 27436,
+      "vertical": "vehicles",
+      "location": {
+        "province": "Panamá",
+        "district": "San Miguelito",
+        "corregimiento": "San Miguelito",
+        "neighborhood": "San Miguelito",
+        "lat": 9.04,
+        "lng": -79.5
+      },
+      "score": 10,
+      "confidence": 75,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 3,
+      "comparables_avg_quality": 46.333333333333336
+    },
+    {
+      "assetId": "E24-VH-003",
+      "title": "Toyota Hilux 2016 - Marrón",
+      "price": 10420,
+      "vertical": "vehicles",
+      "location": {
+        "province": "Panamá Oeste",
+        "district": "Arraiján",
+        "corregimiento": "Arraiján",
+        "neighborhood": "Pacora",
+        "lat": 8.91,
+        "lng": -79.63
+      },
+      "score": 98,
+      "confidence": 80,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 11,
+      "comparables_avg_quality": 33.81818181818182
+    },
+    {
+      "assetId": "E24-VH-004",
+      "title": "Chevrolet Colorado 2020 - Verde",
+      "price": 16856,
+      "vertical": "vehicles",
+      "location": {
+        "province": "Panamá Oeste",
+        "district": "Arraiján",
+        "corregimiento": "Vista Alegre",
+        "neighborhood": "Vista Alegre",
+        "lat": 8.93,
+        "lng": -79.68
+      },
+      "score": 10,
+      "confidence": 65,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 2,
+      "comparables_avg_quality": 33
+    },
+    {
+      "assetId": "E24-VH-005",
+      "title": "Toyota Yaris 2025 - Marrón",
+      "price": 14478,
+      "vertical": "vehicles",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Paitilla",
+        "neighborhood": "Paitilla",
+        "lat": 8.979,
+        "lng": -79.51
+      },
+      "score": 74,
+      "confidence": 80,
+      "grade": "B",
+      "decision": "WATCH_HIGH_PRIORITY",
+      "comparables_found": 10,
+      "comparables_avg_quality": 46.6
+    },
+    {
+      "assetId": "E24-VH-006",
+      "title": "Toyota RAV4 2020 - Rojo",
+      "price": 12767,
+      "vertical": "vehicles",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Parque Lefevre",
+        "neighborhood": "Parque Lefevre",
+        "lat": 8.988,
+        "lng": -79.496
+      },
+      "score": 75,
+      "confidence": 75,
+      "grade": "B",
+      "decision": "WATCH_HIGH_PRIORITY",
+      "comparables_found": 11,
+      "comparables_avg_quality": 38.63636363636363
+    },
+    {
+      "assetId": "E24-VH-007",
+      "title": "Toyota Corolla 2021 - Gris",
+      "price": 7036,
+      "vertical": "vehicles",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Bella Vista",
+        "neighborhood": "La Cresta",
+        "lat": 8.984,
+        "lng": -79.515
+      },
+      "score": 98,
+      "confidence": 75,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 9,
+      "comparables_avg_quality": 41.44444444444444
+    },
+    {
+      "assetId": "E24-VH-008",
+      "title": "Kia Sorento 2018 - Azul",
+      "price": 11848,
+      "vertical": "vehicles",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Río Abajo",
+        "neighborhood": "Río Abajo",
+        "lat": 9,
+        "lng": -79.5
+      },
+      "score": 10,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 5,
+      "comparables_avg_quality": 39.6
+    },
+    {
+      "assetId": "E24-VH-009",
+      "title": "Toyota Yaris 2025 - Plateado",
+      "price": 16441,
+      "vertical": "vehicles",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Juan Díaz",
+        "neighborhood": "Juan Díaz",
+        "lat": 9.02,
+        "lng": -79.47
+      },
+      "score": 52,
+      "confidence": 80,
+      "grade": "C",
+      "decision": "NEGOTIATE",
+      "comparables_found": 10,
+      "comparables_avg_quality": 45.4
+    },
+    {
+      "assetId": "E24-VH-010",
+      "title": "Hyundai Santa Fe 2018 - Blanco",
+      "price": 8221,
+      "vertical": "vehicles",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "San Francisco",
+        "neighborhood": "Marbella",
+        "lat": 8.982,
+        "lng": -79.506
+      },
+      "score": 98,
+      "confidence": 70,
+      "grade": "A+",
+      "decision": "WATCH_HIGH_PRIORITY",
+      "comparables_found": 4,
+      "comparables_avg_quality": 35.75
+    },
+    {
+      "assetId": "E24-VH-011",
+      "title": "Honda Civic 2017 - Plateado",
+      "price": 11719,
+      "vertical": "vehicles",
+      "location": {
+        "province": "Panamá Oeste",
+        "district": "La Chorrera",
+        "corregimiento": "La Chorrera",
+        "neighborhood": "Playa Leona",
+        "lat": 8.85,
+        "lng": -79.82
+      },
+      "score": 37,
+      "confidence": 75,
+      "grade": "D",
+      "decision": "AVOID",
+      "comparables_found": 3,
+      "comparables_avg_quality": 36.666666666666664
+    },
+    {
+      "assetId": "E24-VH-012",
+      "title": "Toyota Prado 2025 - Gris",
+      "price": 63187,
+      "vertical": "vehicles",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Pueblo Nuevo",
+        "neighborhood": "Campo Alegre",
+        "lat": 8.995,
+        "lng": -79.515
+      },
+      "score": 10,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 9,
+      "comparables_avg_quality": 35.55555555555556
+    },
+    {
+      "assetId": "E24-VH-013",
+      "title": "Toyota Yaris 2019 - Gris",
+      "price": 6752,
+      "vertical": "vehicles",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Bethania",
+        "neighborhood": "El Dorado",
+        "lat": 8.994,
+        "lng": -79.535
+      },
+      "score": 98,
+      "confidence": 75,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 10,
+      "comparables_avg_quality": 45.8
+    },
+    {
+      "assetId": "E24-VH-014",
+      "title": "Hyundai Creta 2025 - Beige",
+      "price": 23989,
+      "vertical": "vehicles",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Río Abajo",
+        "neighborhood": "Río Abajo",
+        "lat": 9,
+        "lng": -79.5
+      },
+      "score": 10,
+      "confidence": 75,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 3,
+      "comparables_avg_quality": 43
+    },
+    {
+      "assetId": "E24-VH-015",
+      "title": "Kia Rio 2018 - Beige",
+      "price": 3173,
+      "vertical": "vehicles",
+      "location": {
+        "province": "Panamá Oeste",
+        "district": "Arraiján",
+        "corregimiento": "Arraiján",
+        "neighborhood": "Pacora",
+        "lat": 8.91,
+        "lng": -79.63
+      },
+      "score": 98,
+      "confidence": 60,
+      "grade": "A+",
+      "decision": "MANUAL_REVIEW_REQUIRED",
+      "comparables_found": 2,
+      "comparables_avg_quality": 53
+    },
+    {
+      "assetId": "E24-VH-016",
+      "title": "Toyota Yaris 2019 - Gris",
+      "price": 6481,
+      "vertical": "vehicles",
+      "location": {
+        "province": "Panamá",
+        "district": "San Miguelito",
+        "corregimiento": "San Miguelito",
+        "neighborhood": "San Miguelito",
+        "lat": 9.04,
+        "lng": -79.5
+      },
+      "score": 98,
+      "confidence": 75,
+      "grade": "A+",
+      "decision": "BUY_NOW",
+      "comparables_found": 9,
+      "comparables_avg_quality": 47.55555555555556
+    },
+    {
+      "assetId": "E24-VH-017",
+      "title": "Chevrolet Onix 2016 - Verde",
+      "price": 5517,
+      "vertical": "vehicles",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Bethania",
+        "neighborhood": "El Carmen",
+        "lat": 8.988,
+        "lng": -79.528
+      },
+      "score": 98,
+      "confidence": 65,
+      "grade": "A+",
+      "decision": "NEGOTIATE",
+      "comparables_found": 1,
+      "comparables_avg_quality": 31
+    },
+    {
+      "assetId": "E24-VH-018",
+      "title": "Toyota Fortuner 2018 - Beige",
+      "price": 24870,
+      "vertical": "vehicles",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Juan Díaz",
+        "neighborhood": "Juan Díaz",
+        "lat": 9.02,
+        "lng": -79.47
+      },
+      "score": 10,
+      "confidence": 80,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 9,
+      "comparables_avg_quality": 36
+    },
+    {
+      "assetId": "E24-VH-019",
+      "title": "Toyota Corolla 2023 - Marrón",
+      "price": 15708,
+      "vertical": "vehicles",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Pueblo Nuevo",
+        "neighborhood": "Campo Alegre",
+        "lat": 8.995,
+        "lng": -79.515
+      },
+      "score": 55,
+      "confidence": 75,
+      "grade": "C",
+      "decision": "NEGOTIATE",
+      "comparables_found": 11,
+      "comparables_avg_quality": 40.45454545454545
+    },
+    {
+      "assetId": "E24-VH-020",
+      "title": "Kia Rio 2021 - Verde",
+      "price": 9610,
+      "vertical": "vehicles",
+      "location": {
+        "province": "Panamá",
+        "district": "Panamá",
+        "corregimiento": "Bethania",
+        "neighborhood": "El Dorado",
+        "lat": 8.994,
+        "lng": -79.535
+      },
+      "score": 10,
+      "confidence": 65,
+      "grade": "F",
+      "decision": "AVOID",
+      "comparables_found": 2,
+      "comparables_avg_quality": 51.5
+    }
+  ]
+}

@@ -1,0 +1,240 @@
+[
+  {
+    "asset": {
+      "asset_id": "real-001",
+      "source_id": "encuentra24",
+      "vertical": "real_estate",
+      "status": "active",
+      "price_currency": "USD",
+      "title": "PACIFIC HILLS\n        \n                \n      \n        \n      \n      \n        \n        \n  \n\n        El Bosque        \n      \n       PH Greenwood Ricardo J. Alfaro\n      Comes with comfortable, safe and conveniet space with a modern design\nFind yourself at the doorstep from restaurants, coffee house, pharmacy, daycare, beaty salon and more\n      \n        $145,000      \n      \n        \n          \n  \n  \n\n  47 m2\n\n  \n  \n\n  2\n\n  \n  \n\n  2\n        \n      \n\n      \n        \n          \n  \n\n          Contact now",
+      "price_amount": 145000,
+      "location": {
+        "province": "",
+        "district": "",
+        "neighborhood": "Compare this ad\n    \n  \n  \n\n  Add to favorites"
+      },
+      "description": "Comes with comfortable, safe and conveniet space with a modern design\nFind yourself at the doorstep from restaurants, coffee house, pharmacy, daycare, beaty salon and more",
+      "seller_type": "owner",
+      "tags": [],
+      "source_listing_url": "https://www.encuentra24.com/panama-en/real-estate-preconstruction-new-property/ph-greenwood-ricardo-j-alfaro/31340975"
+    },
+    "comparables": [
+      {
+        "price": 132937,
+        "distance_km": 4.2,
+        "age_days": 35,
+        "quality_score": 0.78
+      },
+      {
+        "price": 139710,
+        "distance_km": 2.6,
+        "age_days": 10,
+        "quality_score": 0.66
+      },
+      {
+        "price": 134838,
+        "distance_km": 0.4,
+        "age_days": 21,
+        "quality_score": 0.88
+      },
+      {
+        "price": 137816,
+        "distance_km": 3.9,
+        "age_days": 75,
+        "quality_score": 0.9
+      },
+      {
+        "price": 144655,
+        "distance_km": 1,
+        "age_days": 62,
+        "quality_score": 0.81
+      }
+    ],
+    "estimatedValue": 137906.16625310178,
+    "discount": -5.143956894486338,
+    "score": 29,
+    "grade": "F",
+    "confidence": 75,
+    "decision": "AVOID"
+  },
+  {
+    "asset": {
+      "asset_id": "real-002",
+      "source_id": "encuentra24",
+      "vertical": "real_estate",
+      "status": "active",
+      "price_currency": "USD",
+      "title": "PACIFIC HILLS\n        \n                \n      \n        \n      \n      \n        \n        \n  \n\n        Brisas del Golf        \n      \n       Invest in Well-Being, Live at Panorama 360\n      Panorama 360 combines a strategic location, contemporary design, and a unique natural environment. An ideal project for those seeking quality of life, security, and an excellent ...\n      \n        $145,000      \n      \n        \n          \n  \n  \n\n  52 m2\n\n  \n  \n\n  2\n\n  \n  \n\n  2\n        \n      \n\n      \n        \n          \n  \n\n          Contact now",
+      "price_amount": 145000,
+      "location": {
+        "province": "",
+        "district": "",
+        "neighborhood": "Compare this ad\n    \n  \n  \n\n  Add to favorites"
+      },
+      "description": "Panorama 360 combines a strategic location, contemporary design, and a unique natural environment. An ideal project for those seeking quality of life, security, and an excellent ...",
+      "seller_type": "owner",
+      "tags": [],
+      "source_listing_url": "https://www.encuentra24.com/panama-en/real-estate-preconstruction-new-property/invest-in-well-being-live-at-panorama-360/32418838"
+    },
+    "comparables": [
+      {
+        "price": 135338,
+        "distance_km": 0.7,
+        "age_days": 86,
+        "quality_score": 0.82
+      },
+      {
+        "price": 138613,
+        "distance_km": 3.7,
+        "age_days": 69,
+        "quality_score": 0.89
+      },
+      {
+        "price": 141309,
+        "distance_km": 3.6,
+        "age_days": 52,
+        "quality_score": 0.89
+      },
+      {
+        "price": 140803,
+        "distance_km": 2.5,
+        "age_days": 24,
+        "quality_score": 0.9
+      }
+    ],
+    "estimatedValue": 139094.41142857142,
+    "discount": -4.2457410838977205,
+    "score": 30,
+    "grade": "D",
+    "confidence": 70,
+    "decision": "AVOID"
+  },
+  {
+    "asset": {
+      "asset_id": "real-003",
+      "source_id": "encuentra24",
+      "vertical": "real_estate",
+      "status": "active",
+      "price_currency": "USD",
+      "title": "Favaro´s Investmets\n        \n                \n      \n        \n      \n      \n        \n        \n  \n\n        San Francisco        \n      \n       For sale, 2 bedrooms, 2 bathrooms, San Francisco, near Parque Omar\n      85 m2 apartment for sale, steps from Omar Park. This family-friendly building with only 80 units has been in operation for 6 years and includes social areas.\n\nThe apartment we can rent ...\n      \n        $239,000      \n      \n        \n          \n  \n  \n\n  91 m2\n\n  \n  \n\n  2\n\n  \n  \n\n  2\n\n  \n  \n\n  2\n        \n      \n\n      \n        \n          \n  \n\n          Contact now",
+      "price_amount": 239000,
+      "location": {
+        "province": "",
+        "district": "",
+        "neighborhood": "Compare this ad\n    \n  \n  \n\n  Add to favorites"
+      },
+      "description": "85 m2 apartment for sale, steps from Omar Park. This family-friendly building with only 80 units has been in operation for 6 years and includes social areas.\n\nThe apartment we can rent ...",
+      "seller_type": "owner",
+      "tags": [],
+      "source_listing_url": "https://www.encuentra24.com/panama-en/real-estate-for-sale-apartments-condos/for-sale-2-bedrooms-2-bathrooms-san-francisco-near-parque-omar/24531044"
+    },
+    "comparables": [
+      {
+        "price": 216322,
+        "distance_km": 1.2,
+        "age_days": 91,
+        "quality_score": 0.67
+      },
+      {
+        "price": 237024,
+        "distance_km": 3.3,
+        "age_days": 12,
+        "quality_score": 0.68
+      },
+      {
+        "price": 261956,
+        "distance_km": 3.7,
+        "age_days": 70,
+        "quality_score": 0.9
+      },
+      {
+        "price": 246422,
+        "distance_km": 3.1,
+        "age_days": 35,
+        "quality_score": 0.73
+      },
+      {
+        "price": 257961,
+        "distance_km": 2.5,
+        "age_days": 11,
+        "quality_score": 0.87
+      },
+      {
+        "price": 249022,
+        "distance_km": 1.1,
+        "age_days": 14,
+        "quality_score": 0.85
+      },
+      {
+        "price": 232836,
+        "distance_km": 2.9,
+        "age_days": 11,
+        "quality_score": 0.9
+      }
+    ],
+    "estimatedValue": 244179.9446428571,
+    "discount": 2.1213636731851158,
+    "score": 42,
+    "grade": "C-",
+    "confidence": 85,
+    "decision": "AVOID"
+  },
+  {
+    "asset": {
+      "asset_id": "real-004",
+      "source_id": "encuentra24",
+      "vertical": "real_estate",
+      "status": "active",
+      "price_currency": "USD",
+      "title": "Samuel Díaz PN 5867\n        \n                \n      \n        \n      \n      \n        \n        \n  \n\n        San Francisco        \n      \n       Apartment for Sale in San Francisco Bay, San Francisco.\n      Apartment for Sale in PH San Francisco Bay – San Francisco\n95 m² | 2 Bedrooms | 2 Bathrooms | 1 Parking Space with the Right to Use a Second Parking Spot\n\nComfortable and functional ...\n      \n        $160,000      \n        Destacado      \n      \n      \n        \n          \n  \n  \n\n  95 m2\n\n  \n  \n\n  2\n\n  \n  \n\n  2\n\n  \n  \n\n  2\n        \n      \n\n      \n        \n          \n  \n\n          Contact now",
+      "price_amount": 160000,
+      "location": {
+        "province": "",
+        "district": "",
+        "neighborhood": "Compare this ad\n    \n  \n  \n\n  Add to favorites"
+      },
+      "description": "Apartment for Sale in PH San Francisco Bay – San Francisco\n95 m² | 2 Bedrooms | 2 Bathrooms | 1 Parking Space with the Right to Use a Second Parking Spot\n\nComfortable and functional ...",
+      "seller_type": "owner",
+      "tags": [],
+      "source_listing_url": "https://www.encuentra24.com/panama-en/real-estate-for-sale-apartments-condos/apartment-for-sale-in-san-francisco-bay-san-francisco/32558757"
+    },
+    "comparables": [
+      {
+        "price": 155434,
+        "distance_km": 3.7,
+        "age_days": 33,
+        "quality_score": 0.85
+      },
+      {
+        "price": 147998,
+        "distance_km": 0.4,
+        "age_days": 36,
+        "quality_score": 0.72
+      },
+      {
+        "price": 152409,
+        "distance_km": 2.5,
+        "age_days": 17,
+        "quality_score": 0.93
+      },
+      {
+        "price": 144210,
+        "distance_km": 0.9,
+        "age_days": 75,
+        "quality_score": 0.84
+      },
+      {
+        "price": 145627,
+        "distance_km": 3.5,
+        "age_days": 37,
+        "quality_score": 0.94
+      }
+    ],
+    "estimatedValue": 149169.06775700935,
+    "discount": -7.260843287318666,
+    "score": 25,
+    "grade": "F",
+    "confidence": 75,
+    "decision": "AVOID"
+  }
+]
