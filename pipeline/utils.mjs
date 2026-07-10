@@ -7,9 +7,21 @@ import { createHash } from 'crypto'
 
 // ── Source UUIDs (seeded in Supabase) ─────────────────────────────────────
 export const SOURCE_UUIDS = {
-  encuentra24:        '89ee5ff1-e448-4ef5-83eb-31252bd89806',
-  'banco-nacional':   '36553830-0a7e-4d6a-96a5-a061773a7da9',
-  'caja-ahorros':     '01045869-2ef5-4431-80f9-2924fd6e848f',
+  'bac-panama':             'd5662882-022f-4096-b192-533a97ee7ef4',
+  'banco-general':          '6e4c1f98-af67-464f-a246-f82dde298b00',
+  'banco-nacional':         '36553830-0a7e-4d6a-96a5-a061773a7da9',
+  'banco-nacional-autos':   'd712251f-ec55-4387-abdf-0e67108824d8',
+  'banistmo':               'f1b03b7b-0544-42a1-abd3-16782a7916db',
+  'caja-ahorros':           '01045869-2ef5-4431-80f9-2924fd6e848f',
+  'caja-ahorros-autos':     'c2a52960-3aa6-493c-8977-e911cab1031b',
+  'carrocarros-pa':         'f72d448d-593d-4e23-9686-f8bf5a71e522',
+  'clasificar-pa':          'd48a989c-b0b0-48b4-91f4-c5f1ed472e86',
+  'compreoalquile':         'cb8a0506-51eb-439e-9560-cd9810db547c',
+  'e24-autos':              '84342de5-9ff2-4d75-a48c-286ae89115b8',
+  'encuentra24':            '89ee5ff1-e448-4ef5-83eb-31252bd89806',
+  'global-bank':            '9cfb428b-c950-4718-83d9-9045cb386dee',
+  'multibank':              'f05e45ae-2fac-4d6b-9738-7f06fa72de72',
+  'superautos-pa':          '5825fb5e-2a4e-4aa9-b1be-90caf09d881d',
 }
 
 // ── Content Hash ───────────────────────────────────────────────────────────
