@@ -1146,7 +1146,7 @@
             <svg class="icon-svg sm" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             INSPECCIÓN MECÁNICA APROBADA 100%
           </span>
-          <span class="asset-id-tag" id="display-asset-id">ID: HOIE-AUTO-2022</span>
+          <span class="asset-id-tag" id="display-asset-id">ID: OI-AUTO-2022</span>
         </div>
 
         <h1 class="asset-title" id="display-title">Toyota Hilux 4x4 Diésel 2.8L</h1>
@@ -1264,7 +1264,7 @@
       <div class="testimonials-section">
         <div class="section-head-title">
           <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          Experiencias Verificadas de Compradores de Autos HOIE
+          Experiencias Verificadas de Compradores de Autos OI
         </div>
         <div class="testimonial-cards-grid">
           <div class="testimonial-card">
@@ -1385,7 +1385,7 @@
 
         <div class="ai-chat-box" id="ai-chat-box">
           <div class="ai-msg ai-msg-bot">
-            ¡Hola! Soy la IA Asesora de este auto. Haz cualquier pregunta o presiona uno de los botones de consulta rápida arriba.
+            ¡Hola! Soy la IA Asesora OI de este auto. Haz cualquier pregunta o presiona uno de los botones de consulta rápida arriba.
           </div>
         </div>
 
@@ -1482,7 +1482,7 @@
         </div>
         <div>
           <label class="admin-label">ID de Vehículo</label>
-          <input type="text" id="adm-id" class="admin-input" placeholder="ej. HOIE-AUTO-2022">
+          <input type="text" id="adm-id" class="admin-input" placeholder="ej. OI-AUTO-2022">
         </div>
         <div>
           <label class="admin-label">Precio de Venta ($ USD) *</label>
@@ -1579,7 +1579,7 @@
   </footer>
 
   <script>
-    const N8N_WEBHOOK_URL = "https://n8n.tu-servidor.com/webhook/hoie-leads";
+    const N8N_WEBHOOK_URL = "https://n8n.tu-servidor.com/webhook/oi-leads";
 
     let userTelemetry = {
       startTime: Date.now(),
@@ -1592,7 +1592,7 @@
     };
 
     let VEHICLE_DATA = {
-      assetId: "HOIE-AUTO-2022",
+      assetId: "OI-AUTO-2022",
       title: "Toyota Hilux 4x4 Diésel 2.8L",
       address: "Disponible para prueba en: Vía España, Ciudad de Panamá",
       price: 24500,
@@ -1631,11 +1631,11 @@
 
     const urlParams = new URLSearchParams(window.location.search);
     const assetIdParam = urlParams.get('id');
-    const hasAdminSession = !!(localStorage.getItem('oi_access_token') || sessionStorage.getItem('oi_access_token') || localStorage.getItem('hoie_admin_authorized') === 'true');
+    const hasAdminSession = !!(localStorage.getItem('oi_access_token') || sessionStorage.getItem('oi_access_token') || localStorage.getItem('oi_admin_authorized') === 'true' || localStorage.getItem('hoie_admin_authorized') === 'true');
     const isAdmin = urlParams.get('admin') === 'true' || hasAdminSession;
 
     try {
-      const savedData = localStorage.getItem(assetIdParam ? `hoie_auto_${assetIdParam}` : 'hoie_vehicle_listing_data');
+      const savedData = localStorage.getItem(assetIdParam ? `oi_auto_${assetIdParam}` : 'oi_vehicle_listing_data') || localStorage.getItem(assetIdParam ? `hoie_auto_${assetIdParam}` : 'hoie_vehicle_listing_data');
       if (savedData) { VEHICLE_DATA = { ...VEHICLE_DATA, ...JSON.parse(savedData) }; }
     } catch(e) {}
 
@@ -1657,6 +1657,7 @@
     function promptAdminLogin() {
       const pin = prompt("Ingrese clave de acceso administrador o PIN táctico:");
       if (pin === "admin123" || pin === "aizprua" || pin === "2026" || pin === "OI2026") {
+        localStorage.setItem('oi_admin_authorized', 'true');
         localStorage.setItem('hoie_admin_authorized', 'true');
         applyAdminUI();
         openAdminModal();
@@ -1670,7 +1671,7 @@
     function renderVehicleListing() {
       const formatPrice = (n) => '$' + Number(n).toLocaleString('en-US');
       
-      document.getElementById('page-title').textContent = `${VEHICLE_DATA.title} — HOIE Auto Intelligence`;
+      document.getElementById('page-title').textContent = `${VEHICLE_DATA.title} — OI Auto Intelligence`;
       document.getElementById('display-asset-id').textContent = `ID: ${VEHICLE_DATA.assetId}`;
       document.getElementById('display-title').textContent = VEHICLE_DATA.title;
       document.getElementById('display-address').innerHTML = `<svg class="icon-svg sm" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ${VEHICLE_DATA.address}`;
@@ -1953,7 +1954,7 @@
       }
 
       VEHICLE_DATA = {
-        assetId: document.getElementById('adm-id').value.trim() || 'HOIE-AUTO-2022',
+        assetId: document.getElementById('adm-id').value.trim() || 'OI-AUTO-2022',
         title: title,
         address: address,
         price: Number(price),
@@ -1973,6 +1974,7 @@
       };
 
       try {
+        localStorage.setItem(assetIdParam ? `oi_auto_${assetIdParam}` : 'oi_vehicle_listing_data', JSON.stringify(VEHICLE_DATA));
         localStorage.setItem(assetIdParam ? `hoie_auto_${assetIdParam}` : 'hoie_vehicle_listing_data', JSON.stringify(VEHICLE_DATA));
       } catch(e) {}
 
@@ -2064,7 +2066,7 @@
       const calcSummary = userTelemetry.calcSimulations.length > 0 ? userTelemetry.calcSimulations[userTelemetry.calcSimulations.length - 1] : 'Por defecto';
 
       const emailTxt = leadData.email ? `\n*EMAIL:* ${leadData.email}` : '';
-      const msg = `Hola, mi nombre es ${leadData.name}. Me he calificado exitosamente en HOIE Auto para el vehículo '${VEHICLE_DATA.title}' ($${Number(VEHICLE_DATA.price).toLocaleString('en-US')}).\n\n*TOKEN VIP:* ${token}\n*SCORE MIC:* ${finalScore}/100\n*PERFIL:* ${leadData.profile}${emailTxt}\n\n*DOSSIER INTELIGENTE DE CIERRE:* \n- Preguntas a la IA: ${aiSummary}\n- Documentos Vistos: ${docsSummary}\n- Simulación Cuota Auto: ${calcSummary}\n- FAQ Revisadas: ${faqSummary}\n- Tiempo en Página: ${userTelemetry.timeSpentSec}s (${userTelemetry.photosViewedCount} fotos vistas)\n\nEstoy listo para agendar la prueba de manejo VIP para mañana.`;
+      const msg = `Hola, mi nombre es ${leadData.name}. Me he calificado exitosamente en OI Auto para el vehículo '${VEHICLE_DATA.title}' ($${Number(VEHICLE_DATA.price).toLocaleString('en-US')}).\n\n*TOKEN VIP:* ${token}\n*SCORE MIC:* ${finalScore}/100\n*PERFIL:* ${leadData.profile}${emailTxt}\n\n*DOSSIER INTELIGENTE DE CIERRE:* \n- Preguntas a la IA: ${aiSummary}\n- Documentos Vistos: ${docsSummary}\n- Simulación Cuota Auto: ${calcSummary}\n- FAQ Revisadas: ${faqSummary}\n- Tiempo en Página: ${userTelemetry.timeSpentSec}s (${userTelemetry.photosViewedCount} fotos vistas)\n\nEstoy listo para agendar la prueba de manejo VIP para mañana.`;
       
       const waLink = document.getElementById('whatsapp-vip-link');
       const waSticky = document.getElementById('whatsapp-sticky-link');

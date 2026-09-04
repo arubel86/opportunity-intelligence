@@ -4538,7 +4538,7 @@
 
     let logLines = [
       { text: '[WEBHOOK] Disparando webhook en servidor n8n...', type: 'system' },
-      { text: '[n8n ENGINE] Workflow "HOIE - Scraper Inteligente de Activos" activado.', type: 'info' },
+      { text: '[n8n ENGINE] Workflow "OI - Scraper Inteligente de Activos" activado.', type: 'info' },
       { text: '[HTTP REQUEST] Descargando listados activos de Banco Nacional y Caja de Ahorros...', type: 'info' },
       { text: '[SANITIZER] Limpieza de HTML -> Formato Markdown optimizado para LLM.', type: 'info' },
       { text: '[LANGCHAIN IA] Modelo GPT-4o-mini extrayendo precio, área m², habs y corregimientos...', type: 'info' },
@@ -4554,7 +4554,7 @@
         if (scraperProgressWrapper) scraperProgressWrapper.style.display = 'block';
         if (consoleLogBox) consoleLogBox.innerHTML = '';
         
-        const webhookUrl = n8nWebhookInput ? n8nWebhookInput.value.trim() : 'http://localhost:5678/webhook/hoie-scrape';
+        const webhookUrl = n8nWebhookInput ? n8nWebhookInput.value.trim() : 'http://localhost:5678/webhook/oi-scrape';
         
         // Intentar llamada real a n8n en segundo plano si está disponible
         try {
@@ -4675,7 +4675,7 @@
         if (targetedProgressFill) targetedProgressFill.style.width = '15%';
         if (targetedProgressStatus) targetedProgressStatus.textContent = `Buscando oportunidades en ${loc}...`;
 
-        const webhookUrl = n8nWebhookInput ? n8nWebhookInput.value.trim() : 'http://localhost:5678/webhook/hoie-scrape';
+        const webhookUrl = n8nWebhookInput ? n8nWebhookInput.value.trim() : 'http://localhost:5678/webhook/oi-scrape';
 
         try {
           // Actualizar feedback visual
@@ -4798,7 +4798,7 @@
       <div class="admin-modal-header">
         <div class="admin-modal-title">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:2px; vertical-align: middle;"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-          Centro de Control y Administración (HOIE Admin Hub)
+          Centro de Control y Administración (OI Admin Hub)
         </div>
         <button class="admin-modal-close" id="admin-modal-close">&times;</button>
       </div>
@@ -4918,7 +4918,7 @@
 
           <div style="background:var(--surface-elevated);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
             <span style="font-size:11px;color:var(--fg-muted);white-space:nowrap;font-weight:600;">Webhook n8n:</span>
-            <input type="text" id="n8n-webhook-url" value="http://localhost:5678/webhook/hoie-scrape" placeholder="http://localhost:5678/webhook/hoie-scrape" style="flex:1;background:var(--surface);border:1px solid var(--border-focus);color:var(--fg);padding:6px 10px;border-radius:6px;font-size:12px;font-family:var(--font-mono);">
+            <input type="text" id="n8n-webhook-url" value="http://localhost:5678/webhook/oi-scrape" placeholder="http://localhost:5678/webhook/oi-scrape" style="flex:1;background:var(--surface);border:1px solid var(--border-focus);color:var(--fg);padding:6px 10px;border-radius:6px;font-size:12px;font-family:var(--font-mono);">
             <span style="font-size:10px;color:var(--color-comprar);background:rgba(16,185,129,0.1);padding:4px 8px;border-radius:4px;border:1px solid rgba(16,185,129,0.25);">IA Enabled (n8n + GPT-4o-mini)</span>
           </div>
           
@@ -4929,7 +4929,7 @@
           </div>
 
           <div class="console-log-box" id="console-log-box">
-            <div class="console-line system">[SYSTEM]: Consola HOIE Scraper Engine inicializada. Conector n8n activo.</div>
+            <div class="console-line system">[SYSTEM]: Consola OI Scraper Engine inicializada. Conector n8n activo.</div>
           </div>
         </div>
 
