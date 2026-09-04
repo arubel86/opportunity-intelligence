@@ -3,12 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>HOIE Dashboard</title>
+  <title>Opportunity Intelligence — Dashboard</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23131722'/%3E%3Cstop offset='50%25' stop-color='%231e40af'/%3E%3Cstop offset='100%25' stop-color='%233b82f6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='25' fill='url(%23g)'/%3E%3Ctext x='50' y='56' font-family='Arial, sans-serif' font-weight='bold' font-size='56' fill='%23F1F5F9' text-anchor='middle' dominant-baseline='central'%3EOI%3C/text%3E%3C/svg%3E">
   
-  <!-- Tipografía Inter y JetBrains Mono -->
+  <!-- Tipografía Inter, Manrope y JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Manrope:wght@600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
   <!-- Leaflet Map CSS & JS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -833,34 +834,58 @@
     .brand-section {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 11px;
+      text-decoration: none;
+      cursor: default;
+      user-select: none;
     }
 
-    .brand-logo {
-      width: 24px;
-      height: 24px;
-      color: var(--border-focus);
-    }
-
-    .brand-title {
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: var(--fg);
+    .brand-oi-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--surface-elevated);
+      border: 1.5px solid var(--border-focus);
+      border-radius: 9px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      box-shadow: 0 0 16px rgba(59, 130, 246, 0.25);
+      color: #ffffff;
+      font-family: 'Manrope', sans-serif;
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: -0.02em;
+      flex-shrink: 0;
+      transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .brand-tag {
-      font-size: 10px;
-      font-weight: 500;
-      background: rgba(59, 130, 246, 0.1);
-      border: 1px solid rgba(59, 130, 246, 0.2);
-      color: var(--border-focus);
-      padding: 2px 6px;
-      border-radius: 4px;
+    .brand-section:hover .brand-oi-icon {
+      border-color: #60A5FA;
+      box-shadow: 0 0 22px rgba(59, 130, 246, 0.45);
+      transform: translateY(-1px);
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+    }
+
+    .brand-name {
+      font-family: 'Manrope', sans-serif;
+      font-size: 13.5px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: #ffffff;
+    }
+
+    .brand-sub {
+      font-family: 'Inter', sans-serif;
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-celeste);
     }
 
     /* KPIs Globales */
@@ -2099,18 +2124,15 @@
         padding: 0 16px;
       }
 
-      .brand-title {
-        font-size: 11px;
-        font-weight: 800;
-        letter-spacing: 0.08em;
-        color: var(--accent-celeste);
-        flex-direction: column;
-        line-height: 1.2;
+      .brand-text {
+        display: none !important;
       }
 
-      .brand-title > span,
-      .brand-tag {
-        display: none !important;
+      .brand-oi-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 13px;
+        border-radius: 8px;
       }
 
       .kpi-container {
@@ -2572,15 +2594,11 @@
        BARRA SUPERIOR (TOP NAVIGATION & GLOBAL KPIs)
        ════════════════════════════════════════════════════════════════ -->
   <header data-od-id="top-navigation">
-    <div class="brand-section">
-      <svg class="brand-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-        <polyline points="2 17 12 22 22 17"></polyline>
-        <polyline points="2 12 12 17 22 12"></polyline>
-      </svg>
-      <div class="brand-title">
-        HOIE
-        <span class="brand-tag">PRO</span>
+    <div class="brand-section" title="Opportunity Intelligence">
+      <div class="brand-oi-icon">OI</div>
+      <div class="brand-text">
+        <span class="brand-name">Opportunity</span>
+        <span class="brand-sub">Intelligence</span>
       </div>
     </div>
 
