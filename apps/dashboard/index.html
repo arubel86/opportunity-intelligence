@@ -1066,17 +1066,35 @@
       background-color: var(--bg);
       border: 1px solid var(--border);
       color: var(--fg);
-      padding: 10px 12px;
-      border-radius: 6px;
-      font-size: 13px;
+      padding: 11px 42px 11px 16px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      line-height: 1.5;
       outline: none;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, box-shadow 0.2s;
       cursor: pointer;
       font-family: 'Inter', sans-serif;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: calc(100% - 16px) center;
     }
 
     .custom-select:focus {
       border-color: var(--border-focus);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%233B82F6' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .custom-select option {
+      background-color: #121620;
+      color: #F8FAFC;
+      padding: 12px 16px;
+      font-size: 13.5px;
+      line-height: 1.8;
+      min-height: 38px;
     }
 
     /* Checkboxes interactivos */
@@ -1682,16 +1700,7 @@
     }
 
     .leaflet-control-attribution {
-      background: rgba(12, 13, 17, 0.75) !important;
-      color: var(--fg-muted) !important;
-      font-size: 9px !important;
-      border-radius: 4px;
-      margin: 4px 8px !important;
-      border: 1px solid var(--border);
-    }
-
-    .leaflet-control-attribution a {
-      color: var(--accent-celeste) !important;
+      display: none !important;
     }
 
     .leaflet-control-zoom {
@@ -3019,7 +3028,7 @@
       minZoom: 7,
       maxZoom: 20,
       zoomControl: false,
-      attributionControl: true
+      attributionControl: false
     });
 
     // 3 Capas de Alta Resolución para Panamá
