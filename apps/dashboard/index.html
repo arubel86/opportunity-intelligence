@@ -4808,6 +4808,7 @@
         <button class="admin-tab-btn" data-tab="scoring-algorithm">Algoritmo de Scoring</button>
         <button class="admin-tab-btn" data-tab="scraper-console">Consola en Vivo</button>
         <button class="admin-tab-btn" data-tab="targeted-search">Búsqueda Táctica</button>
+        <button class="admin-tab-btn" data-tab="landings-manager" style="color:var(--accent-celeste);font-weight:700;">Landings VIP</button>
       </div>
 
       <div class="admin-modal-body">
@@ -5018,6 +5019,72 @@
             <div class="scraper-progress-wrapper" id="targeted-progress-wrapper" style="display:none;margin-top:14px;">
               <div class="progress-meta"><span id="targeted-progress-status">Rastreando zona seleccionada con Groq Llama 3.3...</span><span id="targeted-progress-pct">0%</span></div>
               <div class="progress-bar-bg"><div class="progress-bar-fill" id="targeted-progress-fill"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pestaña 5: Gestión de Landings VIP -->
+        <div class="admin-tab-content" id="tab-landings-manager">
+          <div class="tab-section-header">
+            <div>
+              <span class="section-title">Editor y Gestor de Landings VIP</span>
+              <p style="font-size:12px;color:var(--fg-muted);margin-top:4px;">
+                Administra los activos destacados, fotos HD, recorridos 360° y carga los documentos oficiales (PDFs de Registro Público, Avalúos, Inspecciones mecánicas).
+              </p>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px;">
+            <!-- Card Landing Inmuebles -->
+            <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;">
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                  <span style="font-size:13px;font-weight:800;color:#FFF;display:flex;align-items:center;gap:6px;">
+                    🏢 Landing Inmuebles / Propiedades
+                  </span>
+                  <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;background:rgba(16,185,129,0.15);color:var(--color-comprar);border:1px solid rgba(16,185,129,0.3);">
+                    ACTIVA
+                  </span>
+                </div>
+                <div style="font-size:11px;color:var(--fg-muted);line-height:1.5;margin-bottom:12px;">
+                  Rutas: <code>/propiedades</code> ó <code>/landing1</code><br>
+                  Permite editar: Título, precios, avalúo, área, recámaras, amenidades, fotos HD, video, tour virtual y <strong>adjuntar PDFs oficiales</strong> (Certificados, Avalúos, Planos).
+                </div>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:10px;">
+                <a href="/propiedades?admin=true" target="_blank" rel="noopener noreferrer" style="flex:1;text-align:center;background:linear-gradient(135deg, #1E40AF, #3B82F6);color:#FFF;font-size:11.5px;font-weight:700;padding:8px 12px;border-radius:6px;text-decoration:none;">
+                  ⚙️ Abrir Modo Admin
+                </a>
+                <a href="/propiedades" target="_blank" rel="noopener noreferrer" style="background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--fg);font-size:11.5px;font-weight:600;padding:8px 12px;border-radius:6px;text-decoration:none;">
+                  Ver Pública
+                </a>
+              </div>
+            </div>
+
+            <!-- Card Landing Vehículos -->
+            <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;">
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                  <span style="font-size:13px;font-weight:800;color:#FFF;display:flex;align-items:center;gap:6px;">
+                    🚗 Landing Vehículos / Autos
+                  </span>
+                  <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;background:rgba(16,185,129,0.15);color:var(--color-comprar);border:1px solid rgba(16,185,129,0.3);">
+                    ACTIVA
+                  </span>
+                </div>
+                <div style="font-size:11px;color:var(--fg-muted);line-height:1.5;margin-bottom:12px;">
+                  Rutas: <code>/autos</code> ó <code>/landing2</code><br>
+                  Permite editar: Modelo, año, precio, kilometraje, transmisión, equipamiento, fotos, video, tour y <strong>adjuntar PDFs oficiales</strong> (Inspección 50 pts, Registro Vehicular, Paz y Salvo).
+                </div>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:10px;">
+                <a href="/autos?admin=true" target="_blank" rel="noopener noreferrer" style="flex:1;text-align:center;background:linear-gradient(135deg, #F59E0B, #D97706);color:#000;font-size:11.5px;font-weight:700;padding:8px 12px;border-radius:6px;text-decoration:none;">
+                  ⚙️ Abrir Modo Admin
+                </a>
+                <a href="/autos" target="_blank" rel="noopener noreferrer" style="background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--fg);font-size:11.5px;font-weight:600;padding:8px 12px;border-radius:6px;text-decoration:none;">
+                  Ver Pública
+                </a>
+              </div>
             </div>
           </div>
         </div>

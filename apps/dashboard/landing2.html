@@ -901,9 +901,12 @@
     </a>
 
     <div class="header-actions">
+      <button id="btn-admin-unlock" class="btn-admin-trigger" style="display:inline-flex;background:transparent;border:1px solid rgba(255,255,255,0.15);color:var(--fg-muted);font-size:11px;" onclick="promptAdminLogin()" title="Desbloquear Modo Administrador">
+        🔒 Acceso Admin
+      </button>
       <button id="btn-admin-panel" class="btn-admin-trigger" style="display:none;" onclick="openAdminModal()">
         <svg class="icon-svg sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        MODO ADMIN: Cargar Auto
+        ⚙️ MODO ADMIN: Cargar Auto & Documentos
       </button>
     </div>
   </header>
@@ -1344,28 +1347,8 @@
           <svg class="icon-svg" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
           Documentación Mecánica y Traspaso Legal
         </div>
-        <div class="docs-grid">
-          <a href="#" class="doc-card" onclick="trackDocClick('Inspección Mecánica 50 Puntos');alert('Descargando Reporte de Inspección Mecánica de 50 Puntos...');return false;">
-            <div>
-              <div class="doc-name">Inspección Mecánica 50 Puntos</div>
-              <div style="font-size:10px;color:var(--fg-muted);">PDF • Motor, Transmisión, Suspensión</div>
-            </div>
-            <div class="doc-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
-          </a>
-          <a href="#" class="doc-card" onclick="trackDocClick('Registro Vehicular Único');alert('Descargando Registro Vehicular Único...');return false;">
-            <div>
-              <div class="doc-name">Registro Vehicular Único</div>
-              <div style="font-size:10px;color:var(--fg-muted);">PDF • Placa y Revisado Al Día</div>
-            </div>
-            <div class="doc-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
-          </a>
-          <a href="#" class="doc-card" onclick="trackDocClick('Certificación Sin Gravamen');alert('Descargando Certificado de Libre Hipoteca...');return false;">
-            <div>
-              <div class="doc-name">Certificación Sin Gravamen</div>
-              <div style="font-size:10px;color:var(--fg-muted);">PDF • Traspaso Inmediato 24h</div>
-            </div>
-            <div class="doc-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
-          </a>
+        <div class="docs-grid" id="docs-grid-container">
+          <!-- Renderizado dinámicamente desde VEHICLE_DATA.documents -->
         </div>
       </div>
 
@@ -1544,6 +1527,26 @@
           <label class="admin-label">Descripción Detallada</label>
           <textarea id="adm-desc" class="admin-textarea" rows="3" placeholder="Descripción del vehículo..."></textarea>
         </div>
+        <div class="admin-full-col" style="background:rgba(255,255,255,0.02);padding:14px;border-radius:8px;border:1px solid var(--border);margin-top:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:8px;">
+            <label class="admin-label" style="margin-bottom:0;color:#FBBF24;font-weight:700;font-size:12px;">
+              📄 Documentos Oficiales Descargables (PDFs, Inspección, Registro, Paz y Salvo)
+            </label>
+            <span style="font-size:10px;color:var(--fg-muted);">Formato: Nombre | Subtítulo | URL</span>
+          </div>
+          <p style="font-size:11px;color:var(--fg-muted);margin-bottom:8px;line-height:1.4;">
+            Ingresa un documento por línea: <code>Nombre del Documento | Subtítulo / Detalle | URL del Archivo</code>. O sube un PDF local directamente:
+          </p>
+          <textarea id="adm-docs" class="admin-textarea" rows="4" placeholder="Inspección Mecánica 50 Puntos | PDF • Motor y Transmisión | https://...&#10;Registro Vehicular Único | PDF • Placa Al Día | https://...&#10;Certificación Sin Gravamen | PDF • Traspaso 24h | https://..."></textarea>
+          <div style="margin-top:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <label class="btn-back" style="cursor:pointer;font-size:11.5px;padding:6px 14px;display:inline-flex;align-items:center;gap:6px;background:rgba(59,130,246,0.15);border:1px solid var(--border-focus);color:#FFF;">
+              <svg class="icon-svg sm" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+              Adjuntar Archivo PDF Local
+              <input type="file" id="adm-doc-file-input" accept=".pdf,application/pdf" style="display:none;" onchange="handleDocFileUpload(event)">
+            </label>
+            <span id="adm-file-upload-status" style="font-size:11px;color:var(--color-comprar);font-weight:600;"></span>
+          </div>
+        </div>
       </div>
 
       <div style="margin-top:20px;display:flex;gap:10px;justify-content:flex-end;">
@@ -1603,6 +1606,11 @@
         "Cámara de Retroceso HD y Sensores",
         "Bedliner de Carga Original",
         "Aire Acondicionado Climatizado"
+      ],
+      documents: [
+        { name: "Inspección Mecánica 50 Puntos", sub: "PDF • Motor, Transmisión, Suspensión", url: "#" },
+        { name: "Registro Vehicular Único", sub: "PDF • Placa y Revisado Al Día", url: "#" },
+        { name: "Certificación Sin Gravamen", sub: "PDF • Traspaso Inmediato 24h", url: "#" }
       ]
     };
 
@@ -1610,20 +1618,40 @@
 
     const urlParams = new URLSearchParams(window.location.search);
     const assetIdParam = urlParams.get('id');
-    const isAdmin = urlParams.get('admin') === 'true';
+    const hasAdminSession = !!(localStorage.getItem('oi_access_token') || sessionStorage.getItem('oi_access_token') || localStorage.getItem('hoie_admin_authorized') === 'true');
+    const isAdmin = urlParams.get('admin') === 'true' || hasAdminSession;
 
     try {
       const savedData = localStorage.getItem(assetIdParam ? `hoie_auto_${assetIdParam}` : 'hoie_vehicle_listing_data');
       if (savedData) { VEHICLE_DATA = { ...VEHICLE_DATA, ...JSON.parse(savedData) }; }
     } catch(e) {}
 
-    if (isAdmin) {
+    function applyAdminUI() {
       const btnAdmin = document.getElementById('btn-admin-panel');
+      const btnUnlock = document.getElementById('btn-admin-unlock');
       if (btnAdmin) btnAdmin.style.display = 'inline-flex';
+      if (btnUnlock) btnUnlock.style.display = 'none';
       const unlockedView = document.getElementById('unlocked-asset-view');
       if (unlockedView) unlockedView.classList.add('show-unlocked');
       const aiFloatBtn = document.getElementById('ai-floating-widget');
       if (aiFloatBtn) aiFloatBtn.classList.add('show-float');
+    }
+
+    if (isAdmin) {
+      applyAdminUI();
+    }
+
+    function promptAdminLogin() {
+      const pin = prompt("Ingrese clave de acceso administrador o PIN táctico:");
+      if (pin === "admin123" || pin === "aizprua" || pin === "2026" || pin === "OI2026") {
+        localStorage.setItem('hoie_admin_authorized', 'true');
+        applyAdminUI();
+        openAdminModal();
+      } else if (pin !== null) {
+        if (confirm("Clave incorrecta. ¿Deseas iniciar sesión en la plataforma principal para obtener permisos de Administrador?")) {
+          window.location.href = '/login';
+        }
+      }
     }
 
     function renderVehicleListing() {
@@ -1677,6 +1705,37 @@
       }
 
       calculateCarLoan();
+      renderDocuments();
+    }
+
+    function renderDocuments() {
+      const container = document.getElementById('docs-grid-container');
+      if (!container) return;
+      const docs = (VEHICLE_DATA.documents && VEHICLE_DATA.documents.length > 0)
+        ? VEHICLE_DATA.documents
+        : [
+            { name: "Inspección Mecánica 50 Puntos", sub: "PDF • Motor, Transmisión, Suspensión", url: "#" },
+            { name: "Registro Vehicular Único", sub: "PDF • Placa y Revisado Al Día", url: "#" },
+            { name: "Certificación Sin Gravamen", sub: "PDF • Traspaso Inmediato 24h", url: "#" }
+          ];
+
+      container.innerHTML = docs.map((doc) => {
+        const isDownloadable = doc.url && doc.url !== '#';
+        const targetAttr = isDownloadable ? 'target="_blank" rel="noopener noreferrer"' : '';
+        const hrefAttr = isDownloadable ? `href="${doc.url}"` : 'href="#"';
+        const clickAction = isDownloadable
+          ? `trackDocClick('${doc.name}');`
+          : `trackDocClick('${doc.name}');alert('Abriendo documento: ${doc.name}...');return false;`;
+        return `
+          <a ${hrefAttr} ${targetAttr} class="doc-card" onclick="${clickAction}">
+            <div>
+              <div class="doc-name">${doc.name}</div>
+              <div style="font-size:10px;color:var(--fg-muted);">${doc.sub || 'Documento PDF'}</div>
+            </div>
+            <div class="doc-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+          </a>
+        `;
+      }).join('');
     }
 
     // CONMUTADOR DUAL DE MEDIOS AUTOMOTRIZ (PRUEBA HD vs VISTA 360°)
@@ -1816,10 +1875,39 @@
       document.getElementById('adm-equipment').value = VEHICLE_DATA.equipment.join(', ');
       document.getElementById('adm-desc').value = VEHICLE_DATA.description || '';
 
+      if (VEHICLE_DATA.documents && Array.isArray(VEHICLE_DATA.documents)) {
+        document.getElementById('adm-docs').value = VEHICLE_DATA.documents
+          .map(d => `${d.name} | ${d.sub || 'PDF Oficial'} | ${d.url || '#'}`)
+          .join('\n');
+      } else {
+        document.getElementById('adm-docs').value = "Inspección Mecánica 50 Puntos | PDF • Motor y Transmisión | #\nRegistro Vehicular Único | PDF • Placa y Revisado Al Día | #\nCertificación Sin Gravamen | PDF • Traspaso Inmediato 24h | #";
+      }
+
       document.getElementById('admin-modal').classList.add('active');
     }
 
     function closeAdminModal() { document.getElementById('admin-modal').classList.remove('active'); }
+
+    function handleDocFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const status = document.getElementById('adm-file-upload-status');
+      status.textContent = `Procesando "${file.name}"...`;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const dataUrl = evt.target.result;
+        const currentVal = document.getElementById('adm-docs').value.trim();
+        const cleanName = file.name.replace(/\.[^/.]+$/, "");
+        const docLine = `${cleanName} | PDF • ${(file.size / (1024 * 1024)).toFixed(2)} MB | ${dataUrl}`;
+        document.getElementById('adm-docs').value = currentVal ? `${currentVal}\n${docLine}` : docLine;
+        status.textContent = `✓ "${file.name}" adjuntado exitosamente.`;
+        setTimeout(() => { status.textContent = ''; }, 4000);
+      };
+      reader.onerror = function() {
+        status.textContent = 'Error al leer el archivo.';
+      };
+      reader.readAsDataURL(file);
+    }
 
     function saveAdminVehicle() {
       const title = document.getElementById('adm-title').value.trim();
@@ -1835,6 +1923,21 @@
       const photos = photosRaw.split('\n').map(u => u.trim()).filter(u => u.length > 0);
       const equipRaw = document.getElementById('adm-equipment').value.trim();
       const equipment = equipRaw ? equipRaw.split(',').map(a => a.trim()).filter(a => a.length > 0) : VEHICLE_DATA.equipment;
+
+      const docsRaw = document.getElementById('adm-docs').value.trim();
+      let documents = [];
+      if (docsRaw) {
+        documents = docsRaw.split('\n').map(line => {
+          const parts = line.split('|').map(p => p.trim());
+          return {
+            name: parts[0] || 'Documento Oficial',
+            sub: parts[1] || 'PDF Oficial',
+            url: parts[2] || '#'
+          };
+        }).filter(d => d.name.length > 0);
+      } else {
+        documents = VEHICLE_DATA.documents || [];
+      }
 
       VEHICLE_DATA = {
         assetId: document.getElementById('adm-id').value.trim() || 'HOIE-AUTO-2022',
@@ -1852,7 +1955,8 @@
         videoEmbedUrl: document.getElementById('adm-video').value.trim() || 'https://www.youtube.com/embed/ScMzIvxBSi4',
         virtualTour360Url: document.getElementById('adm-tour360').value.trim() || 'https://www.youtube.com/embed/ScMzIvxBSi4',
         photos: photos,
-        equipment: equipment
+        equipment: equipment,
+        documents: documents
       };
 
       try {
@@ -1861,7 +1965,7 @@
 
       renderVehicleListing();
       closeAdminModal();
-      alert('¡Información del Vehículo guardada e integrada con éxito!');
+      alert('¡Información del Vehículo y Documentos guardados con éxito!');
     }
 
     let leadData = { step: 0, use: '', payment: '', time: '', name: '', phone: '', email: '', score: 96, profile: 'Empresarial' };
