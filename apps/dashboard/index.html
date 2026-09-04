@@ -834,10 +834,10 @@
     .brand-section {
       display: flex;
       align-items: center;
-      gap: 11px;
       text-decoration: none;
       cursor: default;
       user-select: none;
+      flex-shrink: 0;
     }
 
     .brand-oi-icon {
@@ -865,54 +865,31 @@
       transform: translateY(-1px);
     }
 
-    .brand-text {
-      display: flex;
-      flex-direction: column;
-      line-height: 1.15;
-    }
-
-    .brand-name {
-      font-family: 'Manrope', sans-serif;
-      font-size: 13.5px;
-      font-weight: 800;
-      letter-spacing: -0.01em;
-      color: #ffffff;
-    }
-
-    .brand-sub {
-      font-family: 'Inter', sans-serif;
-      font-size: 9.5px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--accent-celeste);
-    }
-
     /* KPIs Globales */
     .kpi-container {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 6px;
       flex: 1;
-      margin: 0 16px;
-      padding: 4px 0;
+      margin: 0 14px;
+      padding: 2px 0;
       min-width: 0;
     }
 
     .kpi-card {
       background: rgba(15, 23, 42, 0.5);
       border: 1px solid var(--border);
-      padding: 6px 10px;
-      border-radius: 8px;
+      padding: 4px 8px;
+      border-radius: 7px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
       flex: 1;
-      max-width: 120px;
-      min-width: 75px;
+      max-width: 95px;
+      min-width: 58px;
       transition: all 0.2s ease;
     }
 
@@ -923,18 +900,18 @@
 
     .kpi-value {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
-      line-height: 1.2;
+      line-height: 1.15;
     }
 
     .kpi-label {
-      font-size: 8.5px;
+      font-size: 8px;
       font-weight: 600;
       color: var(--fg-muted);
       letter-spacing: 0.04em;
       text-transform: uppercase;
-      margin-top: 3px;
+      margin-top: 2px;
       white-space: nowrap;
     }
 
@@ -961,8 +938,9 @@
     .system-status {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 10px;
       font-size: 11px;
+      flex-shrink: 0;
     }
 
     .status-meta {
@@ -2124,10 +2102,6 @@
         padding: 0 16px;
       }
 
-      .brand-text {
-        display: none !important;
-      }
-
       .brand-oi-icon {
         width: 32px;
         height: 32px;
@@ -2596,10 +2570,6 @@
   <header data-od-id="top-navigation">
     <div class="brand-section" title="Opportunity Intelligence">
       <div class="brand-oi-icon">OI</div>
-      <div class="brand-text">
-        <span class="brand-name">Opportunity</span>
-        <span class="brand-sub">Intelligence</span>
-      </div>
     </div>
 
     <div class="kpi-container" id="kpis-bar" data-od-id="kpis-bar"></div>
