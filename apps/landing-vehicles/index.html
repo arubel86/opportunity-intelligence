@@ -1,0 +1,1984 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title id="page-title">Vehículo en Oportunidad Exclusiva — HOIE Auto Intelligence</title>
+  
+  <!-- Tipografía Inter y JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0A0C10;
+      --surface: #121620;
+      --surface-elevated: #181E2C;
+      --surface-glass: rgba(18, 22, 32, 0.92);
+      --border: #232D3F;
+      --border-focus: #F59E0B;
+      --border-glow: rgba(245, 158, 11, 0.25);
+      --fg: #F8FAFC;
+      --fg-muted: #94A3B8;
+      
+      --color-comprar: #10B981;
+      --color-prioridad: #3B82F6;
+      --color-negociar: #F59E0B;
+      --color-observar: #F97316;
+      --color-evitar: #EF4444;
+      --accent-celeste: #85CDFF;
+
+      --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    .bg-glow-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(140px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.12;
+    }
+    .orb-1 { top: -120px; left: -100px; width: 550px; height: 550px; background: #3B82F6; }
+    .orb-2 { bottom: -150px; right: -100px; width: 600px; height: 600px; background: #F59E0B; }
+
+    .icon-svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .icon-svg.sm { width: 14px; height: 14px; stroke-width: 1.6; }
+    .icon-svg.lg { width: 22px; height: 22px; stroke-width: 1.8; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--surface-glass);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--fg);
+    }
+    .brand-badge {
+      background: linear-gradient(135deg, #1E293B, #0F172A);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #FBBF24;
+      font-weight: 800;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      letter-spacing: 1px;
+      font-family: var(--font-mono);
+    }
+    .brand-title { font-weight: 700; font-size: 14px; letter-spacing: 0.3px; }
+    .brand-tag {
+      font-size: 10px;
+      color: var(--color-comprar);
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.5px;
+    }
+
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+
+    .btn-admin-trigger {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #FBBF24;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-admin-trigger:hover { background: #F59E0B; color: #000; }
+
+    main {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      max-width: 1180px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+    }
+
+    .gated-hero-section {
+      text-align: center;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+    .scarcity-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      color: #FBBF24;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 16px;
+      border-radius: 20px;
+      margin-bottom: 18px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.5px;
+    }
+    .live-users-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.08);
+      color: var(--color-comprar);
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+    .gated-title {
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 800;
+      line-height: 1.18;
+      margin-bottom: 14px;
+      background: linear-gradient(180deg, #FFFFFF 40%, #94A3B8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .gated-subtitle {
+      font-size: 15px;
+      color: var(--fg-muted);
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    .mic-card-wrapper {
+      max-width: 850px;
+      width: 100%;
+      margin: 0 auto;
+      background: var(--surface-glass);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(20px);
+      overflow: hidden;
+    }
+    .mic-header {
+      background: var(--surface-elevated);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .mic-advisor-info { display: flex; align-items: center; gap: 12px; }
+    .mic-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #FBBF24;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mic-advisor-title { font-weight: 700; font-size: 13px; letter-spacing: 0.2px; }
+    .mic-advisor-status {
+      font-size: 11px;
+      color: var(--color-comprar);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+    }
+    .status-pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--color-comprar);
+      box-shadow: 0 0 6px var(--color-comprar);
+    }
+    .mic-match-badge {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 14px;
+      text-align: right;
+    }
+    .mic-match-label { font-size: 9px; color: var(--fg-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+    .mic-match-val { font-family: var(--font-mono); font-size: 13px; font-weight: 700; color: #FBBF24; }
+
+    .mic-progress-container { background: var(--surface); height: 3px; width: 100%; }
+    .mic-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #F59E0B, #10B981);
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .mic-body {
+      padding: 32px 28px;
+      min-height: 340px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .mic-step { display: none; animation: fadeInStep 0.35s ease forwards; }
+    .mic-step.active { display: block; }
+    @keyframes fadeInStep {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-tag {
+      font-size: 10px;
+      font-weight: 700;
+      color: #FBBF24;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .step-question {
+      font-size: clamp(18px, 2.5vw, 22px);
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 8px;
+      color: #FFFFFF;
+      letter-spacing: -0.3px;
+    }
+    .step-desc { font-size: 13px; color: var(--fg-muted); margin-bottom: 22px; line-height: 1.5; }
+
+    .options-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    @media (min-width: 540px) {
+      .options-grid.two-cols { grid-template-columns: 1fr 1fr; }
+    }
+
+    .option-btn {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      color: var(--fg);
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-family: var(--font-sans);
+      font-size: 13px;
+    }
+    .option-btn:hover {
+      border-color: #F59E0B;
+      background: rgba(245, 158, 11, 0.06);
+      transform: translateY(-1px);
+    }
+    .option-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      color: #FBBF24;
+      flex-shrink: 0;
+    }
+    .option-main-text { font-weight: 600; color: #FFF; display: block; }
+    .option-sub-text { font-size: 11px; color: var(--fg-muted); display: block; }
+
+    .mic-input-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+    .mic-input {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: var(--fg);
+      font-size: 13px;
+      outline: none;
+      font-family: var(--font-sans);
+    }
+    .mic-input:focus { border-color: #F59E0B; box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15); }
+
+    .btn-next-step {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      border: none;
+      color: #000;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);
+      transition: all 0.2s ease;
+    }
+    .btn-next-step:hover { background: linear-gradient(135deg, #D97706, #B45309); }
+
+    .mic-footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .btn-back { background: transparent; border: none; color: var(--fg-muted); font-size: 12px; font-weight: 600; cursor: pointer; }
+
+    .unlocked-section {
+      display: none !important;
+      animation: unlockFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .unlocked-section.show-unlocked {
+      display: block !important;
+    }
+    @keyframes unlockFade {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-story-hook {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.8));
+      border: 1px solid rgba(245, 158, 11, 0.2);
+      border-radius: 14px;
+      padding: 22px 26px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #E2E8F0;
+    }
+    .hero-story-hook p { margin-bottom: 8px; }
+    .hero-story-hook p:last-child { margin-bottom: 0; }
+    .hook-tag { font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: #FBBF24; text-transform: uppercase; margin-bottom: 6px; display: block; letter-spacing: 0.5px; }
+
+    .asset-header-card {
+      background: var(--surface-glass);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 26px;
+      backdrop-filter: blur(20px);
+    }
+    .asset-meta-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .asset-badge-verified {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      color: #FBBF24;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.5px;
+    }
+    .asset-id-tag { font-family: var(--font-mono); font-size: 11px; color: var(--fg-muted); }
+
+    .asset-title {
+      font-size: clamp(24px, 3.5vw, 36px);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 8px;
+      color: #FFFFFF;
+      letter-spacing: -0.5px;
+    }
+    .asset-address {
+      font-size: 13px;
+      color: var(--fg-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 22px;
+    }
+
+    .price-savings-box {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      padding: 18px 24px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+    .price-main-group { display: flex; flex-direction: column; }
+    .price-label { font-size: 10px; color: var(--fg-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+    .price-amount {
+      font-size: clamp(26px, 3vw, 34px);
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: #FBBF24;
+      line-height: 1.1;
+    }
+    .market-value-group {
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid var(--border);
+      padding-left: 24px;
+    }
+    .market-amount { font-size: 17px; font-family: var(--font-mono); color: var(--fg-muted); text-decoration: line-through; }
+    .savings-badge {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: var(--color-comprar);
+      font-weight: 700;
+      font-size: 12px;
+      padding: 6px 14px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+    }
+
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .spec-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+    .spec-card-label { font-size: 10px; color: var(--fg-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 4px; letter-spacing: 0.5px; }
+    .spec-card-val { font-weight: 700; font-size: 14px; color: #FFF; display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .spec-card-benefit { font-size: 11px; color: #FBBF24; font-weight: 500; }
+
+    .media-layout-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+    @media (min-width: 860px) {
+      .media-layout-grid { grid-template-columns: 1.2fr 1fr; }
+    }
+
+    .gallery-container { display: flex; flex-direction: column; gap: 12px; }
+    .main-photo-wrapper {
+      width: 100%;
+      height: 340px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      position: relative;
+      cursor: pointer;
+    }
+    .main-photo { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+    .main-photo:hover { transform: scale(1.02); }
+    .zoom-hint-badge {
+      position: absolute; bottom: 12px; right: 12px;
+      background: rgba(10, 12, 16, 0.85); backdrop-filter: blur(8px);
+      color: #FFF; font-size: 11px; padding: 4px 10px; border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.15); pointer-events: none;
+      display: flex; align-items: center; gap: 6px; font-family: var(--font-mono);
+    }
+
+    .thumbnails-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; }
+    .thumb-btn {
+      width: 75px;
+      height: 55px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid transparent;
+      cursor: pointer;
+      flex-shrink: 0;
+      background: var(--surface);
+      padding: 0;
+    }
+    .thumb-btn.active {
+      border-color: #F59E0B;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+    }
+    .thumb-img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* TARJETA CONMUTADORA REPRODUCTOR DE VIDEO & VISTA 360° AUTOMOTRIZ */
+    .video-tour-wrapper {
+      background: var(--surface-glass);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .video-header {
+      padding: 10px 14px;
+      background: var(--surface-elevated);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .media-tabs-group { display: flex; gap: 6px; }
+    .media-tab-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--fg-muted);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+      font-family: var(--font-mono);
+    }
+    .media-tab-btn.active {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: #F59E0B;
+      color: #FBBF24;
+    }
+    .video-frame-container { width: 100%; height: 280px; background: #000; }
+    .video-iframe { width: 100%; height: 100%; border: none; }
+
+    .amenities-title { font-size: 11px; font-weight: 700; color: var(--fg-muted); text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px; }
+    .amenities-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .amenity-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 11px;
+      color: var(--fg);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .testimonials-section {
+      background: var(--surface-glass);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: 24px;
+    }
+    .testimonial-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .testimonial-card {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .testimonial-quote { font-size: 13px; color: #CBD5E1; font-style: italic; line-height: 1.6; margin-bottom: 16px; }
+    .testimonial-user { display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--border); padding-top: 14px; }
+    .testimonial-avatar { width: 34px; height: 34px; border-radius: 50%; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); color: #FBBF24; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; font-family: var(--font-mono); }
+    .testimonial-name { font-weight: 700; font-size: 12px; color: #FFF; }
+    .testimonial-tag { font-size: 10px; color: #FBBF24; font-family: var(--font-mono); }
+
+    .trust-badges-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+    .trust-badge-card {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .trust-icon { color: #FBBF24; flex-shrink: 0; }
+    .trust-title { font-weight: 700; font-size: 13px; color: #FFF; }
+    .trust-desc { font-size: 11px; color: var(--fg-muted); }
+
+    .calc-section {
+      background: var(--surface-glass);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: 24px;
+    }
+    .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 16px; }
+    @media (max-width: 640px) { .calc-grid { grid-template-columns: 1fr; } }
+    .calc-result-box {
+      background: var(--surface-elevated);
+      border: 1px solid #F59E0B;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .calc-price-val { font-size: 28px; font-weight: 800; font-family: var(--font-mono); color: #FBBF24; }
+
+    .documents-section {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      margin-top: 24px;
+    }
+    .section-head-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #FFF;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      letter-spacing: 0.2px;
+    }
+    .docs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+    .doc-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--fg);
+      transition: all 0.2s;
+    }
+    .doc-card:hover { border-color: #F59E0B; background: rgba(245, 158, 11, 0.06); }
+    .doc-name { font-weight: 600; font-size: 12px; }
+    .doc-icon { color: #FBBF24; }
+
+    .ai-assistant-widget {
+      background: linear-gradient(135deg, rgba(18, 22, 32, 0.95), rgba(10, 12, 16, 0.98));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: 24px;
+    }
+    .ai-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+    .ai-avatar-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #FBBF24;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ai-quick-chips {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+    .ai-chip-btn {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      color: #FBBF24;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .ai-chip-btn:hover { border-color: #F59E0B; background: rgba(245, 158, 11, 0.12); }
+
+    .ai-chat-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      max-height: 220px;
+      overflow-y: auto;
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .ai-msg { font-size: 13px; padding: 10px 14px; border-radius: 8px; max-width: 85%; }
+    .ai-msg-bot { background: var(--surface-elevated); color: var(--fg); align-self: flex-start; border: 1px solid var(--border); }
+    .ai-msg-user { background: #D97706; color: #000; font-weight: 600; align-self: flex-end; }
+    .ai-input-row { display: flex; gap: 10px; }
+    .ai-input {
+      flex: 1;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #FFF;
+      font-size: 13px;
+      outline: none;
+    }
+    .ai-input:focus { border-color: #F59E0B; }
+    .btn-ai-send { background: #F59E0B; color: #000; border: none; border-radius: 8px; padding: 0 18px; font-weight: 700; font-size: 13px; cursor: pointer; }
+
+    .faq-section {
+      background: var(--surface-glass);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      margin-top: 24px;
+    }
+    .faq-item { border-bottom: 1px solid var(--border); padding: 16px 0; }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-question { font-weight: 700; font-size: 13px; color: #FFF; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+    .faq-answer { font-size: 13px; color: var(--fg-muted); margin-top: 8px; display: none; line-height: 1.6; }
+    .faq-item.active .faq-answer { display: block; }
+
+    .btn-whatsapp-vip {
+      background: #25D366;
+      color: #000;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(37, 211, 102, 0.25);
+      transition: all 0.2s ease;
+      margin: 28px auto 0;
+      max-width: 480px;
+      width: 100%;
+      letter-spacing: 0.3px;
+    }
+    .btn-whatsapp-vip:hover { background: #22bf5b; transform: translateY(-1px); }
+
+    .sticky-bottom-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(10, 12, 16, 0.95); backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border);
+      padding: 12px 16px; z-index: 90;
+      display: none; justify-content: space-between; align-items: center; gap: 12px;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+    }
+    @media (max-width: 768px) {
+      .unlocked-section.show-unlocked + .sticky-bottom-bar, .sticky-bottom-bar.show { display: flex; }
+    }
+    .sticky-bar-info { display: flex; flex-direction: column; }
+    .sticky-bar-price { font-weight: 800; font-family: var(--font-mono); color: #FBBF24; font-size: 16px; }
+    .sticky-bar-title { font-size: 11px; color: var(--fg-muted); max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .ai-floating-trigger {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 95;
+      background: rgba(18, 22, 32, 0.95);
+      border: 1px solid #F59E0B;
+      border-radius: 30px;
+      padding: 10px 18px;
+      display: none !important;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(12px);
+      transition: all 0.3s ease;
+    }
+    .ai-floating-trigger.show-float {
+      display: flex !important;
+    }
+    .ai-floating-trigger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7);
+    }
+    .ai-float-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(245, 158, 11, 0.2);
+      color: #FBBF24;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ai-float-text { display: flex; flex-direction: column; }
+    .ai-float-title { font-weight: 700; font-size: 12px; color: #FFF; line-height: 1.1; }
+    .ai-float-sub { font-size: 10px; color: #FBBF24; display: flex; align-items: center; gap: 4px; font-family: var(--font-mono); }
+
+    .lightbox-modal {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(14px);
+      z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .lightbox-modal.active { display: flex; }
+    .lightbox-img { max-width: 90vw; max-height: 85vh; border-radius: 12px; box-shadow: 0 0 50px rgba(0, 0, 0, 0.8); }
+    .lightbox-close { position: absolute; top: 20px; right: 24px; color: #FFF; font-size: 28px; cursor: pointer; background: transparent; border: none; }
+
+    .admin-modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px);
+      z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .admin-modal-overlay.active { display: flex; }
+    .admin-modal-card {
+      background: var(--surface-glass); border: 1px solid #F59E0B; border-radius: 16px;
+      max-width: 650px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 24px;
+    }
+    .admin-modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 20px; }
+    .admin-modal-title { font-weight: 800; font-size: 15px; color: #FBBF24; display: flex; align-items: center; gap: 8px; }
+    .admin-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .admin-full-col { grid-column: span 2; }
+    .admin-label { font-size: 11px; color: var(--fg-muted); display: block; margin-bottom: 4px; font-weight: 600; }
+    .admin-input, .admin-textarea { width: 100%; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; color: #FFF; font-size: 13px; outline: none; }
+
+    footer { border-top: 1px solid var(--border); padding: 24px; text-align: center; font-size: 12px; color: var(--fg-muted); background: var(--surface); }
+  </style>
+</head>
+<body>
+
+  <div class="bg-glow-orb orb-1"></div>
+  <div class="bg-glow-orb orb-2"></div>
+
+  <header>
+    <a href="#" class="brand-logo">
+      <span class="brand-badge">HOIE AUTO</span>
+      <div class="brand-title">Vehicles Intelligence</div>
+      <span class="brand-tag">ACCESO VIP RESTRINGIDO</span>
+    </a>
+
+    <div class="header-actions">
+      <button id="btn-admin-panel" class="btn-admin-trigger" style="display:none;" onclick="openAdminModal()">
+        <svg class="icon-svg sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        MODO ADMIN: Cargar Auto
+      </button>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="gated-hero-section" id="gated-hero">
+      <div class="scarcity-bar">
+        <span>PRECIO DE OPORTUNIDAD BANCARIA EN PANAMÁ</span>
+        <span class="live-users-pill">
+          <svg class="icon-svg sm" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          3 Evaluando
+        </span>
+      </div>
+      <h1 class="gated-title">Adquiere con $6,500 USD por Debajo de Precio de Mercado</h1>
+      <p class="gated-subtitle">Por confidencialidad de la unidad, la ubicación de inspección, fotos HD, video tour y precio especial solo se muestran a prospectos calificados.</p>
+    </section>
+
+    <section class="mic-card-wrapper" id="mic-section">
+      <div class="mic-header">
+        <div class="mic-advisor-info">
+          <div class="mic-avatar">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
+          </div>
+          <div>
+            <div class="mic-advisor-title">Asesor Digital de Calificación Automotriz</div>
+            <div class="mic-advisor-status"><span class="status-pulse"></span> Motor MIC Activo • 2 min</div>
+          </div>
+        </div>
+        <div class="mic-match-badge">
+          <div class="mic-match-label">Compatibilidad</div>
+          <div class="mic-match-val" id="match-score-val">0%</div>
+        </div>
+      </div>
+
+      <div class="mic-progress-container">
+        <div class="mic-progress-fill" id="mic-progress-fill"></div>
+      </div>
+
+      <div class="mic-body">
+        <div class="mic-step active" data-step="0">
+          <div class="step-tag">Acceso Exclusivo • Paso 01 / 05</div>
+          <h2 class="step-question">¿Deseas calificar para este vehículo en oportunidad?</h2>
+          <p class="step-desc">Responde 4 preguntas breves para verificar tu compatibilidad y desbloquear la Ficha Maestra del auto.</p>
+          <button class="btn-next-step" onclick="micNextStep()">
+            Comenzar Evaluación de Acceso
+            <svg class="icon-svg sm" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+
+        <div class="mic-step" data-step="1">
+          <div class="step-tag">Paso 02 / 05 • Uso Previsto & Perfil de Comprador</div>
+          <h2 class="step-question">¿Cuál es tu objetivo principal con este vehículo?</h2>
+          <div class="options-grid two-cols">
+            <button class="option-btn" onclick="micSelectOption('use', 'work', 98, 'Empresarial / Trabajo')">
+              <div class="option-icon">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              </div>
+              <div>
+                <span class="option-main-text">Trabajo / Empresa / Finca</span>
+                <span class="option-sub-text">Carga pesada y terreno difícil</span>
+              </div>
+            </button>
+            <button class="option-btn" onclick="micSelectOption('use', 'first_car', 92, 'Mi Primer Auto')">
+              <div class="option-icon">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.778-7.778zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+              </div>
+              <div>
+                <span class="option-main-text">Mi Primer Auto</span>
+                <span class="option-sub-text">Bajo consumo de combustible y mantenimiento económico</span>
+              </div>
+            </button>
+            <button class="option-btn" onclick="micSelectOption('use', 'family', 90, 'Auto Familiar')">
+              <div class="option-icon">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+              <div>
+                <span class="option-main-text">Auto Familiar Amplio</span>
+                <span class="option-sub-text">Confort, espacio y máxima seguridad para paseos</span>
+              </div>
+            </button>
+            <button class="option-btn" onclick="micSelectOption('use', 'resale', 95, 'Flipping / Reventa')">
+              <div class="option-icon">
+                <svg class="icon-svg" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </div>
+              <div>
+                <span class="option-main-text">Reventa Comercial (Flip)</span>
+                <span class="option-sub-text">Aprovechar el margen de ahorro directo</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <div class="mic-step" data-step="2">
+          <div class="step-tag">Paso 03 / 05 • Modalidad de Pago</div>
+          <h2 class="step-question">¿Cómo realizarás la compra?</h2>
+          <div class="options-grid">
+            <button class="option-btn" onclick="micSelectOption('payment', 'cash', 100, 'Comprador Urgente')">
+              <div class="option-icon">
+                <svg class="icon-svg" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              </div>
+              <div>
+                <span class="option-main-text">Pago al Contado / Transferencia</span>
+                <span class="option-sub-text">Traspaso y entrega en < 24 horas</span>
+              </div>
+            </button>
+            <button class="option-btn" onclick="micSelectOption('payment', 'trade_in', 94, 'Trade-In / Abono')">
+              <div class="option-icon">
+                <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              </div>
+              <div>
+                <span class="option-main-text">Trade-In (Doy mi auto en parte de pago)</span>
+                <span class="option-sub-text">Abono inicial con tu auto actual</span>
+              </div>
+            </button>
+            <button class="option-btn" onclick="micSelectOption('payment', 'finance', 88, 'Financiamiento Auto')">
+              <div class="option-icon">
+                <svg class="icon-svg" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+              </div>
+              <div>
+                <span class="option-main-text">Financiamiento Bancario</span>
+                <span class="option-sub-text">Préstamo auto con banco o financiera</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <div class="mic-step" data-step="3">
+          <div class="step-tag">Paso 04 / 05 • Tiempo de Compra</div>
+          <h2 class="step-question">¿Cuándo necesitas tener la unidad?</h2>
+          <div class="options-grid two-cols">
+            <button class="option-btn" onclick="micSelectOption('time', 'immediate', 100)">
+              <div class="option-icon">
+                <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div>
+                <span class="option-main-text">Esta misma semana</span>
+                <span class="option-sub-text">Listo para prueba de manejo</span>
+              </div>
+            </button>
+            <button class="option-btn" onclick="micSelectOption('time', '15_days', 85)">
+              <div class="option-icon">
+                <svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+              <div>
+                <span class="option-main-text">En los próximos 15 días</span>
+                <span class="option-sub-text">En fase de decisión</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <div class="mic-step" data-step="4">
+          <div class="step-tag">Paso 05 / 05 • Registro de Acceso VIP</div>
+          <h2 class="step-question">¿A quién autorizamos el acceso?</h2>
+          <div class="mic-input-group">
+            <input type="text" id="lead-name" class="mic-input" placeholder="Nombre y Apellido completo *" required>
+            <input type="tel" id="lead-phone" class="mic-input" placeholder="Teléfono de WhatsApp (ej. +507 6890-1122) *" required>
+            <input type="email" id="lead-email" class="mic-input" placeholder="Correo electrónico (opcional para alertas de autos)">
+          </div>
+          <button class="btn-next-step" style="width:100%;justify-content:center;padding:14px;" onclick="micSubmitLead()">
+            Validar Calificación y Desbloquear Ficha
+            <svg class="icon-svg sm" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+
+        <div class="mic-step" data-step="5">
+          <div style="text-align:center;">
+            <div style="margin-bottom:12px;color:var(--border-focus);">
+              <svg class="icon-svg lg" style="width:36px;height:36px;" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <h2 class="step-question">Registro en Lista Prioritaria de Autos</h2>
+            <p class="step-desc">Déjanos tu presupuesto y tu requisito principal para enviarte alertas automáticas por WhatsApp y Email penas ingrese un vehículo que cumpla tu perfil.</p>
+            
+            <div class="mic-input-group" style="margin-top:16px;text-align:left;">
+              <label class="admin-label">Presupuesto Máximo de Auto:</label>
+              <select id="nurture-budget-car" class="mic-input">
+                <option value="15k">Hasta $15,000 USD</option>
+                <option value="25k">Hasta $25,000 USD</option>
+                <option value="40k">Hasta $40,000 USD</option>
+              </select>
+
+              <label class="admin-label" style="margin-top:8px;">Requisito Indispensable para tu Auto:</label>
+              <select id="nurture-feature-car" class="mic-input">
+                <option value="4x4_traction">Tracción 4x4 Obligatoria</option>
+                <option value="automatic_trans">Transmisión Automática</option>
+                <option value="low_mileage">Menos de 50,000 km</option>
+                <option value="diesel_engine">Motor Turbo Diésel</option>
+              </select>
+
+              <button class="btn-next-step" style="width:100%;justify-content:center;margin-top:14px;background:linear-gradient(135deg, #F59E0B, #D97706);color:#000;" onclick="saveNurturingLead()">
+                Activar Alertas Prioritarias por WhatsApp & Email
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mic-footer" id="mic-footer">
+        <button class="btn-back" id="btn-mic-back" onclick="micPrevStep()" style="display:none;">← Volver</button>
+        <div style="font-size:11px;color:var(--fg-muted);font-family:var(--font-mono);" id="mic-step-counter">Paso 1 de 5</div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN DESBLOQUEADA DE LA SALA DE VENTA AUTOMOTRIZ -->
+    <section class="unlocked-section" id="unlocked-asset-view">
+      <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.25);border-radius:10px;padding:12px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <div style="color:var(--color-comprar);font-weight:700;font-size:12px;display:flex;align-items:center;gap:8px;font-family:var(--font-mono);">
+          <svg class="icon-svg sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          ACCESO VIP APROBADO — FICHA MAESTRA DESBLOQUEADA
+        </div>
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--fg-muted);" id="display-user-token">TOKEN: REF-MIC-AUTO-96</div>
+      </div>
+
+      <div class="hero-story-hook">
+        <span class="hook-tag">TOYOTA HILUX 4X4 — EDICIÓN 2.8L TURBO DIÉSEL</span>
+        <p><strong>Siente la respuesta inmediata del motor 2.8 Turbo Diésel</strong> superando cualquier camino exigente en Panamá, con el confort de una cabina insonorizada, conectividad total en pantalla táctil y la certeza absoluta de tener 50 puntos mecánicos inspeccionados al 100%.</p>
+        <p style="font-size:13px;color:var(--fg-muted);">La combinación perfecta entre capacidad de trabajo pesado, bajo consumo de combustible diésel y durabilidad respaldada por mantenimientos de agencia.</p>
+      </div>
+
+      <div class="asset-header-card">
+        <div class="asset-meta-bar">
+          <span class="asset-badge-verified">
+            <svg class="icon-svg sm" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            INSPECCIÓN MECÁNICA APROBADA 100%
+          </span>
+          <span class="asset-id-tag" id="display-asset-id">ID: HOIE-AUTO-2022</span>
+        </div>
+
+        <h1 class="asset-title" id="display-title">Toyota Hilux 4x4 Diésel 2.8L</h1>
+        <div class="asset-address" id="display-address">
+          <svg class="icon-svg sm" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Disponible para prueba en: Vía España, Ciudad de Panamá
+        </div>
+
+        <div class="price-savings-box">
+          <div class="price-main-group">
+            <span class="price-label">Precio Especial de Adjudicación</span>
+            <span class="price-amount" id="display-price">$24,500</span>
+          </div>
+          <div class="market-value-group">
+            <span class="price-label">Valor de Mercado Estimado</span>
+            <span class="market-amount" id="display-market-value">$31,000</span>
+          </div>
+          <div class="savings-badge" id="display-savings">
+            📉 Ahorro de $6,500 USD (-21%)
+          </div>
+        </div>
+
+        <div class="specs-grid">
+          <div class="spec-card">
+            <div class="spec-card-label">Año / Modelo</div>
+            <div class="spec-card-val" id="display-year">
+              <svg class="icon-svg sm" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
+              Año 2022
+            </div>
+            <div class="spec-card-benefit">Línea moderna y alta reventa</div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-card-label">Kilometraje</div>
+            <div class="spec-card-val" id="display-km">
+              <svg class="icon-svg sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              48,000 km
+            </div>
+            <div class="spec-card-benefit">Bajo recorrido de agencia</div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-card-label">Transmisión</div>
+            <div class="spec-card-val" id="display-trans">
+              <svg class="icon-svg sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              Manual 6 Vel.
+            </div>
+            <div class="spec-card-benefit">Control total y economía</div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-card-label">Tracción / Motor</div>
+            <div class="spec-card-val" id="display-engine">
+              <svg class="icon-svg sm" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              4x4 • 2.8 Turbo
+            </div>
+            <div class="spec-card-benefit">Fuerza para cualquier terreno</div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-card-label">Combustible</div>
+            <div class="spec-card-val" id="display-fuel">
+              <svg class="icon-svg sm" viewBox="0 0 24 24"><path d="M3 22V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v18"/><path d="M13 11h4a2 2 0 0 1 2 2v5a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9l-3-3"/></svg>
+              Diésel
+            </div>
+            <div class="spec-card-benefit">Máximo rendimiento por galón</div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-card-label">Historial / Agencia</div>
+            <div class="spec-card-val" id="display-history">
+              <svg class="icon-svg sm" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Único Dueño
+            </div>
+            <div class="spec-card-benefit">Mantenimientos al día verificados</div>
+          </div>
+        </div>
+
+        <div class="media-layout-grid">
+          <div class="gallery-container">
+            <div class="main-photo-wrapper" onclick="openLightbox()">
+              <img id="main-gallery-photo" class="main-photo" src="" alt="Foto principal del vehículo">
+              <div class="zoom-hint-badge">
+                <svg class="icon-svg sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                AMPLIAR HD
+              </div>
+            </div>
+            <div class="thumbnails-row" id="thumbnails-container"></div>
+          </div>
+
+          <!-- TARJETA CONMUTADORA REPRODUCTOR DE VIDEO & VISTA 360° AUTOMOTRIZ -->
+          <div class="video-tour-wrapper">
+            <div class="video-header">
+              <div class="media-tabs-group">
+                <button id="tab-btn-video" class="media-tab-btn active" onclick="switchMediaTab('video')">
+                  <svg class="icon-svg sm" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                  Prueba & Motor HD
+                </button>
+                <button id="tab-btn-360" class="media-tab-btn" onclick="switchMediaTab('360')">
+                  <svg class="icon-svg sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+                  Vista 360° Cabina
+                </button>
+              </div>
+            </div>
+            <div class="video-frame-container">
+              <iframe id="video-frame" class="video-iframe" src="" title="Video Tour Auto" allowfullscreen allow="gyroscope; accelerometer; vr"></iframe>
+            </div>
+            <div style="padding:16px;">
+              <p style="font-size:12px;color:var(--fg-muted);" id="display-description"></p>
+              
+              <div class="amenities-wrapper" style="margin-top:12px;">
+                <div class="amenities-title">Equipamiento & Extras:</div>
+                <div class="amenities-list" id="amenities-container"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonials-section">
+        <div class="section-head-title">
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Experiencias Verificadas de Compradores de Autos HOIE
+        </div>
+        <div class="testimonial-cards-grid">
+          <div class="testimonial-card">
+            <div class="testimonial-quote">
+              "Tenía dudas sobre si el vehículo tendría fallas mecánicas ocultas. El reporte de 50 puntos me dio total confianza y pude probar el auto con mi mecánico. Traspaso en municipio listo en 24h."
+            </div>
+            <div class="testimonial-user">
+              <div class="testimonial-avatar">JG</div>
+              <div>
+                <div class="testimonial-name">Jorge Guerra</div>
+                <div class="testimonial-tag">VERIFICADO • David, Chiriquí</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card">
+            <div class="testimonial-quote">
+              "Entregué mi sedan anterior en Trade-In como abono inicial y me ahorré todo el dolor de cabeza de venderlo por fuera. El ahorro de $6,500 frente al precio de agencias fue real."
+            </div>
+            <div class="testimonial-user">
+              <div class="testimonial-avatar">AL</div>
+              <div>
+                <div class="testimonial-name">Alberto Lasso</div>
+                <div class="testimonial-tag">VERIFICADO • Chorrera</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trust-badges-row">
+        <div class="trust-badge-card">
+          <div class="trust-icon">
+            <svg class="icon-svg lg" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+          </div>
+          <div>
+            <div class="trust-title">Inspección de 50 Puntos</div>
+            <div class="trust-desc">Motor, caja y suspensión auditados por mecánico.</div>
+          </div>
+        </div>
+        <div class="trust-badge-card">
+          <div class="trust-icon">
+            <svg class="icon-svg lg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div>
+            <div class="trust-title">Sin Hipoteca ni Reserva</div>
+            <div class="trust-desc">Registro vehicular listo para traspaso inmediato 24h.</div>
+          </div>
+        </div>
+        <div class="trust-badge-card">
+          <div class="trust-icon">
+            <svg class="icon-svg lg" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          </div>
+          <div>
+            <div class="trust-title">Trade-In Aprobado</div>
+            <div class="trust-desc">Recibimos tu auto actual como parte de abono inicial.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="calc-section">
+        <div class="section-head-title">
+          <svg class="icon-svg" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="18"/><path d="M8 10h.01"/><path d="M12 10h.01"/><path d="M16 10h.01"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/></svg>
+          Calculadora de Cuota Mensual de Auto
+        </div>
+        <div class="calc-grid">
+          <div>
+            <label class="admin-label">Abono Inicial (Contado o Trade-In):</label>
+            <select id="calc-down-payment-car" class="admin-input" onchange="calculateCarLoan()">
+              <option value="0.20">20% Abono ($4,900 USD)</option>
+              <option value="0.30" selected>30% Abono ($7,350 USD)</option>
+              <option value="0.40">40% Abono ($9,800 USD)</option>
+            </select>
+
+            <label class="admin-label" style="margin-top:10px;">Plazo del Préstamo (Años):</label>
+            <select id="calc-years-car" class="admin-input" onchange="calculateCarLoan()">
+              <option value="5" selected>5 Años (60 Meses)</option>
+              <option value="4">4 Años (48 Meses)</option>
+              <option value="3">3 Años (36 Meses)</option>
+            </select>
+          </div>
+
+          <div class="calc-result-box">
+            <div style="font-size:10px;color:var(--fg-muted);text-transform:uppercase;font-weight:700;letter-spacing:0.5px;">Mensualidad Estimada Auto</div>
+            <div class="calc-price-val" id="calc-car-monthly-val">$348 / mes</div>
+            <div style="font-size:11px;color:var(--color-comprar);margin-top:4px;">*Tasa auto estimada 7.5% anual</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="documents-section">
+        <div class="section-head-title">
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          Documentación Mecánica y Traspaso Legal
+        </div>
+        <div class="docs-grid">
+          <a href="#" class="doc-card" onclick="trackDocClick('Inspección Mecánica 50 Puntos');alert('Descargando Reporte de Inspección Mecánica de 50 Puntos...');return false;">
+            <div>
+              <div class="doc-name">Inspección Mecánica 50 Puntos</div>
+              <div style="font-size:10px;color:var(--fg-muted);">PDF • Motor, Transmisión, Suspensión</div>
+            </div>
+            <div class="doc-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+          </a>
+          <a href="#" class="doc-card" onclick="trackDocClick('Registro Vehicular Único');alert('Descargando Registro Vehicular Único...');return false;">
+            <div>
+              <div class="doc-name">Registro Vehicular Único</div>
+              <div style="font-size:10px;color:var(--fg-muted);">PDF • Placa y Revisado Al Día</div>
+            </div>
+            <div class="doc-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+          </a>
+          <a href="#" class="doc-card" onclick="trackDocClick('Certificación Sin Gravamen');alert('Descargando Certificado de Libre Hipoteca...');return false;">
+            <div>
+              <div class="doc-name">Certificación Sin Gravamen</div>
+              <div style="font-size:10px;color:var(--fg-muted);">PDF • Traspaso Inmediato 24h</div>
+            </div>
+            <div class="doc-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+          </a>
+        </div>
+      </div>
+
+      <div class="ai-assistant-widget" id="ai-chat-section">
+        <div class="ai-header">
+          <div class="ai-avatar-icon">
+            <svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
+          </div>
+          <div>
+            <div style="font-weight:700;font-size:14px;color:#FFF;">Asistente de IA — Preguntas Técnicas sobre este Vehículo</div>
+            <div style="font-size:11px;color:#FBBF24;">Responde dudas sobre estado del motor, mantenimientos y trade-in</div>
+          </div>
+        </div>
+
+        <div class="ai-quick-chips">
+          <button class="ai-chip-btn" onclick="askQuickAi('¿Aceptan mi auto actual como Trade-In?')">Aceptar mi auto (Trade-In)</button>
+          <button class="ai-chip-btn" onclick="askQuickAi('¿Puedo llevar mi propio mecánico a la prueba?')">Prueba con mi mecánico</button>
+          <button class="ai-chip-btn" onclick="askQuickAi('¿Cuánto tiempo toma el traspaso en municipio?')">Tiempo de traspaso</button>
+          <button class="ai-chip-btn" onclick="askQuickAi('¿Cuáles son los mantenimientos en agencia?')">Mantenimientos al día</button>
+        </div>
+
+        <div class="ai-chat-box" id="ai-chat-box">
+          <div class="ai-msg ai-msg-bot">
+            ¡Hola! Soy la IA Asesora de este auto. Haz cualquier pregunta o presiona uno de los botones de consulta rápida arriba.
+          </div>
+        </div>
+
+        <div class="ai-input-row">
+          <input type="text" id="ai-user-input" class="ai-input" placeholder="Haz cualquier pregunta sobre este auto..." onkeypress="if(event.key==='Enter') sendAiQuestion()">
+          <button class="btn-ai-send" onclick="sendAiQuestion()">Preguntar</button>
+        </div>
+      </div>
+
+      <div class="faq-section">
+        <div class="section-head-title">
+          <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Preguntas Frecuentes antes de la Prueba de Manejo
+        </div>
+        
+        <div class="faq-item" onclick="toggleFaq(this, '¿Puedo llevar mi propio mecánico?')">
+          <div class="faq-question">
+            <span>¿Puedo llevar mi propio mecánico a la revisión?</span>
+            <span class="faq-toggle">▼</span>
+          </div>
+          <div class="faq-answer">
+            ¡Por supuesto! Fomentamos la transparencia total. Puedes acudir a la prueba de manejo acompañado de tu mecánico de confianza o solicitar el escaneo computarizado en el sitio.
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this, '¿Cómo funciona el Trade-In?')">
+          <div class="faq-question">
+            <span>¿Cómo funciona la modalidad de Trade-In (entregar mi auto)?</span>
+            <span class="faq-toggle">▼</span>
+          </div>
+          <div class="faq-answer">
+            Inspeccionamos tu auto actual en 30 minutos, le asignamos un valor comercial justo y ese monto se descuenta directamente como abono inicial del vehículo que vas a adquirir.
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this, '¿Cuánto tiempo toma el traspaso en municipio?')">
+          <div class="faq-question">
+            <span>¿Cuánto tiempo toma el proceso de traspaso de municipio?</span>
+            <span class="faq-toggle">▼</span>
+          </div>
+          <div class="faq-answer">
+            Si la compra es al contado o con transferencia verificada, la minuta de traspaso en la ATTT y Municipio de Panamá se firma el mismo día y recibes las llaves en 24 horas.
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align:center;">
+        <a href="#" id="whatsapp-vip-link" target="_blank" class="btn-whatsapp-vip">
+          <svg class="icon-svg lg" viewBox="0 0 24 24" style="stroke:none;fill:currentColor;"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+          AGENDAR PRUEBA DE MANEJO VIP CON FICHA APROBADA
+        </a>
+      </div>
+    </section>
+
+    <div id="mobile-sticky-bar" class="sticky-bottom-bar">
+      <div class="sticky-bar-info">
+        <div class="sticky-bar-price" id="sticky-display-price">$24,500</div>
+        <div class="sticky-bar-title" id="sticky-display-title">Toyota Hilux 4x4</div>
+      </div>
+      <a href="#" id="whatsapp-sticky-link" target="_blank" class="btn-next-step" style="background:#25D366;color:#000;padding:10px 16px;text-decoration:none;">
+        Agendar Prueba
+      </a>
+    </div>
+
+  </main>
+
+  <div id="ai-floating-widget" class="ai-floating-trigger" onclick="handleAiFloatingClick()">
+    <div class="ai-float-avatar">
+      <svg class="icon-svg sm" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/></svg>
+    </div>
+    <div class="ai-float-text">
+      <span class="ai-float-title">IA Asesora Auto</span>
+      <span class="ai-float-sub"><span class="status-pulse"></span> En Línea</span>
+    </div>
+  </div>
+
+  <div id="lightbox-modal" class="lightbox-modal" onclick="closeLightbox()">
+    <button class="lightbox-close">✕</button>
+    <img id="lightbox-img" class="lightbox-img" src="" alt="Vista ampliada HD">
+  </div>
+
+  <!-- MODAL ADMIN CON SOPORTE DE TOUR 360° -->
+  <div id="admin-modal" class="admin-modal-overlay">
+    <div class="admin-modal-card">
+      <div class="admin-modal-header">
+        <div class="admin-modal-title">⚙️ Cargar / Publicar Nuevo Vehículo (Modo Admin)</div>
+        <button onclick="closeAdminModal()" style="background:transparent;border:none;color:var(--fg-muted);font-size:18px;cursor:pointer;">✕</button>
+      </div>
+
+      <div class="admin-form-grid">
+        <div class="admin-full-col">
+          <label class="admin-label">Título del Vehículo *</label>
+          <input type="text" id="adm-title" class="admin-input" placeholder="ej. Toyota Hilux 4x4 Diésel 2.8L">
+        </div>
+        <div>
+          <label class="admin-label">ID de Vehículo</label>
+          <input type="text" id="adm-id" class="admin-input" placeholder="ej. HOIE-AUTO-2022">
+        </div>
+        <div>
+          <label class="admin-label">Precio de Venta ($ USD) *</label>
+          <input type="number" id="adm-price" class="admin-input" placeholder="ej. 24500">
+        </div>
+        <div>
+          <label class="admin-label">Valor de Mercado ($ USD)</label>
+          <input type="number" id="adm-market" class="admin-input" placeholder="ej. 31000">
+        </div>
+        <div>
+          <label class="admin-label">Año</label>
+          <input type="number" id="adm-year" class="admin-input" placeholder="ej. 2022">
+        </div>
+        <div>
+          <label class="admin-label">Kilometraje (Km)</label>
+          <input type="number" id="adm-km" class="admin-input" placeholder="ej. 48000">
+        </div>
+        <div>
+          <label class="admin-label">Transmisión</label>
+          <input type="text" id="adm-trans" class="admin-input" placeholder="ej. Manual 6 Vel.">
+        </div>
+        <div>
+          <label class="admin-label">Motor & Tracción</label>
+          <input type="text" id="adm-engine" class="admin-input" placeholder="ej. 4x4 • 2.8 Turbo Diésel">
+        </div>
+        <div>
+          <label class="admin-label">Combustible</label>
+          <input type="text" id="adm-fuel" class="admin-input" placeholder="ej. Diésel">
+        </div>
+        <div>
+          <label class="admin-label">Historial / Garantía</label>
+          <input type="text" id="adm-history" class="admin-input" placeholder="ej. Único Dueño / Agencia">
+        </div>
+        <div class="admin-full-col">
+          <label class="admin-label">Ubicación para Prueba *</label>
+          <input type="text" id="adm-address" class="admin-input" placeholder="ej. Vía España, Ciudad de Panamá">
+        </div>
+        <div class="admin-full-col">
+          <label class="admin-label">URL Embed de Video HD (YouTube / MP4)</label>
+          <input type="text" id="adm-video" class="admin-input" placeholder="ej. https://www.youtube.com/embed/ScMzIvxBSi4">
+        </div>
+        <div class="admin-full-col">
+          <label class="admin-label">URL Embed de Tour Virtual 360° (YouTube 360 / Kuula)</label>
+          <input type="text" id="adm-tour360" class="admin-input" placeholder="ej. https://www.youtube.com/embed/ScMzIvxBSi4">
+        </div>
+        <div class="admin-full-col">
+          <label class="admin-label">URLs de Fotos (Una URL por línea) *</label>
+          <textarea id="adm-photos" class="admin-textarea" rows="4" placeholder="https://imagen1.jpg&#10;https://imagen2.jpg"></textarea>
+        </div>
+        <div class="admin-full-col">
+          <label class="admin-label">Equipamiento (Separado por coma)</label>
+          <input type="text" id="adm-equipment" class="admin-input" placeholder="Tracción 4x4, Apple CarPlay, Cámara HD">
+        </div>
+        <div class="admin-full-col">
+          <label class="admin-label">Descripción Detallada</label>
+          <textarea id="adm-desc" class="admin-textarea" rows="3" placeholder="Descripción del vehículo..."></textarea>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;display:flex;gap:10px;justify-content:flex-end;">
+        <button onclick="closeAdminModal()" class="btn-back">Cancelar</button>
+        <button onclick="saveAdminVehicle()" class="btn-next-step" style="background:linear-gradient(135deg, #F59E0B, #D97706);color:#000;">
+          Guardar y Publicar Vehículo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div style="max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+      <div>© 2026 HOIE Opportunity Intelligence — Plataforma Automotriz Institucional</div>
+      <div>Acceso Restringido & Motor MIC v3.5</div>
+    </div>
+  </footer>
+
+  <script>
+    const N8N_WEBHOOK_URL = "https://n8n.tu-servidor.com/webhook/hoie-leads";
+
+    let userTelemetry = {
+      startTime: Date.now(),
+      aiQuestions: [],
+      docsClicked: [],
+      faqsOpened: [],
+      photosViewedCount: 0,
+      lightboxOpened: false,
+      calcSimulations: []
+    };
+
+    let VEHICLE_DATA = {
+      assetId: "HOIE-AUTO-2022",
+      title: "Toyota Hilux 4x4 Diésel 2.8L",
+      address: "Disponible para prueba en: Vía España, Ciudad de Panamá",
+      price: 24500,
+      marketValue: 31000,
+      year: 2022,
+      km: 48000,
+      transmission: "Manual 6 Vel.",
+      engine: "4x4 • 2.8 Turbo Diésel",
+      fuel: "Diésel",
+      history: "Único Dueño / Agencia",
+      description: "Toyota Hilux 2.8 Diésel 4x4 en condiciones impecables. Mantenimientos de agencia al día, llantas todo terreno nuevas, pantalla táctil con Apple CarPlay y Android Auto. Lista para traspaso inmediato.",
+      videoEmbedUrl: "https://www.youtube.com/embed/ScMzIvxBSi4",
+      virtualTour360Url: "https://www.youtube.com/embed/ScMzIvxBSi4", // DEMO TOUR 360° AUTO
+      photos: [
+        "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1000&q=80",
+        "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=1000&q=80",
+        "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1000&q=80",
+        "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1000&q=80"
+      ],
+      equipment: [
+        "Tracción 4x4 con Bloqueo de Diferencial",
+        "Pantalla Touch con Apple CarPlay & Android Auto",
+        "Frenos ABS + Control de Tracción",
+        "Cámara de Retroceso HD y Sensores",
+        "Bedliner de Carga Original",
+        "Aire Acondicionado Climatizado"
+      ]
+    };
+
+    const ADVISOR_PHONE = '+507 6890-1122';
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const assetIdParam = urlParams.get('id');
+    const isAdmin = urlParams.get('admin') === 'true';
+
+    try {
+      const savedData = localStorage.getItem(assetIdParam ? `hoie_auto_${assetIdParam}` : 'hoie_vehicle_listing_data');
+      if (savedData) { VEHICLE_DATA = { ...VEHICLE_DATA, ...JSON.parse(savedData) }; }
+    } catch(e) {}
+
+    if (isAdmin) {
+      const btnAdmin = document.getElementById('btn-admin-panel');
+      if (btnAdmin) btnAdmin.style.display = 'inline-flex';
+      const unlockedView = document.getElementById('unlocked-asset-view');
+      if (unlockedView) unlockedView.classList.add('show-unlocked');
+      const aiFloatBtn = document.getElementById('ai-floating-widget');
+      if (aiFloatBtn) aiFloatBtn.classList.add('show-float');
+    }
+
+    function renderVehicleListing() {
+      const formatPrice = (n) => '$' + Number(n).toLocaleString('en-US');
+      
+      document.getElementById('page-title').textContent = `${VEHICLE_DATA.title} — HOIE Auto Intelligence`;
+      document.getElementById('display-asset-id').textContent = `ID: ${VEHICLE_DATA.assetId}`;
+      document.getElementById('display-title').textContent = VEHICLE_DATA.title;
+      document.getElementById('display-address').innerHTML = `<svg class="icon-svg sm" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ${VEHICLE_DATA.address}`;
+      document.getElementById('display-price').textContent = formatPrice(VEHICLE_DATA.price);
+      document.getElementById('display-market-value').textContent = formatPrice(VEHICLE_DATA.marketValue);
+
+      const stickyPrice = document.getElementById('sticky-display-price');
+      const stickyTitle = document.getElementById('sticky-display-title');
+      if (stickyPrice) stickyPrice.textContent = formatPrice(VEHICLE_DATA.price);
+      if (stickyTitle) stickyTitle.textContent = VEHICLE_DATA.title;
+
+      const savings = VEHICLE_DATA.marketValue - VEHICLE_DATA.price;
+      const savingsPct = Math.round((savings / VEHICLE_DATA.marketValue) * 100);
+      document.getElementById('display-savings').textContent = `📉 Ahorro de ${formatPrice(savings)} USD (-${savingsPct}%)`;
+
+      document.getElementById('display-year').innerHTML = `<svg class="icon-svg sm" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg> Año ${VEHICLE_DATA.year}`;
+      document.getElementById('display-km').innerHTML = `<svg class="icon-svg sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${Number(VEHICLE_DATA.km).toLocaleString('en-US')} km`;
+      document.getElementById('display-trans').innerHTML = `<svg class="icon-svg sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> ${VEHICLE_DATA.transmission}`;
+      document.getElementById('display-engine').innerHTML = `<svg class="icon-svg sm" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> ${VEHICLE_DATA.engine}`;
+      document.getElementById('display-fuel').innerHTML = `<svg class="icon-svg sm" viewBox="0 0 24 24"><path d="M3 22V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v18"/><path d="M13 11h4a2 2 0 0 1 2 2v5a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9l-3-3"/></svg> ${VEHICLE_DATA.fuel}`;
+      document.getElementById('display-history').innerHTML = `<svg class="icon-svg sm" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> ${VEHICLE_DATA.history}`;
+      document.getElementById('display-description').textContent = VEHICLE_DATA.description;
+      
+      const videoFrame = document.getElementById('video-frame');
+      if (videoFrame && VEHICLE_DATA.videoEmbedUrl) {
+        videoFrame.src = VEHICLE_DATA.videoEmbedUrl;
+      }
+
+      const mainPhoto = document.getElementById('main-gallery-photo');
+      const thumbContainer = document.getElementById('thumbnails-container');
+      if (VEHICLE_DATA.photos.length > 0 && mainPhoto) {
+        mainPhoto.src = VEHICLE_DATA.photos[0];
+      }
+      if (thumbContainer) {
+        thumbContainer.innerHTML = VEHICLE_DATA.photos.map((url, idx) => `
+          <button class="thumb-btn ${idx === 0 ? 'active' : ''}" onclick="switchPhoto('${url}', this)">
+            <img class="thumb-img" src="${url}" alt="Miniatura ${idx + 1}">
+          </button>
+        `).join('');
+      }
+
+      const amenContainer = document.getElementById('amenities-container');
+      if (amenContainer) {
+        amenContainer.innerHTML = VEHICLE_DATA.equipment.map(a => `<span class="amenity-chip"><svg class="icon-svg sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> ${a}</span>`).join('');
+      }
+
+      calculateCarLoan();
+    }
+
+    // CONMUTADOR DUAL DE MEDIOS AUTOMOTRIZ (PRUEBA HD vs VISTA 360°)
+    function switchMediaTab(type) {
+      const videoFrame = document.getElementById('video-frame');
+      const tabVideo = document.getElementById('tab-btn-video');
+      const tab360 = document.getElementById('tab-btn-360');
+
+      if (type === '360') {
+        if (tabVideo) tabVideo.classList.remove('active');
+        if (tab360) tab360.classList.add('active');
+        if (videoFrame) videoFrame.src = VEHICLE_DATA.virtualTour360Url || VEHICLE_DATA.videoEmbedUrl;
+      } else {
+        if (tab360) tab360.classList.remove('active');
+        if (tabVideo) tabVideo.classList.add('active');
+        if (videoFrame) videoFrame.src = VEHICLE_DATA.videoEmbedUrl;
+      }
+    }
+
+    function switchPhoto(url, btn) {
+      const mainPhoto = document.getElementById('main-gallery-photo');
+      if (mainPhoto) mainPhoto.src = url;
+      document.querySelectorAll('.thumb-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      userTelemetry.photosViewedCount++;
+    }
+
+    function handleAiFloatingClick() {
+      const aiSec = document.getElementById('ai-chat-section');
+      if (aiSec) aiSec.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function openLightbox() {
+      const mainPhoto = document.getElementById('main-gallery-photo');
+      const lightboxModal = document.getElementById('lightbox-modal');
+      const lightboxImg = document.getElementById('lightbox-img');
+      if (mainPhoto && lightboxModal && lightboxImg) {
+        lightboxImg.src = mainPhoto.src;
+        lightboxModal.classList.add('active');
+        userTelemetry.lightboxOpened = true;
+      }
+    }
+    function closeLightbox() {
+      const lightboxModal = document.getElementById('lightbox-modal');
+      if (lightboxModal) lightboxModal.classList.remove('active');
+    }
+
+    function toggleFaq(el, title) {
+      el.classList.toggle('active');
+      if (el.classList.contains('active') && title) {
+        if (!userTelemetry.faqsOpened.includes(title)) userTelemetry.faqsOpened.push(title);
+      }
+    }
+
+    function trackDocClick(docName) {
+      if (!userTelemetry.docsClicked.includes(docName)) userTelemetry.docsClicked.push(docName);
+    }
+
+    function calculateCarLoan() {
+      const price = VEHICLE_DATA.price;
+      const downPct = parseFloat(document.getElementById('calc-down-payment-car').value);
+      const years = parseInt(document.getElementById('calc-years-car').value);
+
+      const loan = price * (1 - downPct);
+      const monthlyRate = 0.075 / 12;
+      const numPayments = years * 12;
+
+      const monthlyPayment = (loan * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+      const resVal = document.getElementById('calc-car-monthly-val');
+      if (resVal) resVal.textContent = `$${Math.round(monthlyPayment).toLocaleString()} / mes`;
+
+      userTelemetry.calcSimulations.push(`Abono ${downPct*100}% a ${years} años ($${Math.round(monthlyPayment)}/mes)`);
+    }
+
+    function askQuickAi(qText) {
+      const input = document.getElementById('ai-user-input');
+      if (input) {
+        input.value = qText;
+        sendAiQuestion();
+      }
+    }
+
+    function sendAiQuestion() {
+      const input = document.getElementById('ai-user-input');
+      const chatBox = document.getElementById('ai-chat-box');
+      if (!input || !input.value.trim() || !chatBox) return;
+
+      const q = input.value.trim();
+      input.value = '';
+
+      userTelemetry.aiQuestions.push(q);
+
+      const uMsg = document.createElement('div');
+      uMsg.className = 'ai-msg ai-msg-user';
+      uMsg.textContent = q;
+      chatBox.appendChild(uMsg);
+
+      setTimeout(() => {
+        let ans = `Excelente consulta sobre '${VEHICLE_DATA.title}': es modelo ${VEHICLE_DATA.year}, transmisión ${VEHICLE_DATA.transmission}, con ${Number(VEHICLE_DATA.km).toLocaleString()} km y precio especial de $${Number(VEHICLE_DATA.price).toLocaleString()} USD.`;
+        
+        const qL = q.toLowerCase();
+        if (qL.includes('mecanico') || qL.includes('mecánico') || qL.includes('inspeccion') || qL.includes('inspección') || qL.includes('motor')) {
+          ans = `Esta unidad cuenta con Inspección Mecánica Certificada de 50 puntos aprobada al 100%. Puedes acudir a la prueba acompañado de tu mecánico de confianza o solicitar el escaneo en el sitio.`;
+        } else if (qL.includes('trade') || qL.includes('abono') || qL.includes('auto') || qL.includes('usado')) {
+          ans = `¡Sí aceptamos Trade-In! Avaluamos tu auto actual en 30 minutos y descontamos ese valor directamente como abono inicial.`;
+        } else if (qL.includes('traspaso') || qL.includes('placa') || qL.includes('municipio') || qL.includes('papeles')) {
+          ans = `La unidad está libre de gravamen e hipoteca. El traspaso en la ATTT y Municipio de Panamá se realiza el mismo día de la compra.`;
+        } else if (qL.includes('precio') || qL.includes('descuento') || qL.includes('ahorro')) {
+          ans = `El precio especial es $${Number(VEHICLE_DATA.price).toLocaleString()} USD. Su valor de mercado en Panamá es $${Number(VEHICLE_DATA.marketValue).toLocaleString()} USD, lo que significa un ahorro directo de $${Number(VEHICLE_DATA.marketValue - VEHICLE_DATA.price).toLocaleString()} USD (-21%).`;
+        }
+
+        const bMsg = document.createElement('div');
+        bMsg.className = 'ai-msg ai-msg-bot';
+        bMsg.textContent = ans;
+        chatBox.appendChild(bMsg);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }, 400);
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function openAdminModal() {
+      document.getElementById('adm-title').value = VEHICLE_DATA.title || '';
+      document.getElementById('adm-id').value = VEHICLE_DATA.assetId || '';
+      document.getElementById('adm-price').value = VEHICLE_DATA.price || '';
+      document.getElementById('adm-market').value = VEHICLE_DATA.marketValue || '';
+      document.getElementById('adm-year').value = VEHICLE_DATA.year || '';
+      document.getElementById('adm-km').value = VEHICLE_DATA.km || '';
+      document.getElementById('adm-trans').value = VEHICLE_DATA.transmission || '';
+      document.getElementById('adm-engine').value = VEHICLE_DATA.engine || '';
+      document.getElementById('adm-fuel').value = VEHICLE_DATA.fuel || '';
+      document.getElementById('adm-history').value = VEHICLE_DATA.history || '';
+      document.getElementById('adm-address').value = VEHICLE_DATA.address || '';
+      document.getElementById('adm-video').value = VEHICLE_DATA.videoEmbedUrl || '';
+      document.getElementById('adm-tour360').value = VEHICLE_DATA.virtualTour360Url || '';
+      document.getElementById('adm-photos').value = VEHICLE_DATA.photos.join('\n');
+      document.getElementById('adm-equipment').value = VEHICLE_DATA.equipment.join(', ');
+      document.getElementById('adm-desc').value = VEHICLE_DATA.description || '';
+
+      document.getElementById('admin-modal').classList.add('active');
+    }
+
+    function closeAdminModal() { document.getElementById('admin-modal').classList.remove('active'); }
+
+    function saveAdminVehicle() {
+      const title = document.getElementById('adm-title').value.trim();
+      const price = document.getElementById('adm-price').value.trim();
+      const photosRaw = document.getElementById('adm-photos').value.trim();
+      const address = document.getElementById('adm-address').value.trim();
+
+      if (!title || !price || !photosRaw || !address) {
+        alert('Por favor completa todos los campos requeridos (Título, Precio, Ubicación y Fotos).');
+        return;
+      }
+
+      const photos = photosRaw.split('\n').map(u => u.trim()).filter(u => u.length > 0);
+      const equipRaw = document.getElementById('adm-equipment').value.trim();
+      const equipment = equipRaw ? equipRaw.split(',').map(a => a.trim()).filter(a => a.length > 0) : VEHICLE_DATA.equipment;
+
+      VEHICLE_DATA = {
+        assetId: document.getElementById('adm-id').value.trim() || 'HOIE-AUTO-2022',
+        title: title,
+        address: address,
+        price: Number(price),
+        marketValue: Number(document.getElementById('adm-market').value.trim() || Math.round(Number(price) * 1.2)),
+        year: Number(document.getElementById('adm-year').value.trim() || 2022),
+        km: Number(document.getElementById('adm-km').value.trim() || 30000),
+        transmission: document.getElementById('adm-trans').value.trim() || 'Automática',
+        engine: document.getElementById('adm-engine').value.trim() || '4x4',
+        fuel: document.getElementById('adm-fuel').value.trim() || 'Diésel',
+        history: document.getElementById('adm-history').value.trim() || 'Único Dueño / Agencia',
+        description: document.getElementById('adm-desc').value.trim() || 'Vehículo auditado en inspección mecánica.',
+        videoEmbedUrl: document.getElementById('adm-video').value.trim() || 'https://www.youtube.com/embed/ScMzIvxBSi4',
+        virtualTour360Url: document.getElementById('adm-tour360').value.trim() || 'https://www.youtube.com/embed/ScMzIvxBSi4',
+        photos: photos,
+        equipment: equipment
+      };
+
+      try {
+        localStorage.setItem(assetIdParam ? `hoie_auto_${assetIdParam}` : 'hoie_vehicle_listing_data', JSON.stringify(VEHICLE_DATA));
+      } catch(e) {}
+
+      renderVehicleListing();
+      closeAdminModal();
+      alert('¡Información del Vehículo guardada e integrada con éxito!');
+    }
+
+    let leadData = { step: 0, use: '', payment: '', time: '', name: '', phone: '', email: '', score: 96, profile: 'Empresarial' };
+
+    function showStep(s) {
+      document.querySelectorAll('.mic-step').forEach(el => el.classList.remove('active'));
+      const target = document.querySelector(`.mic-step[data-step="${s}"]`);
+      if (target) target.classList.add('active');
+      leadData.step = s;
+
+      const fill = document.getElementById('mic-progress-fill');
+      const counter = document.getElementById('mic-step-counter');
+      const btnBack = document.getElementById('btn-mic-back');
+      const matchBadge = document.getElementById('match-score-val');
+
+      const pct = Math.round((s / 5) * 100);
+      if (fill) fill.style.width = pct + '%';
+      if (counter) counter.textContent = `Paso ${Math.min(s + 1, 5)} de 5`;
+      if (btnBack) btnBack.style.display = s > 0 && s < 5 ? 'block' : 'none';
+      if (matchBadge) matchBadge.textContent = Math.min(99, Math.max(30, pct + 25)) + '%';
+    }
+
+    function micNextStep() { if (leadData.step < 5) showStep(leadData.step + 1); }
+    function micPrevStep() { if (leadData.step > 0) showStep(leadData.step - 1); }
+
+    function micSelectOption(field, val, score, profile) {
+      leadData[field] = val;
+      if (profile) leadData.profile = profile;
+      micNextStep();
+    }
+
+    function sendLeadToWebhook(payload) {
+      try {
+        fetch(N8N_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).catch(err => console.log('Webhook dispatched in background.'));
+      } catch(e) {}
+    }
+
+    function saveNurturingLead() {
+      const budget = document.getElementById('nurture-budget-car').value;
+      const feature = document.getElementById('nurture-feature-car').value;
+      leadData.nurtureBudget = budget;
+      leadData.nurtureFeature = feature;
+
+      sendLeadToWebhook({ ...leadData, telemetry: userTelemetry, type: 'NURTURING_LEAD_AUTO', assetId: VEHICLE_DATA.assetId });
+      alert('Te notificaremos por WhatsApp y Email apenas ingrese un auto con tus requisitos.');
+    }
+
+    function micSubmitLead() {
+      const nameInput = document.getElementById('lead-name');
+      const phoneInput = document.getElementById('lead-phone');
+      const emailInput = document.getElementById('lead-email');
+
+      if (!nameInput || !nameInput.value.trim()) { alert('Por favor, ingresa tu nombre.'); return; }
+      if (!phoneInput || !phoneInput.value.trim()) { alert('Por favor, ingresa tu WhatsApp.'); return; }
+
+      leadData.name = nameInput.value.trim();
+      leadData.phone = phoneInput.value.trim();
+      leadData.email = emailInput ? emailInput.value.trim() : '';
+
+      const finalScore = leadData.payment === 'cash' ? 98 : (leadData.payment === 'trade_in' ? 94 : 90);
+      leadData.score = finalScore;
+      const token = `REF-MIC-AUTO-${finalScore}-${leadData.name.split(' ')[0].toUpperCase()}`;
+
+      userTelemetry.timeSpentSec = Math.round((Date.now() - userTelemetry.startTime) / 1000);
+
+      sendLeadToWebhook({
+        ...leadData,
+        token: token,
+        assetId: VEHICLE_DATA.assetId,
+        assetTitle: VEHICLE_DATA.title,
+        telemetry: userTelemetry,
+        timestamp: new Date().toISOString()
+      });
+
+      const cleanPhone = ADVISOR_PHONE.replace(/[^\d]/g, '');
+      const aiSummary = userTelemetry.aiQuestions.length > 0 ? userTelemetry.aiQuestions.join('; ') : 'Ninguna duda en chat';
+      const docsSummary = userTelemetry.docsClicked.length > 0 ? userTelemetry.docsClicked.join(', ') : 'Ninguno';
+      const faqSummary = userTelemetry.faqsOpened.length > 0 ? userTelemetry.faqsOpened.join(', ') : 'Ninguna';
+      const calcSummary = userTelemetry.calcSimulations.length > 0 ? userTelemetry.calcSimulations[userTelemetry.calcSimulations.length - 1] : 'Por defecto';
+
+      const emailTxt = leadData.email ? `\n*EMAIL:* ${leadData.email}` : '';
+      const msg = `Hola, mi nombre es ${leadData.name}. Me he calificado exitosamente en HOIE Auto para el vehículo '${VEHICLE_DATA.title}' ($${Number(VEHICLE_DATA.price).toLocaleString('en-US')}).\n\n*TOKEN VIP:* ${token}\n*SCORE MIC:* ${finalScore}/100\n*PERFIL:* ${leadData.profile}${emailTxt}\n\n*DOSSIER INTELIGENTE DE CIERRE:* \n- Preguntas a la IA: ${aiSummary}\n- Documentos Vistos: ${docsSummary}\n- Simulación Cuota Auto: ${calcSummary}\n- FAQ Revisadas: ${faqSummary}\n- Tiempo en Página: ${userTelemetry.timeSpentSec}s (${userTelemetry.photosViewedCount} fotos vistas)\n\nEstoy listo para agendar la prueba de manejo VIP para mañana.`;
+      
+      const waLink = document.getElementById('whatsapp-vip-link');
+      const waSticky = document.getElementById('whatsapp-sticky-link');
+      if (waLink) waLink.href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
+      if (waSticky) waSticky.href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
+
+      document.getElementById('display-user-token').textContent = `TOKEN VIP: ${token}`;
+
+      if (finalScore >= 50) {
+        const unlockedView = document.getElementById('unlocked-asset-view');
+        const stickyBar = document.getElementById('mobile-sticky-bar');
+        const aiFloatBtn = document.getElementById('ai-floating-widget');
+
+        if (unlockedView) {
+          unlockedView.classList.add('show-unlocked');
+          unlockedView.scrollIntoView({ behavior: 'smooth' });
+        }
+        if (stickyBar) stickyBar.classList.add('show');
+        if (aiFloatBtn) aiFloatBtn.classList.add('show-float');
+
+        const micSec = document.getElementById('mic-section');
+        const heroSec = document.getElementById('gated-hero');
+        if (micSec) micSec.style.display = 'none';
+        if (heroSec) heroSec.style.display = 'none';
+      } else {
+        showStep(5);
+      }
+    }
+
+    renderVehicleListing();
+  </script>
+
+</body>
+</html>

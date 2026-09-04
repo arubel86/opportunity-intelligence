@@ -16,6 +16,11 @@ export interface Comparable {
   bedrooms?: number
   bathrooms?: number
   listPrice: number
+  // Vehicle fields
+  make?: string
+  model?: string
+  year?: number
+  mileage?: number
 }
 
 export interface ComparablesResult {
@@ -160,9 +165,126 @@ export class ComparableEngine {
     }
   }
 
-  private _matchVehicle(_asset: Asset, _candidate: Asset): Comparable | null {
-    // Vehicle matching would go here
-    return null
+  private _matchVehicle(asset: Asset, candidate: Asset): Comparable | null {
+    if (candidate.vertical !== 'vehicles') return null
+
+    let score = 0
+    const reasons: string[] = []
+
+    // Extraer marca, modelo y año del raw_data
+    const assetMake = (asset.raw_data?.make || '').toLowerCase()
+    const candMake = (candidate.raw_data?.make || '').toLowerCase()
+    
+    const assetModel = (asset.raw_data?.model || '').toLowerCase()
+    const candModel = (candidate.raw_data?.model || '').toLowerCase()
+
+    const assetYear = asset.raw_data?.year || 0
+    const candYear = candidate.raw_data?.year || 0
+
+    // Si no tienen marca o modelo en raw_data, inferirlos del título
+    const inferFromTitle = (title: string = '') => {
+      const lower = title.toLowerCase()
+      let make = ''
+      let model = ''
+      let year = 0
+
+      // Marcas comunes en Panamá
+      const makes = ['toyota', 'honda', 'nissan', 'hyundai', 'kia', 'mitsubishi', 'ford', 'chevrolet', 'bmw', 'mercedes', 'suzuki', 'mazda', 'volkswagen']
+      for (const m of makes) {
+        if (lower.includes(m)) {
+          make = m
+          break
+        }
+      }
+
+      // Modelos comunes
+      const models = ['hilux', 'civic', 'crv', 'cr-v', 'corolla', 'frontier', 'montero', 'sportage', 'f-150', 'tucson', 'spark', '320i', 'c300', 'vitara', 'cx-5', 'silverado', 'tiguan', 'prado', 'versa', 'elantra', 'tracker']
+      for (const mod of models) {
+        if (lower.includes(mod)) {
+          model = mod
+          break
+        }
+      }
+
+      const yearMatch = lower.match(/\b(20\d{2}|19\d{2})\b/)
+      if (yearMatch) {
+        year = parseInt(yearMatch[1])
+      }
+
+      return { make, model, year }
+    }
+
+    const aInfo = {
+      make: assetMake || inferFromTitle(asset.title).make,
+      model: assetModel || inferFromTitle(asset.title).model,
+      year: assetYear || inferFromTitle(asset.title).year
+    }
+
+    const cInfo = {
+      make: candMake || inferFromTitle(candidate.title).make,
+      model: candModel || inferFromTitle(candidate.title).model,
+      year: candYear || inferFromTitle(candidate.title).year
+    }
+
+    // Deben tener la misma marca
+    if (aInfo.make && cInfo.make && aInfo.make === cInfo.make) {
+      score += 30
+      reasons.push('Misma marca')
+    } else {
+      return null
+    }
+
+    // Mismo modelo = gran coincidencia
+    if (aInfo.model && cInfo.model && aInfo.model === cInfo.model) {
+      score += 30
+      reasons.push('Mismo modelo')
+    } else {
+      return null
+    }
+
+    // Diferencia de año (±3 años máximo)
+    if (aInfo.year > 0 && cInfo.year > 0) {
+      const yearDiff = Math.abs(aInfo.year - cInfo.year)
+      if (yearDiff === 0) {
+        score += 20
+        reasons.push('Mismo año')
+      } else if (yearDiff <= 1) {
+        score += 15
+        reasons.push('Año ±1 de diferencia')
+      } else if (yearDiff <= 3) {
+        score += 8
+        reasons.push('Año ±3 de diferencia')
+      } else {
+        return null
+      }
+    }
+
+    // Similar price (±40%)
+    const assetPrice = asset.price_amount || 0
+    const candPrice = candidate.price_amount || 0
+    if (assetPrice > 0 && candPrice > 0) {
+      const ratio = Math.max(candPrice, assetPrice) / Math.min(candPrice, assetPrice)
+      if (ratio <= 1.1) { score += 20; reasons.push('Precio casi idéntico') }
+      else if (ratio <= 1.25) { score += 15; reasons.push('Precio muy similar') }
+      else if (ratio <= 1.4) { score += 8; reasons.push('Precio similar') }
+      else { return null }
+    }
+
+    return {
+      price: candPrice,
+      listingUrl: candidate.source_listing_url || candidate.source_listing_id,
+      title: candidate.title,
+      distance_km: 0,
+      age_days: this._daysSince(candidate.description || candidate.title),
+      qualityScore: Math.min(100, score),
+      source: 'Encuentra24',
+      reason: reasons.join(', '),
+      listPrice: candPrice,
+      make: cInfo.make,
+      model: cInfo.model,
+      year: cInfo.year,
+      mileage: candidate.raw_data?.mileage
+    }
   }
 
   private _extractAreaM2(asset: Asset): number {

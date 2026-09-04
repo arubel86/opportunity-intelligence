@@ -35,11 +35,17 @@ function opt(name, fallback) {
 }
 
 export const config = {
-  // Supabase
+  // InsForge (Primary)
+  insforge: {
+    url: opt('INSFORGE_URL', opt('API_BASE_URL', 'https://insforge.aizprua.com')),
+    apiKey: opt('INSFORGE_API_KEY', opt('API_KEY', '')),
+  },
+
+  // Supabase (Fallback / Legacy)
   supabase: {
-    url: req('SUPABASE_URL'),
-    anonKey: req('SUPABASE_ANON_KEY'),
-    serviceRoleKey: req('SUPABASE_SERVICE_ROLE_KEY'),
+    url: opt('SUPABASE_URL', opt('INSFORGE_URL', opt('API_BASE_URL', 'https://insforge.aizprua.com'))),
+    anonKey: opt('SUPABASE_ANON_KEY', opt('INSFORGE_API_KEY', '')),
+    serviceRoleKey: opt('SUPABASE_SERVICE_ROLE_KEY', opt('INSFORGE_API_KEY', '')),
     databaseUrl: opt('SUPABASE_DATABASE_URL'),
   },
 

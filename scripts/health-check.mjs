@@ -9,6 +9,7 @@ import { execSync } from 'child_process'
 import { existsSync } from 'fs'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
+import './config.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = resolve(__dirname, '..')
@@ -45,15 +46,23 @@ console.log('╚═════════════════════�
 console.log('')
 
 // ── 1. Database ────────────────────────────────────────────────────────────
+const INSFORGE_URL = process.env.INSFORGE_URL || process.env.API_BASE_URL || 'https://insforge.aizprua.com'
+const INSFORGE_KEY = process.env.INSFORGE_API_KEY || process.env.API_KEY
 const DB_URL = process.env.SUPABASE_DATABASE_URL
-if (DB_URL) {
+
+if (INSFORGE_KEY) {
+  check('Database (InsForge)', () => {
+    const curlCmd = process.platform === 'win32' ? 'curl.exe' : 'curl'
+    execSync(`${curlCmd} -sf "${INSFORGE_URL}/api/health"`, { timeout: 10000, stdio: 'pipe' })
+  })
+} else if (DB_URL) {
   check('Database', () => {
     execSync(`psql "${DB_URL}" -c "SELECT 1" -t -q`, { timeout: 10000, stdio: 'pipe' })
   })
 } else if (process.env.SUPABASE_URL) {
   warnCheck('Database', 'SUPABASE_URL set, but no SUPABASE_DATABASE_URL for psql')
 } else {
-  warnCheck('Database', 'Not configured (set SUPABASE_URL in .env)')
+  warnCheck('Database', 'Not configured (set INSFORGE_URL or SUPABASE_URL in .env)')
 }
 
 // ── 2. Redis ───────────────────────────────────────────────────────────────
@@ -146,7 +155,10 @@ check('Dashboard', () => {
 }
 
 // ── 9. Environment ─────────────────────────────────────────────────────────
-const requiredVars = ['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY']
+const hasInsForge = !!(process.env.INSFORGE_API_KEY || process.env.API_KEY)
+const requiredVars = hasInsForge
+  ? ['INSFORGE_URL', 'INSFORGE_API_KEY']
+  : ['SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_SERVICE_ROLE_KEY']
 const missingVars = requiredVars.filter(v => !process.env[v])
 if (missingVars.length > 0) {
   warnCheck('Environment', `Missing: ${missingVars.join(', ')} (set in .env)`)

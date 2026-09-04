@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "dev": "turbo run dev",
+    "dev:dashboard": "turbo run dev --filter=dashboard",
     "build": "turbo run build",
     "lint": "turbo run lint",
     "test": "turbo run test",
@@ -18,6 +19,8 @@
     "db:seed": "node scripts/db-seed.mjs",
     "health": "node scripts/health-check.mjs",
     "pipeline": "node scripts/pipeline.mjs",
+    "pipeline:all": "node scripts/scheduler.mjs --run-all",
+    "scheduler": "node scripts/scheduler.mjs",
     "benchmark": "node scripts/pipeline.mjs --limit=10"
   },
   "devDependencies": {
@@ -28,6 +31,7 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
+    "@insforge/sdk": "^1.5.2",
     "@supabase/supabase-js": "^2.110.0",
     "pg": "^8.22.0"
   },

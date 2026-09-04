@@ -8,11 +8,13 @@
  * Usage: node scripts/pipeline.mjs [--limit=10] [--source=encuentra24]
  */
 
-import { fileURLToPath } from 'url'
+import { fileURLToPath, pathToFileURL } from 'url'
 import { dirname, resolve } from 'path'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = resolve(__dirname, '..')
+
+import './config.mjs'
 
 // ── Logger ────────────────────────────────────────────────────────────────
 import { log as rawLogger } from './logger.mjs'
@@ -71,32 +73,36 @@ async function main() {
   }
 
   // ── Stage 1: Scrape ────────────────────────────────────────────────────
-  const { run: scrape } = await import(resolve(ROOT, 'pipeline/scraper-stage.mjs'))
+  const { run: scrape } = await import(pathToFileURL(resolve(ROOT, 'pipeline/scraper-stage.mjs')).href)
   ctx.listings = await scrape(ctx)
 
   // ── Stage 2: Normalize ────────────────────────────────────────────────
-  const { run: normalize } = await import(resolve(ROOT, 'pipeline/normalize-stage.mjs'))
+  const { run: normalize } = await import(pathToFileURL(resolve(ROOT, 'pipeline/normalize-stage.mjs')).href)
   ctx.normalized = await normalize(ctx)
 
   // ── Stage 3: Validate ──────────────────────────────────────────────────
-  const { run: validate } = await import(resolve(ROOT, 'pipeline/validation-stage.mjs'))
+  const { run: validate } = await import(pathToFileURL(resolve(ROOT, 'pipeline/validation-stage.mjs')).href)
   ctx.validated = await validate(ctx)
 
   // ── Stage 4: Score ─────────────────────────────────────────────────────
-  const { run: score } = await import(resolve(ROOT, 'pipeline/scoring-stage.mjs'))
+  const { run: score } = await import(pathToFileURL(resolve(ROOT, 'pipeline/scoring-stage.mjs')).href)
   ctx.scored = await score(ctx)
 
   // ── Stage 5: Decide ────────────────────────────────────────────────────
-  const { run: decide } = await import(resolve(ROOT, 'pipeline/decision-stage.mjs'))
+  const { run: decide } = await import(pathToFileURL(resolve(ROOT, 'pipeline/decision-stage.mjs')).href)
   ctx.decided = await decide(ctx)
 
   // ── Stage 6: Persist (DB) ──────────────────────────────────────────────
-  const { run: persist } = await import(resolve(ROOT, 'pipeline/persistence-stage.mjs'))
+  const { run: persist } = await import(pathToFileURL(resolve(ROOT, 'pipeline/persistence-stage.mjs')).href)
   const persistResult = await persist(ctx)
   ctx.pipeline_run_id = persistResult.pipeline_run_id
 
-  // ── Stage 7: Report ─────────────────────────────────────────────────────
-  const { run: reportStage } = await import(resolve(ROOT, 'pipeline/reporting-stage.mjs'))
+  // ── Stage 7: Notify & Alert ───────────────────────────────────────────
+  const { run: notifyStage } = await import(pathToFileURL(resolve(ROOT, 'pipeline/notification-stage.mjs')).href)
+  await notifyStage(ctx)
+
+  // ── Stage 8: Report ─────────────────────────────────────────────────────
+  const { run: reportStage } = await import(pathToFileURL(resolve(ROOT, 'pipeline/reporting-stage.mjs')).href)
   await reportStage(ctx)
 
   // ── Done ────────────────────────────────────────────────────────────────

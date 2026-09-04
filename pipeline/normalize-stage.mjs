@@ -3,6 +3,8 @@
  * Transforms raw scraped listings into structured asset objects.
  */
 
+import { geocodeLocation } from './geocoder.mjs'
+
 const KNOWN_AGENCIES = [
   'GC REALTY', 'Global Advisors Real Estate', 'Keller Williams',
   'RE/MAX', 'Coldwell Banker', 'Century 21', 'ERA Real Estate',
@@ -178,8 +180,19 @@ export async function run(ctx) {
         .replace(/Add to favorites\s*/gi, '')
         .trim()
 
+      const isVehicle = ctx.source === 'e24-autos' || ctx.source === 'banco-nacional-autos' || ctx.source === 'caja-ahorros-autos' || ctx.source === 'clasificar-pa' || ctx.source === 'carrocarros-pa' || ctx.source === 'superautos-pa'
+      const vertical = isVehicle ? 'vehicles' : 'real_estate'
+
       // Build structured raw_data for dashboard use
-      const rawData = {
+      const rawData = isVehicle ? {
+        seller: item.seller || owner || '',
+        make: item.make || '',
+        model: item.model || '',
+        year: parseInt(item.year) || 0,
+        mileage: parseInt(item.mileage) || 0,
+        scraped_at: item.scrapedAt || new Date().toISOString(),
+        photos: item.raw_data?.photos || [],
+      } : {
         seller: item.seller || owner || '',
         bedrooms: item.bedrooms || 0,
         bathrooms: item.bathrooms || 0,
@@ -187,29 +200,45 @@ export async function run(ctx) {
         parking: item.parking || 0,
         property_type: translatePropertyType(item.propertyType || ''),
         scraped_at: item.scrapedAt || new Date().toISOString(),
+        photos: item.raw_data?.photos || [],
       }
 
-      // Derive stable source_listing_id from the Encuentra24 URL
-      // (e.g. /panama-en/.../31340975 → E24-31340975) so upserts match across runs
+      // Derive stable source_listing_id (prioritize scraper-assigned ID)
       const urlStr = item.url || item.source_listing_url || ''
       const urlIdMatch = urlStr.match(/\/(\d{6,})(?:\?|$)/)
-      const sourceListingId = urlIdMatch
-        ? `E24-${urlIdMatch[1]}`
-        : `E24-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+      
+      let sourceListingId = item.id
+      if (!sourceListingId) {
+        sourceListingId = urlIdMatch
+          ? `E24-${urlIdMatch[1]}`
+          : `E24-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+      }
+
+      // Geocode location
+      const geocoded = geocodeLocation({
+        neighborhood: neighborhood,
+        district: loc.district || item.district || '',
+        province: loc.province || item.province || '',
+        title: finalTitle,
+        id: sourceListingId
+      })
 
       return {
         asset_id: sourceListingId, // used downstream as source_listing_id
         source_id: ctx.source,
-        vertical: 'real_estate',
+        vertical: vertical,
         status: 'active',
         price_currency: item.currency || item.price_currency || 'USD',
         title: finalTitle,
         owner_name: owner || item.seller || '',
         price_amount: typeof item.price === 'number' ? item.price : parseFloat(String(item.price)) || 0,
         location: {
-          province: loc.province || '',
-          district: loc.district || item.district || '',
+          province: geocoded.province || loc.province || '',
+          district: geocoded.district || loc.district || item.district || '',
           neighborhood: neighborhood,
+          corregimiento: neighborhood || geocoded.district || loc.district || '',
+          lat: geocoded.lat,
+          lng: geocoded.lng,
         },
         description: item.description || '',
         seller_type: item.seller_type || (owner ? 'agent' : 'owner'),

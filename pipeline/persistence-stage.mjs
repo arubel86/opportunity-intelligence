@@ -6,9 +6,10 @@
 
 import { SOURCE_UUIDS, computeContentHash, computeChangeReason,
          gradeForScore, profileForDecision, cleanTitle, extractExtraFields } from './utils.mjs'
+import { getDbClient } from '../lib/db.mjs'
 
 /**
- * Persist all scored+decided assets to Supabase.
+ * Persist all scored+decided assets to InsForge / Supabase.
  * @param {object} ctx Pipeline context { decided, source, log, report }
  * @returns {Promise<object>} Updated context with pipeline_run_id
  */
@@ -17,16 +18,13 @@ export async function run(ctx) {
   const dbStart = Date.now()
   const logStage = log.module('DATABASE')
 
-  const supabaseUrl = process.env.SUPABASE_URL
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  const supabase = await getDbClient()
 
-  if (!supabaseUrl || !supabaseKey) {
-    logStage.info('Supabase not configured — saving to local JSON')
+  if (!supabase) {
+    logStage.info('Database (InsForge / Supabase) not configured — saving to local JSON')
     return ctx // caller will handle file fallback
   }
 
-  const { createClient } = await import('@supabase/supabase-js')
-  const supabase = createClient(supabaseUrl, supabaseKey)
   const knownAssetIds = new Set()
   let pipelineRunId = ctx.pipeline_run_id
 
@@ -279,11 +277,9 @@ export async function run(ctx) {
     }
 
     // ── 2f. Insert Investment Decision ──────────────────────────────────
-    // Map WATCH → RESEARCH_MORE for schema compat (RESEARCH_MORE exists in CHECK)
     let decisionAction = result.decision || 'AVOID'
-    if (decisionAction === 'WATCH') decisionAction = 'RESEARCH_MORE'
-    // Ensure the action is valid per the CHECK constraint
-    const validActions = ['BUY_NOW', 'WATCH_HIGH_PRIORITY', 'NEGOTIATE', 'RESEARCH_MORE', 'AVOID', 'MANUAL_REVIEW_REQUIRED']
+    // Ensure the action is valid per the CHECK constraint (migrated DB supports WATCH/NEGOTIATE)
+    const validActions = ['BUY_NOW', 'WATCH_HIGH_PRIORITY', 'WATCH', 'NEGOTIATE', 'RESEARCH_MORE', 'AVOID', 'MANUAL_REVIEW_REQUIRED']
     if (!validActions.includes(decisionAction)) decisionAction = 'AVOID'
 
     try {

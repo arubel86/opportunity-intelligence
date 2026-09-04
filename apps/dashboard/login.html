@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iniciar Sesión — Opportunity Intelligence</title>
+<meta name="description" content="Acceso a la plataforma de Inteligencia de Oportunidades y Remates Judiciales de Panamá. Aizprua S.E.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%230c2461'/%3E%3Cstop offset='50%25' stop-color='%231e40af'/%3E%3Cstop offset='100%25' stop-color='%233b82f6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='25' fill='url(%23g)'/%3E%3Ctext x='50' y='56' font-family='Arial, sans-serif' font-weight='bold' font-size='56' fill='white' text-anchor='middle' dominant-baseline='central'%3EOI%3C/text%3E%3C/svg%3E">
+
+<!-- Google Fonts: Manrope (Display) + Inter (Body) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* ─────────────────────────────────────────────────────────────────────────────
+   DESIGN SYSTEM: Opportunity Intelligence — The Precision Ledger
+   Aligned with Aizprua S.E. High-Ticket Standards
+   ───────────────────────────────────────────────────────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Primary Palette */
+  --primary: #0c2461;
+  --primary-container: #1e40af;
+  --primary-accent: #3b82f6;
+  --primary-glow: rgba(59, 130, 246, 0.35);
+
+  /* Surface */
+  --surface: #f7f9fb;
+  --surface-container-low: #f0f2f6;
+  --surface-container: #eceef0;
+  --surface-container-high: #e6e8ea;
+  --surface-container-lowest: #ffffff;
+
+  /* Text */
+  --on-surface: #191c1e;
+  --on-surface-variant: #444653;
+  --on-primary: #ffffff;
+
+  /* Status */
+  --error: #ba1a1a;
+  --error-bg: #fef2f2;
+  --error-border: #fecaca;
+  --success-bg: #ecfdf5;
+  --success-border: #a7f3d0;
+  --success-text: #065f46;
+
+  /* Radius & Shadows */
+  --radius-md: 0.75rem;
+  --radius-xl: 1.5rem;
+  --radius-full: 9999px;
+  --shadow-card: 0 2px 20px rgba(12, 36, 97, 0.06);
+  --shadow-glow: 0 0 30px rgba(59, 130, 246, 0.15);
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--surface);
+  color: var(--on-surface);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.anim { opacity: 0; animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.d1 { animation-delay: 0.08s; }
+.d2 { animation-delay: 0.16s; }
+.d3 { animation-delay: 0.24s; }
+.d4 { animation-delay: 0.32s; }
+.d5 { animation-delay: 0.40s; }
+
+/* ── Layout ── */
+.login-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── Hero Side (Desktop) ── */
+.hero-side {
+  display: none;
+  width: 50%;
+  background: linear-gradient(135deg, #07173e 0%, #0c2461 40%, #1e40af 80%, #2563eb 100%);
+  position: relative;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5rem;
+}
+
+.hero-side::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+}
+
+.hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+}
+.hero-orb--1 {
+  width: 420px; height: 420px;
+  top: -120px; right: -80px;
+  background: rgba(59, 130, 246, 0.3);
+  animation: float 8s ease-in-out infinite;
+}
+.hero-orb--2 {
+  width: 360px; height: 360px;
+  bottom: -90px; left: -90px;
+  background: rgba(12, 36, 97, 0.5);
+  animation: float 10s ease-in-out infinite reverse;
+}
+.hero-orb--3 {
+  width: 220px; height: 220px;
+  top: 45%; left: 20%;
+  background: rgba(133, 205, 255, 0.16);
+  animation: float 7s ease-in-out infinite 1s;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+  max-width: 440px;
+  color: var(--on-primary);
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #c7d2fe;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(8px);
+}
+.hero-badge-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #34d399;
+  box-shadow: 0 0 8px #34d399;
+}
+
+.hero-logo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+.hero-logo-icon {
+  width: 54px; height: 54px;
+  background: #ffffff;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  color: var(--primary);
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.4rem;
+}
+.hero-logo-text {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 1.65rem;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.hero-logo-text span {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.hero-tagline {
+  font-size: 1.05rem;
+  font-weight: 300;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.82);
+  margin-bottom: 2.75rem;
+}
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+.hero-stat {
+  text-align: left;
+}
+.hero-stat-value {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: #ffffff;
+}
+.hero-stat-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.55);
+  margin-top: 0.35rem;
+  line-height: 1.35;
+}
+
+/* ── Form Side ── */
+.form-side {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.5rem;
+  position: relative;
+  background: linear-gradient(135deg, #07173e 0%, #0c2461 40%, #1e40af 100%);
+  min-height: 100vh;
+}
+
+.form-container {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: var(--radius-xl);
+  padding: 2.75rem 2.25rem;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+/* ── Mobile Logo ── */
+.mobile-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+.mobile-logo-icon {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-container));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Manrope', sans-serif;
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(12, 36, 97, 0.25);
+}
+.mobile-logo-name {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 1.35rem;
+  color: var(--on-surface);
+  letter-spacing: -0.02em;
+}
+.mobile-logo-name span {
+  color: var(--primary-container);
+}
+
+/* ── Form Header ── */
+.form-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+.form-title {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 700;
+  font-size: 1.65rem;
+  color: var(--on-surface);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+.form-subtitle {
+  font-size: 0.875rem;
+  color: var(--on-surface-variant);
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* ── Alert Box ── */
+.alert-box {
+  display: none;
+  margin-bottom: 1.25rem;
+  animation: fadeUp 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.alert-box.visible { display: block; }
+
+.alert-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.5;
+  border: 1px solid;
+}
+.alert-inner--error {
+  background: var(--error-bg);
+  border-color: var(--error-border);
+  color: #991b1b;
+}
+.alert-inner--success {
+  background: var(--success-bg);
+  border-color: var(--success-border);
+  color: var(--success-text);
+}
+.alert-inner svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ── Form Fields ── */
+.field-group {
+  margin-bottom: 1.25rem;
+}
+.field-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+  margin-left: 0.2rem;
+}
+.field-wrapper {
+  position: relative;
+}
+.field-icon {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  color: var(--on-surface-variant);
+  opacity: 0.45;
+  transition: opacity 0.2s, color 0.2s;
+  z-index: 2;
+}
+.field-input {
+  width: 100%;
+  padding: 0.9rem 1rem 0.9rem 3rem;
+  background: var(--surface-container-low);
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.875rem;
+  color: var(--on-surface);
+  transition: all 0.2s ease;
+  outline: none;
+  position: relative;
+  z-index: 1;
+}
+.field-input::placeholder {
+  color: var(--on-surface-variant);
+  opacity: 0.4;
+}
+.field-input:focus {
+  background: var(--surface-container-lowest);
+  border-color: rgba(12, 36, 97, 0.4);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+}
+.field-input:focus ~ .field-icon,
+.field-wrapper:focus-within .field-icon {
+  color: var(--primary-container);
+  opacity: 1;
+}
+
+.field-input--password {
+  padding-right: 3.25rem;
+}
+input::-ms-reveal, input::-ms-clear { display: none !important; }
+
+/* ── Toggle Password Button ── */
+.toggle-pass {
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 3.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--on-surface-variant);
+  opacity: 0.45;
+  transition: opacity 0.2s, color 0.2s;
+  z-index: 5;
+}
+.toggle-pass:hover {
+  opacity: 0.85;
+  color: var(--primary-container);
+}
+
+/* ── Remember Me ── */
+.remember-group {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+.custom-checkbox {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.custom-checkbox input {
+  position: absolute;
+  opacity: 0;
+  width: 100%; height: 100%;
+  cursor: pointer;
+  z-index: 2;
+  margin: 0;
+}
+.custom-checkbox .checkmark {
+  position: absolute;
+  inset: 0;
+  background: var(--surface-container-low);
+  border: 1.5px solid rgba(12, 36, 97, 0.25);
+  border-radius: 5px;
+  transition: all 0.2s;
+}
+.custom-checkbox input:checked ~ .checkmark {
+  background: linear-gradient(135deg, var(--primary), var(--primary-container));
+  border-color: transparent;
+}
+.custom-checkbox .checkmark::after {
+  content: '';
+  position: absolute;
+  display: none;
+  left: 5.5px; top: 2px;
+  width: 5px; height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.custom-checkbox input:checked ~ .checkmark::after { display: block; }
+.remember-label {
+  font-size: 0.8125rem;
+  color: var(--on-surface-variant);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* ── Submit Button ── */
+.btn-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.95rem 1.25rem;
+  margin-top: 1.75rem;
+  background: linear-gradient(135deg, #0c2461 0%, #1e40af 100%);
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(12, 36, 97, 0.2);
+}
+.btn-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+  background-size: 200% 100%;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.btn-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(12, 36, 97, 0.32);
+}
+.btn-submit:hover::before {
+  opacity: 1;
+  animation: shimmer 1.5s linear infinite;
+}
+.btn-submit:active { transform: translateY(0); }
+.btn-submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+.btn-submit:disabled::before { display: none; }
+
+.spinner {
+  display: none;
+  width: 18px; height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.65s linear infinite;
+}
+.spinner.visible { display: block; }
+
+/* ── Security Footer ── */
+.security-footer {
+  margin-top: 2.25rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+.security-badges {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+}
+.security-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--on-surface-variant);
+  opacity: 0.55;
+}
+.security-badge svg { width: 14px; height: 14px; }
+.security-dot {
+  width: 3px; height: 3px;
+  background: var(--on-surface-variant);
+  opacity: 0.35;
+  border-radius: 50%;
+}
+.security-brand {
+  margin-top: 0.75rem;
+  text-align: center;
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--on-surface-variant);
+  opacity: 0.4;
+}
+
+/* ── Desktop Layout ── */
+@media (min-width: 1024px) {
+  .hero-side { display: flex; }
+  .form-side {
+    width: 50%;
+    background: var(--surface-container-lowest);
+    padding: 3.5rem;
+  }
+  .form-container {
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+    max-width: 380px;
+    border: none;
+  }
+  .mobile-logo { display: none; }
+  .form-header { text-align: left; }
+  .form-title { font-size: 1.85rem; }
+  .security-footer { margin-top: 3.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="login-wrapper">
+
+  <!-- ── LEFT: Hero Side (Desktop) ── -->
+  <aside class="hero-side">
+    <div class="hero-orb hero-orb--1"></div>
+    <div class="hero-orb hero-orb--2"></div>
+    <div class="hero-orb hero-orb--3"></div>
+
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        SISTEMA DE INTELIGENCIA OPERATIVO
+      </div>
+
+      <div class="hero-logo">
+        <div class="hero-logo-icon">OI</div>
+        <div class="hero-logo-text">
+          Opportunity
+          <span>Intelligence Engine</span>
+        </div>
+      </div>
+
+      <p class="hero-tagline">
+        Detección algorítmica, normalización y scoring financiero de remates judiciales y subastas en Panamá.
+      </p>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-value">15+</div>
+          <div class="hero-stat-label">Fuentes Oficiales</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">A — F</div>
+          <div class="hero-stat-label">Scoring de Oportunidades</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">256-bit</div>
+          <div class="hero-stat-label">Seguridad Bancaria</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── RIGHT: Form Side ── -->
+  <main class="form-side">
+    <div class="form-container">
+
+      <!-- Mobile Logo -->
+      <div class="mobile-logo anim d1">
+        <div class="mobile-logo-icon">OI</div>
+        <div class="mobile-logo-name">Opportunity <span>Intelligence</span></div>
+      </div>
+
+      <!-- Header -->
+      <header class="form-header anim d2">
+        <h1 class="form-title">Bienvenido</h1>
+        <p class="form-subtitle">Ingrese sus credenciales para acceder al panel de inteligencia.</p>
+      </header>
+
+      <!-- Alert Box -->
+      <div id="alert-box" class="alert-box" role="alert" aria-live="polite"></div>
+
+      <!-- Login Form -->
+      <form id="auth-form" class="anim d3" novalidate>
+
+        <!-- Email -->
+        <div class="field-group">
+          <label class="field-label" for="input-email">Correo Electrónico</label>
+          <div class="field-wrapper">
+            <input
+              class="field-input"
+              id="input-email"
+              name="email"
+              type="email"
+              placeholder="info@aizprua.com"
+              required
+              autocomplete="email"
+              spellcheck="false"
+            >
+            <div class="field-icon">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="field-group">
+          <label class="field-label" for="input-password">Contraseña</label>
+          <div class="field-wrapper">
+            <input
+              class="field-input field-input--password"
+              id="input-password"
+              name="password"
+              type="password"
+              placeholder="••••••••••••"
+              required
+              autocomplete="current-password"
+            >
+            <div class="field-icon">
+              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+              </svg>
+            </div>
+            <button type="button" id="toggle-pass-btn" class="toggle-pass" title="Mostrar contraseña" aria-label="Mostrar u ocultar contraseña">
+              <svg id="toggle-pass-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2.036 12.322a1.012 1.012 0 010-.644C3.752 8.548 7.567 6 12 6s8.248 2.548 9.964 5.678a1.012 1.012 0 010 .644C20.248 15.452 16.433 18 12 18s-8.248-2.548-9.964-5.678z"/>
+                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Remember Me -->
+        <div class="remember-group">
+          <div class="custom-checkbox">
+            <input type="checkbox" id="remember-check" checked>
+            <span class="checkmark"></span>
+          </div>
+          <label class="remember-label" for="remember-check">Recordarme en este dispositivo</label>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn-submit" id="submit-btn">
+          <span id="submit-text">Acceder al Panel</span>
+          <svg id="submit-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+          </svg>
+          <div class="spinner" id="submit-spinner"></div>
+        </button>
+      </form>
+
+      <!-- Security Footer -->
+      <div class="security-footer anim d4">
+        <div class="security-badges">
+          <div class="security-badge">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+            ENCRIPTADO
+          </div>
+          <div class="security-dot"></div>
+          <div class="security-badge">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            </svg>
+            CONEXIÓN SEGURA
+          </div>
+        </div>
+        <div class="security-brand">AIZPRUA S.E. &bull; OPPORTUNITY INTELLIGENCE</div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+// ── Configuration ──
+const INSFORGE_BASE_URL = 'https://insforge.aizprua.com';
+const INSFORGE_API_KEY  = 'ik_2bed7411a0830c9985681c4a5ccf2dadc81df1c78a3f30b8e8710d64ecb2d13f';
+
+const $ = (id) => document.getElementById(id);
+const alertBox      = $('alert-box');
+const authForm      = $('auth-form');
+const emailInput    = $('input-email');
+const passInput     = $('input-password');
+const submitBtn     = $('submit-btn');
+const submitText    = $('submit-text');
+const submitIcon    = $('submit-icon');
+const submitSpinner = $('submit-spinner');
+const toggleBtn     = $('toggle-pass-btn');
+const toggleIcon    = $('toggle-pass-icon');
+const rememberCheck = $('remember-check');
+
+// ── Check active session on load ──
+(function checkExistingSession() {
+  const token = localStorage.getItem('oi_access_token') || sessionStorage.getItem('oi_access_token');
+  if (token) {
+    // Redirigir al dashboard
+    window.location.href = '/dashboard';
+  }
+})();
+
+// ── Rate Limiting ──
+let failedAttempts = 0;
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_SECONDS = 30;
+
+function startLockout() {
+  let remaining = LOCKOUT_SECONDS;
+  submitBtn.disabled = true;
+  showAlert(`Demasiados intentos fallidos. Espera ${remaining} segundos antes de intentar nuevamente.`);
+  
+  const timer = setInterval(() => {
+    remaining--;
+    if (remaining <= 0) {
+      clearInterval(timer);
+      failedAttempts = 0;
+      submitBtn.disabled = false;
+      submitText.textContent = 'Acceder al Panel';
+      submitIcon.style.display = '';
+      hideAlert();
+    } else {
+      submitText.textContent = `Espera ${remaining}s`;
+    }
+  }, 1000);
+}
+
+// ── Alert System ──
+function showAlert(message, type = 'error') {
+  const cls = type === 'error' ? 'alert-inner--error' : 'alert-inner--success';
+  const icon = type === 'error'
+    ? '<path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>'
+    : '<path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>';
+
+  alertBox.innerHTML = `
+    <div class="alert-inner ${cls}">
+      <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        ${icon}
+      </svg>
+      <p>${message}</p>
+    </div>`;
+  alertBox.classList.add('visible');
+}
+
+function hideAlert() {
+  alertBox.classList.remove('visible');
+  alertBox.innerHTML = '';
+}
+
+// ── Loading state ──
+function setLoading(loading) {
+  submitBtn.disabled = loading;
+  if (loading) {
+    submitText.style.display = 'none';
+    submitIcon.style.display = 'none';
+    submitSpinner.classList.add('visible');
+  } else {
+    submitText.style.display = '';
+    submitIcon.style.display = '';
+    submitSpinner.classList.remove('visible');
+  }
+}
+
+// ── Toggle Password ──
+toggleBtn.addEventListener('click', () => {
+  const isHidden = passInput.type === 'password';
+  passInput.type = isHidden ? 'text' : 'password';
+  toggleIcon.innerHTML = isHidden
+    ? '<path d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/>'
+    : '<path d="M2.036 12.322a1.012 1.012 0 010-.644C3.752 8.548 7.567 6 12 6s8.248 2.548 9.964 5.678a1.012 1.012 0 010 .644C20.248 15.452 16.433 18 12 18s-8.248-2.548-9.964-5.678z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>';
+});
+
+// ── Submit Authentication Flow ──
+authForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  hideAlert();
+
+  const email = emailInput.value.trim();
+  const password = passInput.value;
+
+  if (!email || !password) {
+    showAlert('Por favor ingrese su correo y contraseña.');
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const res = await fetch(`${INSFORGE_BASE_URL}/api/auth/sign-in`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': INSFORGE_API_KEY
+      },
+      body: JSON.stringify({ email, password })
+    });
+
+    const result = await res.json();
+
+    if (!res.ok || result.error) {
+      failedAttempts++;
+      if (failedAttempts >= MAX_ATTEMPTS) {
+        setLoading(false);
+        startLockout();
+        return;
+      }
+      const errorMsg = result.message || result.error?.message || 'Credenciales inválidas. Por favor verifique sus datos.';
+      showAlert(errorMsg);
+      setLoading(false);
+      return;
+    }
+
+    // Autenticación Exitosa
+    const sessionData = result.data || result;
+    const token = sessionData.accessToken || sessionData.token || (sessionData.user && sessionData.user.id);
+
+    if (rememberCheck.checked) {
+      localStorage.setItem('oi_access_token', token);
+      localStorage.setItem('oi_user_email', email);
+    } else {
+      sessionStorage.setItem('oi_access_token', token);
+      sessionStorage.setItem('oi_user_email', email);
+    }
+
+    showAlert('Sesión iniciada correctamente. Redirigiendo...', 'success');
+
+    setTimeout(() => {
+      window.location.href = '/dashboard';
+    }, 600);
+
+  } catch (err) {
+    console.error('Error durante la autenticación:', err);
+    showAlert('Error de conexión con el servidor de autenticación. Intente nuevamente.');
+    setLoading(false);
+  }
+});
+</script>
+
+</body>
+</html>

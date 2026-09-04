@@ -1,0 +1,1289 @@
+{
+  "name": "HOIE - Scraper Inteligente de Activos con Motor de Reconocimiento Web & IA (Producción)",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "### 🌐 Motor de Reconocimiento Web & Token Guard\n\n1. **Fase 1 (Reconocimiento)**: Si es búsqueda táctica, busca en la web y extrae únicamente URLs indexadas y activas con propiedades reales.\n2. **Protección de Tokens**: Si no hay resultados comprobados, el flujo aborta antes de llamar a Groq y responde de inmediato al Dashboard.\n3. **Fase 2 (Extracción)**: Descarga las URLs verificadas y Groq Llama 3.3 extrae los datos estructurados para Supabase.",
+        "height": 200,
+        "width": 360
+      },
+      "id": "node-sticky-notes-discovery",
+      "name": "Sticky Note (Discovery)",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1420,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 12
+            }
+          ]
+        }
+      },
+      "id": "node-trigger-cron",
+      "name": "Auto-Cron Trigger (12h)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1420,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "hoie-scrape",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "node-trigger-webhook",
+      "name": "Webhook Disparo Dashboard",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1420,
+        560
+      ],
+      "webhookId": "hoie-scrape-trigger"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check_is_targeted_search",
+              "leftValue": "={{ Boolean(($json.searchQuery && $json.searchQuery.length > 2) || ($json.location && $json.location.length > 2) || ($json.targetUrl && $json.targetUrl.startsWith('http'))) }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              },
+              "rightValue": true
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-if-search-mode",
+      "name": "¿Es Búsqueda Táctica?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -1220,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.first().json;\n\n// Si ya viene una URL directa específica, no requiere motor de búsqueda\nif (input.targetUrl && typeof input.targetUrl === 'string' && input.targetUrl.startsWith('http')) {\n  return [{\n    json: {\n      direct_url: input.targetUrl.trim(),\n      search_query: null,\n      source_name: input.sourceName || 'Búsqueda Directa',\n      vertical: input.vertical || 'real_estate',\n      location: input.location || 'Panamá',\n      is_direct: true\n    }\n  }];\n}\n\n// Construir la consulta de búsqueda flexible y no restrictiva para Panamá\nconst loc = (input.location && input.location !== 'Panamá') ? input.location.trim() : '';\nconst vert = input.vertical || 'real_estate';\nconst budget = Number(input.budget) || 0;\nconst queryText = input.searchQuery || '';\n\nlet composedQuery = '';\nif (queryText) {\n  composedQuery = `${queryText}`;\n} else if (vert === 'vehicles') {\n  composedQuery = `autos vehiculos venta ${loc} Panamá ${budget > 0 ? `hasta ${budget}` : ''} site:encuentra24.com OR site:banconal.com.pa OR site:cajadeahorros.com.pa`;\n} else {\n  composedQuery = `propiedades apartamentos casas venta ${loc} Panamá ${budget > 0 ? `hasta ${budget}` : ''} site:encuentra24.com OR site:compreoalquile.com OR site:banconal.com.pa`;\n}\n\nreturn [{\n  json: {\n    direct_url: null,\n    search_query: composedQuery.replace(/\\s+/g, ' ').trim(),\n    source_name: `Búsqueda Web (${loc || 'Panamá'})`,\n    vertical: vert,\n    location: loc || 'Panamá',\n    is_direct: false\n  }\n}];"
+      },
+      "id": "node-build-search-query",
+      "name": "Construir Consulta de Búsqueda",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1020,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check_has_direct_url",
+              "leftValue": "={{ $json.is_direct }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              },
+              "rightValue": true
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-if-has-direct-url",
+      "name": "¿Es URL Directa?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -860,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://html.duckduckgo.com/html/?q={{ encodeURIComponent($json.search_query) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "node-web-search-recon",
+      "name": "Búsqueda Web Reconocimiento",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -680,
+        390
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extractor de URLs relevantes adaptado del patrón Scrapeador_master\nconst htmlData = $input.first().json.data || '';\nconst searchMeta = $('Construir Consulta de Búsqueda').first().json;\n\n// 1. Extraer todos los enlaces de resultados de búsqueda\nconst regex = /href=\"([^\"]+)\"/g;\nlet match;\nconst rawLinks = [];\n\nwhile ((match = regex.exec(htmlData)) !== null) {\n  let link = match[1];\n  if (link.includes('uddg=')) {\n    try {\n      const parts = link.split('uddg=');\n      if (parts[1]) {\n        link = decodeURIComponent(parts[1].split('&')[0]);\n      }\n    } catch (e) {}\n  }\n  \n  if (link.startsWith('http')) {\n    rawLinks.push(link);\n  }\n}\n\n// 2. Filtrar solo portales y bancos de Panamá válidos (excluyendo rastreadores y ads)\nconst allowedDomains = ['encuentra24.com', 'compreoalquile.com', 'banconal.com.pa', 'cajadeahorros.com.pa', 'baccredomatic.com', 'kwpanama.com', 'bgeneral.com'];\nconst excludedPatterns = ['facebook.com', 'twitter.com', 'instagram.com', 'duckduckgo.com', 'google.com', 'youtube.com', '/login', '/signup', '/registro'];\n\nconst validUrls = [];\nfor (const url of rawLinks) {\n  const isAllowed = allowedDomains.some(dom => url.toLowerCase().includes(dom));\n  const isExcluded = excludedPatterns.some(ex => url.toLowerCase().includes(ex));\n  \n  if (isAllowed && !isExcluded) {\n    const isPdf = url.toLowerCase().endsWith('.pdf') || url.toLowerCase().includes('/pdf/');\n    validUrls.push({\n      url: url,\n      source_name: searchMeta.source_name || 'Búsqueda Web',\n      vertical: searchMeta.vertical || 'real_estate',\n      location: searchMeta.location || 'Panamá',\n      is_pdf: isPdf,\n      is_custom_trigger: true\n    });\n  }\n}\n\n// Si no hay resultados de búsqueda, devolver indicador para Token Guard\nif (validUrls.length === 0) {\n  return [{\n    json: {\n      no_search_results: true,\n      location: searchMeta.location || 'Panamá',\n      query: searchMeta.search_query\n    }\n  }];\n}\n\nconst topUrls = validUrls.slice(0, 4);\nreturn topUrls.map(item => ({ json: item }));"
+      },
+      "id": "node-code-url-harvester",
+      "name": "Extractor de URLs Relevantes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -500,
+        390
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\nconst isPdf = (item.direct_url || '').toLowerCase().endsWith('.pdf') || (item.direct_url || '').toLowerCase().includes('/pdf/');\nreturn [{\n  json: {\n    url: item.direct_url,\n    source_name: item.source_name,\n    vertical: item.vertical,\n    location: item.location || 'Panamá',\n    is_pdf: isPdf,\n    is_custom_trigger: true\n  }\n}];"
+      },
+      "id": "node-pass-direct-url",
+      "name": "Mapear URL Directa",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -680,
+        250
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ (() => { if (!$env.SUPABASE_URL) throw new Error('SUPABASE_URL no está configurada'); return $env.SUPABASE_URL.replace(/\\/+$/, ''); })() }}/rest/v1/sources?is_active=eq.true",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY || $env.SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "node-supabase-get-sources",
+      "name": "Obtener Fuentes Activas de Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1020,
+        560
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst validSources = [];\n\nfor (const item of items) {\n  const s = item.json;\n  if (s && s.source_id && s.base_url) {\n    const targetUrl = s.base_url;\n    const isPdf = targetUrl.toLowerCase().endsWith('.pdf') || targetUrl.toLowerCase().includes('/pdf/');\n    validSources.push({\n      source_id: s.source_id,\n      url: targetUrl,\n      source_name: s.display_name || s.name,\n      vertical: s.vertical || 'real_estate',\n      is_pdf: isPdf,\n      is_custom_trigger: false\n    });\n  }\n}\n\nif (validSources.length === 0) {\n  throw new Error('No se encontraron fuentes activas en Supabase o falló la conexión.');\n}\n\nreturn validSources.map(src => ({ json: src }));"
+      },
+      "id": "node-code-map-supabase-sources",
+      "name": "Mapear Catálogo Supabase",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -840,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check_no_search_results",
+              "leftValue": "={{ $json.no_search_results }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              },
+              "rightValue": true
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-if-search-results-found",
+      "name": "¿Sin Resultados Web?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        390
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": false,\n  \"found_urls\": [],\n  \"assets_extracted\": 0,\n  \"location\": \"{{ $json.location }}\",\n  \"query\": \"{{ $json.query }}\",\n  \"tokens_saved\": true,\n  \"message\": \"No se encontraron propiedades activas para esta búsqueda en los portales. El flujo abortó de inmediato protegiendo el 100% de los tokens de IA.\"\n}",
+        "options": {}
+      },
+      "id": "node-respond-webhook-no-results",
+      "name": "Responder Webhook (Sin Resultados)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -140,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "=ℹ️ <b>BÚSQUEDA WEB FINALIZADA (Sin Resultados)</b>\n\n🔍 <b>Búsqueda:</b> {{ $json.query }}\n🛡️ <b>Token Guard:</b> Se abortó el flujo preventivamente ahorrando el 100% de tokens de IA al no encontrar anuncios indexados.",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "node-telegram-no-search-results",
+      "name": "Alerta Búsqueda Sin Resultados",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        60,
+        520
+      ],
+      "continueOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "TELEGRAM_CREDENTIAL",
+          "name": "Telegram Bot HOIE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check_is_pdf_direct",
+              "leftValue": "={{ $json.is_pdf }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-if-pdf-url",
+      "name": "¿Es URL Directa de PDF?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -140,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+            },
+            {
+              "name": "Accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "es-PA,es-ES;q=0.9,es;q=0.8,en;q=0.7"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": true
+            }
+          }
+        }
+      },
+      "id": "node-http-fetch",
+      "name": "Descargar Página Web",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        80,
+        410
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ ($env.N8N_HOST || 'http://localhost:5678').replace(/\\/+$/, '') }}/webhook/hoie-upload-pdf",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ source_id: $json.source_id, pdf_url: $json.url, source_name: $json.source_name, vertical: $json.vertical }) }}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "node-call-pdf-subflow",
+      "name": "Delegar al Flujo 2 (LlamaParse PDF)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        80,
+        220
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check_pdf_status_ok",
+              "leftValue": "={{ $json.error != null }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-if-pdf-webhook-ok",
+      "name": "¿Webhook PDF Exitoso?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        280,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "=⚠️ <b>ERROR EN PIPELINE HOIE (Sub-flujo PDF)</b>\n\n🏛️ <b>Fuente:</b> {{ $json.source_name || 'Desconocida' }}\n🔗 <b>PDF:</b> {{ $json.pdf_url || 'N/A' }}\n❌ <b>Causa:</b> Webhook de ingesta PDF no respondió correctamente (error: {{ $json.error?.message || 'Timeout/Conexión' }}).",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "node-telegram-pdf-error-alert",
+      "name": "Alerta Telegram Error PDF",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        220
+      ],
+      "continueOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "TELEGRAM_CREDENTIAL",
+          "name": "Telegram Bot HOIE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check_html_ok",
+              "leftValue": "={{ $json.error != null || $json.data == null || $json.data.length < 500 }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-if-http-ok",
+      "name": "¿Descarga Exitosa?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        280,
+        410
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "=⚠️ <b>ERROR EN PIPELINE HOIE (Scraper)</b>\n\n🏛️ <b>Fuente:</b> {{ $json.source_name || 'Desconocida' }}\n🔗 <b>URL:</b> {{ $json.url || 'N/A' }}\n❌ <b>Causa:</b> La descarga de la página falló o retornó contenido vacío (longitud < 500).",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "node-telegram-error-alert",
+      "name": "Alerta Telegram Error Scraping",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        510
+      ],
+      "continueOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "TELEGRAM_CREDENTIAL",
+          "name": "Telegram Bot HOIE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "htmlToMarkdown",
+        "html": "={{ $json.data }}",
+        "destinationKey": "data",
+        "options": {
+          "ignore": "img,svg,script,style,nav,footer,iframe"
+        }
+      },
+      "id": "node-markdown-clean",
+      "name": "Sanitizar HTML a Markdown",
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        480,
+        410
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.data }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Eres un analista experto en extracción estructurada de activos inmobiliarios y vehículos en Panamá para la plataforma HOIE (Opportunity Intelligence).\n\nAnaliza el texto Markdown extraído del portal '{{ $json.source_name }}' (URL: {{ $json.url }}).\n\nREGLAS ESTRICTAS DE EXTRACCIÓN:\n1. 'price_amount': Extrae únicamente números enteros o decimales en dólares USD (ej: 185000). Si el precio no aparece o es 'A consultar', coloca null.\n2. 'vertical': Usa '{{ $json.vertical }}' o infiere 'real_estate' (propiedades) o 'vehicles' (autos).\n3. 'location': Normaliza la provincia panameña ('Panamá', 'Colón', 'Chiriquí', 'Panamá Oeste', 'Coclé', 'Herrera', 'Los Santos', 'Veraguas') y el corregimiento ('Bella Vista', 'Costa del Este', 'San Francisco', 'David', 'Boquete', 'Pueblo Nuevo', 'Barrio Balboa', etc.).\n4. 'specs': Extrae habitaciones, baños, metraje (area_m2), estacionamientos o año, kilometraje y transmisión.\n5. 'source_listing_url': Si el anuncio tiene un link específico úsalo; de lo contrario usa '{{ $json.url }}'.\n\nDevuelve exclusivamente un JSON estructurado con la lista de activos encontrados."
+            }
+          ]
+        }
+      },
+      "id": "node-llm-chain",
+      "name": "Extracción Estructurada IA",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        680,
+        410
+      ]
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {
+          "temperature": 0.1,
+          "baseURL": "https://api.groq.com/openai/v1"
+        }
+      },
+      "id": "node-groq-model",
+      "name": "Groq Llama 3.3 (Cero Bloqueo VPS)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        680,
+        610
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "GROQ_API_CREDENTIAL",
+          "name": "Groq API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"assets\": [\n    {\n      \"title\": \"Apartamento en Bella Vista\",\n      \"price_amount\": 185000,\n      \"currency\": \"USD\",\n      \"vertical\": \"real_estate\",\n      \"location\": {\n        \"province\": \"Panamá\",\n        \"district\": \"Panamá\",\n        \"corregimiento\": \"Bella Vista\"\n      },\n      \"specs\": {\n        \"bedrooms\": 2,\n        \"bathrooms\": 2,\n        \"area_m2\": 95,\n        \"parking\": 1\n      },\n      \"source_listing_url\": \"https://ejemplo.com/propiedad/123\",\n      \"description\": \"Excelente oportunidad céntrica cerca del Metro.\"\n    }\n  ]\n}"
+      },
+      "id": "node-output-parser",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        880,
+        610
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalizar schema HOIE y calcular UUID determinista para Supabase\nconst parsed = $json.output || $json;\nconst list = Array.isArray(parsed.assets) ? parsed.assets : [];\nconst validItems = [];\n\nconst baseUrl = $json.url || '';\nconst rawSource = $json.source_name || 'Desconocido';\n\nfunction generateDeterministicUUID(seed) {\n  let hash1 = 0x811c9dc5;\n  let hash2 = 0x5bd1e995;\n  for (let i = 0; i < seed.length; i++) {\n    const ch = seed.charCodeAt(i);\n    hash1 = Math.imul(hash1 ^ ch, 0x01000193);\n    hash2 = Math.imul(hash2 ^ (ch << 1), 0x5bd1e995);\n  }\n  const hex1 = ('00000000' + (hash1 >>> 0).toString(16)).slice(-8);\n  const hex2 = ('00000000' + (hash2 >>> 0).toString(16)).slice(-8);\n  const hex3 = ('00000000' + ((hash1 ^ hash2) >>> 0).toString(16)).slice(-8);\n  const hex4 = ('00000000' + ((hash1 + hash2) >>> 0).toString(16)).slice(-8);\n  const fullHex = (hex1 + hex2 + hex3 + hex4).slice(0, 32);\n  \n  return (\n    fullHex.substring(0, 8) + '-' +\n    fullHex.substring(8, 12) + '-' +\n    '4' + fullHex.substring(13, 16) + '-' +\n    ((parseInt(fullHex.substring(16, 18), 16) & 0x3f) | 0x80).toString(16) + fullHex.substring(18, 20) + '-' +\n    fullHex.substring(20, 32)\n  );\n}\n\nlet sourceId = $json.source_id;\nconst isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;\nif (!sourceId || !isUuid.test(sourceId)) {\n  sourceId = generateDeterministicUUID('source::' + rawSource.toLowerCase());\n}\n\nfor (const item of list) {\n  const price = Number(item.price_amount);\n  if (!item.title || isNaN(price) || price <= 0) continue;\n\n  const listingUrl = (item.source_listing_url && item.source_listing_url.startsWith('http')) \n    ? item.source_listing_url.trim() \n    : baseUrl;\n\n  const normalizedTitle = String(item.title)\n    .toLowerCase()\n    .normalize('NFD')\n    .replace(/[\\u0300-\\u036f]/g, '')\n    .trim()\n    .replace(/\\s+/g, ' ');\n\n  const isUniqueUrl = (listingUrl !== baseUrl && listingUrl.length > 0);\n  const hashSeed = isUniqueUrl \n    ? sourceId + '::' + listingUrl\n    : sourceId + '::' + listingUrl + '::' + normalizedTitle;\n\n  const assetId = generateDeterministicUUID(hashSeed);\n\n  const loc = item.location || {};\n  const province = loc.province || 'Panamá';\n  const corregimiento = loc.corregimiento || 'Bella Vista';\n  const district = loc.district || (province === 'Panamá' ? 'Panamá' : corregimiento);\n\n  validItems.push({\n    asset_id: assetId,\n    source_id: sourceId,\n    source_listing_url: listingUrl,\n    vertical: item.vertical === 'vehicles' ? 'vehicles' : 'real_estate',\n    title: String(item.title).trim(),\n    description: item.description || '',\n    price_amount: price,\n    price_currency: 'USD',\n    location: { ...loc, province, district, corregimiento },\n    raw_data: {\n      specs: item.specs || {},\n      area_m2: item.specs?.area_m2 || null,\n      bedrooms: item.specs?.bedrooms || null,\n      bathrooms: item.specs?.bathrooms || null,\n      extracted_by: 'n8n_discovery_groq_pipeline',\n      extracted_at: new Date().toISOString()\n    },\n    status: 'active',\n    updated_at: new Date().toISOString()\n  });\n}\n\nif (validItems.length === 0) {\n  return [{\n    json: {\n      is_empty_error: true,\n      source_name: rawSource,\n      url: baseUrl\n    }\n  }];\n}\n\nreturn validItems.map(obj => ({ json: obj }));"
+      },
+      "id": "node-normalize-schema",
+      "name": "Normalizar & Hash Inmutable",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        940,
+        410
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check_empty_extraction",
+              "leftValue": "={{ $json.is_empty_error }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-if-empty-ingest",
+      "name": "¿Ingesta Vacía?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1080,
+        410
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "=⚠️ <b>ADVERTENCIA EN PIPELINE HOIE (Ingesta Vacía)</b>\n\n🏛️ <b>Fuente:</b> {{ $json.source_name }}\n🔗 <b>URL:</b> {{ $json.url }}\n❌ <b>Causa:</b> El LLM no extrajo ningún activo válido de la página analizada.",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "node-telegram-empty-alert",
+      "name": "Alerta Telegram Ingesta Vacía",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1220,
+        520
+      ],
+      "continueOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "TELEGRAM_CREDENTIAL",
+          "name": "Telegram Bot HOIE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ (() => { if (!$env.SUPABASE_URL) throw new Error('SUPABASE_URL no está configurada'); return $env.SUPABASE_URL.replace(/\\/+$/, ''); })() }}/rest/v1/assets?on_conflict=asset_id",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY || $env.SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation,resolution=merge-duplicates"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "node-supabase-upsert",
+      "name": "Guardar en Supabase (PostgREST)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1220,
+        410
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check_supabase_save_ok",
+              "leftValue": "={{ $json.error != null }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-if-supabase-ok",
+      "name": "¿Guardado en Supabase Exitoso?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1360,
+        410
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "=⚠️ <b>ERROR EN PIPELINE HOIE (Supabase Scraper)</b>\n\n🏛️ <b>Fuente:</b> {{ $('Normalizar & Hash Inmutable').item.json.source_id || 'Desconocida' }}\n📌 <b>Activo:</b> {{ $('Normalizar & Hash Inmutable').item.json.title || 'N/A' }}\n❌ <b>Causa:</b> {{ $json.error?.message || 'Error desconocido en upsert' }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "node-telegram-supabase-error-alert",
+      "name": "Alerta Telegram Error Supabase",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1500,
+        520
+      ],
+      "continueOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "TELEGRAM_CREDENTIAL",
+          "name": "Telegram Bot HOIE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check_is_real_estate",
+              "leftValue": "={{ $('Normalizar & Hash Inmutable').item.json.vertical }}",
+              "rightValue": "real_estate",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-if-vertical-real-estate",
+      "name": "¿Es Vertical Real Estate?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1500,
+        410
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ (() => { if (!$env.SUPABASE_URL) throw new Error('SUPABASE_URL no está configurada en las variables de entorno'); return $env.SUPABASE_URL.replace(/\\/+$/, ''); })() }}/rest/v1/assets?select=price_amount&vertical=eq.{{ $('Normalizar & Hash Inmutable').item.json.vertical }}&location->>corregimiento=eq.{{ $('Normalizar & Hash Inmutable').item.json.location.corregimiento }}&asset_id=neq.{{ $('Normalizar & Hash Inmutable').item.json.asset_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY || $env.SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "node-supabase-get-market",
+      "name": "Obtener Precios Corregimiento",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1640,
+        410
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst prices = items.map(item => Number(item.json.price_amount)).filter(p => !isNaN(p) && p > 0);\n\nconst currentAsset = $('Normalizar & Hash Inmutable').item.json;\nconst currentPrice = Number(currentAsset.price_amount);\nconst vertical = currentAsset.vertical;\n\nlet isOpportunity = false;\nlet reason = '';\nlet avgPrice = 0;\n\nif (vertical === 'vehicles') {\n  isOpportunity = currentPrice <= 25000;\n  reason = `Auto bajo límite estático de $25,000 (Precio actual: $${currentPrice.toLocaleString('en-US')})`;\n} else {\n  if (prices.length >= 3) {\n    const sum = prices.reduce((a, b) => a + b, 0);\n    avgPrice = Math.round(sum / prices.length);\n    const discount = ((avgPrice - currentPrice) / avgPrice) * 100;\n    isOpportunity = discount >= 15;\n    reason = `Precio actual ($${currentPrice.toLocaleString('en-US')}) es ${discount.toFixed(1)}% menor al promedio de la zona ($${avgPrice.toLocaleString('en-US')}) basado en ${prices.length} activos`;\n  } else {\n    isOpportunity = currentPrice <= 180000;\n    reason = `Datos insuficientes en zona. Oportunidad bajo límite estático de $180,000 (Precio actual: $${currentPrice.toLocaleString('en-US')})`;\n  }\n}\n\nreturn [{ \n  json: {\n    ...currentAsset,\n    is_opportunity: isOpportunity,\n    opportunity_reason: reason,\n    avg_zone_price: avgPrice || null\n  }\n}];"
+      },
+      "id": "node-calc-dynamic-opportunity",
+      "name": "Calcular Oportunidad Dinámica",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1800,
+        410
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check_opportunity_alert",
+              "leftValue": "={{ $json.is_opportunity }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-if-opportunity",
+      "name": "¿Es Oportunidad Crítica?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1980,
+        410
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "=🚀 <b>¡NUEVA OPORTUNIDAD DETECTADA! (Descubrimiento Web)</b>\n\n📌 <b>{{ $json.title }}</b>\n💰 <b>Precio:</b> ${{ Number($json.price_amount).toLocaleString('en-US') }} USD\n📍 <b>Ubicación:</b> {{ $json.location.corregimiento }}, {{ $json.location.province }}\n🏛️ <b>Fuente:</b> {{ $json.source_id }}\n💡 <b>Análisis:</b> {{ $json.opportunity_reason }}\n🔗 <a href=\"{{ $json.source_listing_url }}\">Ver Anuncio Original</a>\n\n<i>Analizado por Opportunity Intelligence (Reconocimiento Web)</i>",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "node-telegram-alert",
+      "name": "Alerta Telegram Inversionistas",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2160,
+        340
+      ],
+      "continueOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "TELEGRAM_CREDENTIAL",
+          "name": "Telegram Bot HOIE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"assets_extracted\": {{ $('Normalizar & Hash Inmutable').all().length }},\n  \"found_urls\": {{ JSON.stringify($('Extractor de URLs Relevantes').all().map(i => i.json.url)) }},\n  \"location\": \"{{ $('Normalizar & Hash Inmutable').first().json.location?.corregimiento || 'Panamá' }}\",\n  \"message\": \"Extracción completada. Activos sincronizados con Supabase y evaluados con IA.\"\n}",
+        "options": {}
+      },
+      "id": "node-respond-webhook-success",
+      "name": "Responder Webhook (Éxito)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2160,
+        480
+      ]
+    }
+  ],
+  "connections": {
+    "Auto-Cron Trigger (12h)": {
+      "main": [
+        [
+          {
+            "node": "¿Es Búsqueda Táctica?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Disparo Dashboard": {
+      "main": [
+        [
+          {
+            "node": "¿Es Búsqueda Táctica?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es Búsqueda Táctica?": {
+      "main": [
+        [
+          {
+            "node": "Construir Consulta de Búsqueda",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Obtener Fuentes Activas de Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Construir Consulta de Búsqueda": {
+      "main": [
+        [
+          {
+            "node": "¿Es URL Directa?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es URL Directa?": {
+      "main": [
+        [
+          {
+            "node": "Mapear URL Directa",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Búsqueda Web Reconocimiento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mapear URL Directa": {
+      "main": [
+        [
+          {
+            "node": "¿Es URL Directa de PDF?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Búsqueda Web Reconocimiento": {
+      "main": [
+        [
+          {
+            "node": "Extractor de URLs Relevantes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extractor de URLs Relevantes": {
+      "main": [
+        [
+          {
+            "node": "¿Sin Resultados Web?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Sin Resultados Web?": {
+      "main": [
+        [
+          {
+            "node": "Responder Webhook (Sin Resultados)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "¿Es URL Directa de PDF?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Responder Webhook (Sin Resultados)": {
+      "main": [
+        [
+          {
+            "node": "Alerta Búsqueda Sin Resultados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener Fuentes Activas de Supabase": {
+      "main": [
+        [
+          {
+            "node": "Mapear Catálogo Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mapear Catálogo Supabase": {
+      "main": [
+        [
+          {
+            "node": "¿Es URL Directa de PDF?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es URL Directa de PDF?": {
+      "main": [
+        [
+          {
+            "node": "Delegar al Flujo 2 (LlamaParse PDF)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Descargar Página Web",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar Página Web": {
+      "main": [
+        [
+          {
+            "node": "¿Descarga Exitosa?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delegar al Flujo 2 (LlamaParse PDF)": {
+      "main": [
+        [
+          {
+            "node": "¿Webhook PDF Exitoso?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Webhook PDF Exitoso?": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Alerta Telegram Error PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Descarga Exitosa?": {
+      "main": [
+        [
+          {
+            "node": "Sanitizar HTML a Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alerta Telegram Error Scraping",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sanitizar HTML a Markdown": {
+      "main": [
+        [
+          {
+            "node": "Extracción Estructurada IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Llama 3.3 (Cero Bloqueo VPS)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Extracción Estructurada IA",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Extracción Estructurada IA",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extracción Estructurada IA": {
+      "main": [
+        [
+          {
+            "node": "Normalizar & Hash Inmutable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar & Hash Inmutable": {
+      "main": [
+        [
+          {
+            "node": "¿Ingesta Vacía?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Ingesta Vacía?": {
+      "main": [
+        [
+          {
+            "node": "Alerta Telegram Ingesta Vacía",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Guardar en Supabase (PostgREST)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar en Supabase (PostgREST)": {
+      "main": [
+        [
+          {
+            "node": "¿Guardado en Supabase Exitoso?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Guardado en Supabase Exitoso?": {
+      "main": [
+        [
+          {
+            "node": "¿Es Vertical Real Estate?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alerta Telegram Error Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es Vertical Real Estate?": {
+      "main": [
+        [
+          {
+            "node": "Obtener Precios Corregimiento",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Calcular Oportunidad Dinámica",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener Precios Corregimiento": {
+      "main": [
+        [
+          {
+            "node": "Calcular Oportunidad Dinámica",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calcular Oportunidad Dinámica": {
+      "main": [
+        [
+          {
+            "node": "¿Es Oportunidad Crítica?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es Oportunidad Crítica?": {
+      "main": [
+        [
+          {
+            "node": "Alerta Telegram Inversionistas",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Responder Webhook (Éxito)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

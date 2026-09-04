@@ -14,6 +14,7 @@
  */
 
 import { extractAreaFields } from './utils.mjs'
+import { calculateHaversineDistanceKm, geocodeLocation } from './geocoder.mjs'
 
 /**
  * Find real comparable assets from Supabase for a given asset.
@@ -30,10 +31,11 @@ export async function findComparables(asset, supabase) {
 
   const vertical = asset.vertical || 'real_estate'
   const loc = asset.location || {}
-  const district = (loc.district || '').trim().toLowerCase()
-  const province = (loc.province || '').trim().toLowerCase()
-  const neighborhood = (loc.neighborhood || '').trim().toLowerCase()
+  const district = (loc.district || '').trim()
+  const province = (loc.province || '').trim()
+  const neighborhood = (loc.neighborhood || '').trim()
   const sourceId = asset.source_id || ''
+  const selfListingId = asset.asset_id || asset.source_listing_id || ''
 
   // Parse area/beds/baths from asset description if not directly available
   const extracted = extractAreaFields(asset)
@@ -44,9 +46,14 @@ export async function findComparables(asset, supabase) {
   // ── Query pool candidates from DB ───────────────────────────────────
   const candidates = await queryCandidatePool(supabase, {
     vertical, price, district, province, neighborhood, sourceId,
-    excludeAssetId: asset.asset_id,
+    selfListingId,
   })
   if (!candidates || candidates.length === 0) return []
+
+  // Resolve target coordinates
+  const targetGeo = (loc.lat && loc.lng)
+    ? { lat: loc.lat, lng: loc.lng }
+    : geocodeLocation({ neighborhood, district, province, title: asset.title, id: selfListingId })
 
   // ── Score each candidate as a comparable ────────────────────────────
   const scored = candidates.map(c => {
@@ -54,6 +61,17 @@ export async function findComparables(asset, supabase) {
     const cDist = (cLoc.district || '').trim().toLowerCase()
     const cProv = (cLoc.province || '').trim().toLowerCase()
     const cNeigh = (cLoc.neighborhood || '').trim().toLowerCase()
+    const selfNeigh = neighborhood.toLowerCase()
+    const selfDist = district.toLowerCase()
+    const selfProv = province.toLowerCase()
+
+    // Resolve candidate coordinates
+    const cGeo = (cLoc.lat && cLoc.lng)
+      ? { lat: cLoc.lat, lng: cLoc.lng }
+      : geocodeLocation({ neighborhood: cNeigh, district: cDist, province: cProv, title: c.title, id: c.asset_id })
+
+    // ── Metric Distance (Haversine km) ───────────────────────────
+    const distanceKm = calculateHaversineDistanceKm(targetGeo.lat, targetGeo.lng, cGeo.lat, cGeo.lng)
 
     // Parse candidate's area/beds
     const cExtracted = extractAreaFields(c)
@@ -65,19 +83,18 @@ export async function findComparables(asset, supabase) {
 
     // ── Factor scores [0..1] ──────────────────────────────────────
 
-    // 1. LOCATION MATCH (weight: 0.30)
+    // 1. LOCATION MATCH (weight: 0.30) - Based on Real Metric Distance
     let locationScore = 0
-    if (neighborhood && cNeigh && cNeigh === neighborhood) {
+    if (distanceKm <= 1.0) {
       locationScore = 1.0
-    } else if (district && cDist && cDist === district) {
+    } else if (distanceKm <= 3.0) {
       locationScore = 0.85
-    } else if (province && cProv && cProv === province) {
-      locationScore = 0.60
-    } else if (province && cProv) {
-      // Different province — poor location match
-      locationScore = 0.25
+    } else if (distanceKm <= 7.0) {
+      locationScore = 0.65
+    } else if (distanceKm <= 20.0) {
+      locationScore = 0.40
     } else {
-      locationScore = 0.30 // fallback
+      locationScore = 0.15
     }
 
     // 2. PRICE SIMILARITY (weight: 0.25)
@@ -126,22 +143,23 @@ export async function findComparables(asset, supabase) {
        recencyScore   * 0.05) * 100
     ) / 100
 
-    // ── Approximate geographic distance ───────────────────────────
-    const distanceKm = approximateDistance(loc, cLoc)
-
     // ── Age in days ───────────────────────────────────────────────
     const ageDays = scrapedAt
       ? Math.round((now - scrapedAt) / (1000 * 60 * 60 * 24))
       : null
 
     // ── Match reason ──────────────────────────────────────────────
-    const matchReason = buildMatchReason(loc, cLoc, vertical, areaM2, cArea)
+    const matchReason = buildMatchReason(
+      { neighborhood: selfNeigh, district: selfDist, province: selfProv },
+      { neighborhood: cNeigh, district: cDist, province: cProv },
+      vertical, areaM2, cArea, distanceKm
+    )
 
     return {
       comp_asset_id: c.asset_id,
       price: cPrice,
       title: c.title,
-      location: cLoc,
+      location: { ...cLoc, lat: cGeo.lat, lng: cGeo.lng },
       distance_km: distanceKm,
       age_days: ageDays,
       quality_score: qualityScore,
@@ -168,29 +186,23 @@ export async function findComparables(asset, supabase) {
 
 // ── Internal Helpers ─────────────────────────────────────────────────────
 
-async function queryCandidatePool(supabase, { vertical, price, district, province, neighborhood, sourceId, excludeAssetId }) {
+async function queryCandidatePool(supabase, { vertical, price, district, province, neighborhood, sourceId, selfListingId }) {
   // We query assets with:
   // - Same vertical
   // - Active status
   // - Price within 30%-200% of target price
-  // - Not the same asset (self-exclusion)
   // - Has a price_amount set
+  // NOTE: We exclude self by source_listing_id (post-filter), not asset_id (UUID),
+  //   because the in-memory asset_id at scoring time is the ephemeral source_listing_id
+  //   (e.g. 'E24-...') and PostgREST will 400-reject any .neq('asset_id', non-uuid).
   const priceMin = Math.round(price * 0.30)
   const priceMax = Math.round(price * 2.0)
 
-  let query = supabase
-    .from('assets')
-    .select('asset_id, title, description, location, price_amount, price_currency, seller_type, vertical, status, scraped_at, raw_data, tags')
-    .eq('vertical', vertical)
-    .eq('status', 'active')
-    .neq('asset_id', excludeAssetId || '')
-    .gte('price_amount', priceMin)
-    .lte('price_amount', priceMax)
-    .order('created_at', { ascending: false })
-    .limit(100)
+  const baseSelect = 'asset_id, source_listing_id, title, description, location, price_amount, price_currency, seller_type, vertical, status, scraped_at, raw_data, tags'
 
   // ── Try to narrow by location ────────────────────────────────────
   // Attempt location-based narrowing (prefer neighbourhood → district → province)
+  // Use ilike for case-insensitive match (DB stores mixed-case strings).
   let narrowField = null
   let narrowValue = null
 
@@ -206,55 +218,45 @@ async function queryCandidatePool(supabase, { vertical, price, district, provinc
   }
 
   if (narrowField && narrowValue) {
-    // Try with location filter first
-    const { data: narrowed } = await supabase
+    const { data: narrowed, error: narrowErr } = await supabase
       .from('assets')
-      .select('asset_id, title, description, location, price_amount, price_currency, seller_type, vertical, status, scraped_at, raw_data, tags')
+      .select(baseSelect)
       .eq('vertical', vertical)
       .eq('status', 'active')
-      .neq('asset_id', excludeAssetId || '')
       .gte('price_amount', priceMin)
       .lte('price_amount', priceMax + price) // wider range for location filter
-      .eq(narrowField, narrowValue)
+      .ilike(narrowField, narrowValue)
       .order('created_at', { ascending: false })
       .limit(50)
 
-    if (narrowed && narrowed.length >= 5) {
-      // Enough candidates with location match — use these
-      narrowed = narrowed.filter(a => true) // copy
-      // Merge with broader results for candidates outside location
-      return narrowed
+    if (!narrowErr && narrowed && narrowed.length >= 5) {
+      // Enough candidates with location match — exclude self and use these
+      return narrowed.filter(a => a.source_listing_id !== selfListingId)
     }
     // Fall through to broader query
   }
 
   // Broader query — no location narrowing
-  const { data: results } = await query.limit(100)
-  return results || []
+  const { data: results, error: broadErr } = await supabase
+    .from('assets')
+    .select(baseSelect)
+    .eq('vertical', vertical)
+    .eq('status', 'active')
+    .gte('price_amount', priceMin)
+    .lte('price_amount', priceMax)
+    .order('created_at', { ascending: false })
+    .limit(100)
+
+  if (broadErr || !results) return []
+  // Exclude self by source_listing_id (post-filter)
+  return results.filter(a => a.source_listing_id !== selfListingId)
 }
 
-function approximateDistance(locA, locB) {
-  // Simple placeholder: return 0.1-10 km range based on location match quality
-  const aNeigh = (locA.neighborhood || '').trim().toLowerCase()
-  const bNeigh = (locB.neighborhood || '').trim().toLowerCase()
-  const aDist = (locA.district || '').trim().toLowerCase()
-  const bDist = (locB.district || '').trim().toLowerCase()
-
-  if (aNeigh && bNeigh && aNeigh === bNeigh) return 0.5
-  if (aDist && bDist && aDist === bDist) return 2.0
-  return 5.0
-}
-
-function buildMatchReason(locA, locB, vertical, areaA, areaB) {
-  const aNeigh = (locA.neighborhood || '').trim().toLowerCase()
-  const bNeigh = (locB.neighborhood || '').trim().toLowerCase()
-  const aDist = (locA.district || '').trim().toLowerCase()
-  const bDist = (locB.district || '').trim().toLowerCase()
-
+function buildMatchReason(locA, locB, vertical, areaA, areaB, distanceKm) {
   const vertLabel = vertical === 'real_estate' ? 'misma categoría' : vertical
   const parts = [vertLabel]
-  if (aNeigh && bNeigh && aNeigh === bNeigh) parts.push('mismo barrio')
-  else if (aDist && bDist && aDist === bDist) parts.push('mismo distrito')
-  if (areaA && areaB) parts.push(`diferencia de área: ${Math.abs(areaA - areaB)}m²`)
+  if (distanceKm != null && distanceKm <= 1.5) parts.push(`a ${distanceKm} km (mismo sector)`)
+  else if (distanceKm != null && distanceKm <= 10.0) parts.push(`a ${distanceKm} km`)
+  if (areaA && areaB) parts.push(`dif. área: ${Math.abs(areaA - areaB)}m²`)
   return parts.join(', ')
 }

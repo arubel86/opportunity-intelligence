@@ -1,0 +1,1967 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title id="page-title">Oportunidad Inmobiliaria Exclusiva — HOIE Real Estate</title>
+  
+  <!-- Tipografía Inter y JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0A0C10;
+      --surface: #121620;
+      --surface-elevated: #181E2C;
+      --surface-glass: rgba(18, 22, 32, 0.92);
+      --border: #232D3F;
+      --border-focus: #3B82F6;
+      --border-glow: rgba(59, 130, 246, 0.25);
+      --fg: #F8FAFC;
+      --fg-muted: #94A3B8;
+      
+      --color-comprar: #10B981;
+      --color-prioridad: #3B82F6;
+      --color-negociar: #F59E0B;
+      --color-observar: #F97316;
+      --color-evitar: #EF4444;
+      --accent-celeste: #85CDFF;
+
+      --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    .bg-glow-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(140px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.12;
+    }
+    .orb-1 { top: -120px; left: -100px; width: 550px; height: 550px; background: #3B82F6; }
+    .orb-2 { bottom: -150px; right: -100px; width: 600px; height: 600px; background: #10B981; }
+
+    .icon-svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .icon-svg.sm { width: 14px; height: 14px; stroke-width: 1.6; }
+    .icon-svg.lg { width: 22px; height: 22px; stroke-width: 1.8; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--surface-glass);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--fg);
+    }
+    .brand-badge {
+      background: linear-gradient(135deg, #1E293B, #0F172A);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #3B82F6;
+      font-weight: 800;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      letter-spacing: 1px;
+      font-family: var(--font-mono);
+    }
+    .brand-title { font-weight: 700; font-size: 14px; letter-spacing: 0.3px; }
+    .brand-tag {
+      font-size: 10px;
+      color: var(--color-comprar);
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.5px;
+    }
+
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+
+    .btn-admin-trigger {
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #FBBF24;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-admin-trigger:hover { background: #F59E0B; color: #000; }
+
+    main {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      max-width: 1180px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+    }
+
+    .gated-hero-section {
+      text-align: center;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+    .scarcity-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: #F87171;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 16px;
+      border-radius: 20px;
+      margin-bottom: 18px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.5px;
+    }
+    .live-users-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.08);
+      color: var(--color-comprar);
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+    .gated-title {
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 800;
+      line-height: 1.18;
+      margin-bottom: 14px;
+      background: linear-gradient(180deg, #FFFFFF 40%, #94A3B8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .gated-subtitle {
+      font-size: 15px;
+      color: var(--fg-muted);
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    .mic-card-wrapper {
+      max-width: 850px;
+      width: 100%;
+      margin: 0 auto;
+      background: var(--surface-glass);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(20px);
+      overflow: hidden;
+    }
+    .mic-header {
+      background: var(--surface-elevated);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .mic-advisor-info { display: flex; align-items: center; gap: 12px; }
+    .mic-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: var(--border-focus);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mic-advisor-title { font-weight: 700; font-size: 13px; letter-spacing: 0.2px; }
+    .mic-advisor-status {
+      font-size: 11px;
+      color: var(--color-comprar);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+    }
+    .status-pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--color-comprar);
+      box-shadow: 0 0 6px var(--color-comprar);
+    }
+    .mic-match-badge {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 14px;
+      text-align: right;
+    }
+    .mic-match-label { font-size: 9px; color: var(--fg-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+    .mic-match-val { font-family: var(--font-mono); font-size: 13px; font-weight: 700; color: var(--color-prioridad); }
+
+    .mic-progress-container { background: var(--surface); height: 3px; width: 100%; }
+    .mic-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3B82F6, #10B981);
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .mic-body {
+      padding: 32px 28px;
+      min-height: 340px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .mic-step { display: none; animation: fadeInStep 0.35s ease forwards; }
+    .mic-step.active { display: block; }
+    @keyframes fadeInStep {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-tag {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--accent-celeste);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+    .step-question {
+      font-size: clamp(18px, 2.5vw, 22px);
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 8px;
+      color: #FFFFFF;
+      letter-spacing: -0.3px;
+    }
+    .step-desc { font-size: 13px; color: var(--fg-muted); margin-bottom: 22px; line-height: 1.5; }
+
+    .options-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    @media (min-width: 540px) {
+      .options-grid.two-cols { grid-template-columns: 1fr 1fr; }
+    }
+
+    .option-btn {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      color: var(--fg);
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-family: var(--font-sans);
+      font-size: 13px;
+    }
+    .option-btn:hover {
+      border-color: var(--border-focus);
+      background: rgba(59, 130, 246, 0.06);
+      transform: translateY(-1px);
+    }
+    .option-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      color: var(--border-focus);
+      flex-shrink: 0;
+    }
+    .option-main-text { font-weight: 600; color: #FFF; display: block; }
+    .option-sub-text { font-size: 11px; color: var(--fg-muted); display: block; }
+
+    .mic-input-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+    .mic-input {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: var(--fg);
+      font-size: 13px;
+      outline: none;
+      font-family: var(--font-sans);
+    }
+    .mic-input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
+
+    .btn-next-step {
+      background: linear-gradient(135deg, #2563EB, #1D4ED8);
+      border: none;
+      color: #FFF;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+      transition: all 0.2s ease;
+    }
+    .btn-next-step:hover { background: linear-gradient(135deg, #1D4ED8, #1E40AF); }
+
+    .mic-footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .btn-back { background: transparent; border: none; color: var(--fg-muted); font-size: 12px; font-weight: 600; cursor: pointer; }
+
+    .unlocked-section {
+      display: none !important;
+      animation: unlockFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .unlocked-section.show-unlocked {
+      display: block !important;
+    }
+    @keyframes unlockFade {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-story-hook {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.8));
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      border-radius: 14px;
+      padding: 22px 26px;
+      margin-bottom: 24px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #E2E8F0;
+    }
+    .hero-story-hook p { margin-bottom: 8px; }
+    .hero-story-hook p:last-child { margin-bottom: 0; }
+    .hook-tag { font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--accent-celeste); text-transform: uppercase; margin-bottom: 6px; display: block; letter-spacing: 0.5px; }
+
+    .asset-header-card {
+      background: var(--surface-glass);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 26px;
+      backdrop-filter: blur(20px);
+    }
+    .asset-meta-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .asset-badge-verified {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: var(--color-comprar);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.5px;
+    }
+    .asset-id-tag { font-family: var(--font-mono); font-size: 11px; color: var(--fg-muted); }
+
+    .asset-title {
+      font-size: clamp(24px, 3.5vw, 36px);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 8px;
+      color: #FFFFFF;
+      letter-spacing: -0.5px;
+    }
+    .asset-address {
+      font-size: 13px;
+      color: var(--fg-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 22px;
+    }
+
+    .price-savings-box {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      padding: 18px 24px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+    .price-main-group { display: flex; flex-direction: column; }
+    .price-label { font-size: 10px; color: var(--fg-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+    .price-amount {
+      font-size: clamp(26px, 3vw, 34px);
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: var(--color-comprar);
+      line-height: 1.1;
+    }
+    .market-value-group {
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid var(--border);
+      padding-left: 24px;
+    }
+    .market-amount { font-size: 17px; font-family: var(--font-mono); color: var(--fg-muted); text-decoration: line-through; }
+    .savings-badge {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: var(--color-comprar);
+      font-weight: 700;
+      font-size: 12px;
+      padding: 6px 14px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+    }
+
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .spec-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+    .spec-card-label { font-size: 10px; color: var(--fg-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 4px; letter-spacing: 0.5px; }
+    .spec-card-val { font-weight: 700; font-size: 14px; color: #FFF; display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .spec-card-benefit { font-size: 11px; color: var(--color-comprar); font-weight: 500; }
+
+    .media-layout-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+    @media (min-width: 860px) {
+      .media-layout-grid { grid-template-columns: 1.2fr 1fr; }
+    }
+
+    .gallery-container { display: flex; flex-direction: column; gap: 12px; }
+    .main-photo-wrapper {
+      width: 100%;
+      height: 340px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      position: relative;
+      cursor: pointer;
+    }
+    .main-photo { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+    .main-photo:hover { transform: scale(1.02); }
+    .zoom-hint-badge {
+      position: absolute; bottom: 12px; right: 12px;
+      background: rgba(10, 12, 16, 0.85); backdrop-filter: blur(8px);
+      color: #FFF; font-size: 11px; padding: 4px 10px; border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.15); pointer-events: none;
+      display: flex; align-items: center; gap: 6px; font-family: var(--font-mono);
+    }
+
+    .thumbnails-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; }
+    .thumb-btn {
+      width: 75px;
+      height: 55px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid transparent;
+      cursor: pointer;
+      flex-shrink: 0;
+      background: var(--surface);
+      padding: 0;
+    }
+    .thumb-btn.active {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+    }
+    .thumb-img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* TARJETA CONMUTADORA REPRODUCTOR DE VIDEO & TOUR 360° */
+    .video-tour-wrapper {
+      background: var(--surface-glass);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .video-header {
+      padding: 10px 14px;
+      background: var(--surface-elevated);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .media-tabs-group { display: flex; gap: 6px; }
+    .media-tab-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--fg-muted);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+      font-family: var(--font-mono);
+    }
+    .media-tab-btn.active {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: var(--border-focus);
+      color: var(--accent-celeste);
+    }
+    .video-frame-container { width: 100%; height: 280px; background: #000; }
+    .video-iframe { width: 100%; height: 100%; border: none; }
+
+    .amenities-title { font-size: 11px; font-weight: 700; color: var(--fg-muted); text-transform: uppercase; margin-bottom: 10px; letter-spacing: 0.5px; }
+    .amenities-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .amenity-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 11px;
+      color: var(--fg);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .testimonials-section {
+      background: var(--surface-glass);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: 24px;
+    }
+    .testimonial-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .testimonial-card {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .testimonial-quote { font-size: 13px; color: #CBD5E1; font-style: italic; line-height: 1.6; margin-bottom: 16px; }
+    .testimonial-user { display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--border); padding-top: 14px; }
+    .testimonial-avatar { width: 34px; height: 34px; border-radius: 50%; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--border-focus); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; font-family: var(--font-mono); }
+    .testimonial-name { font-weight: 700; font-size: 12px; color: #FFF; }
+    .testimonial-tag { font-size: 10px; color: var(--color-comprar); font-family: var(--font-mono); }
+
+    .trust-badges-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-top: 24px;
+    }
+    .trust-badge-card {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .trust-icon { color: var(--border-focus); flex-shrink: 0; }
+    .trust-title { font-weight: 700; font-size: 13px; color: #FFF; }
+    .trust-desc { font-size: 11px; color: var(--fg-muted); }
+
+    .calc-section {
+      background: var(--surface-glass);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: 24px;
+    }
+    .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 16px; }
+    @media (max-width: 640px) { .calc-grid { grid-template-columns: 1fr; } }
+    .calc-result-box {
+      background: var(--surface-elevated);
+      border: 1px solid var(--color-comprar);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .calc-price-val { font-size: 28px; font-weight: 800; font-family: var(--font-mono); color: var(--color-comprar); }
+
+    .documents-section {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      margin-top: 24px;
+    }
+    .section-head-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #FFF;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      letter-spacing: 0.2px;
+    }
+    .docs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+    .doc-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--fg);
+      transition: all 0.2s;
+    }
+    .doc-card:hover { border-color: var(--border-focus); background: rgba(59, 130, 246, 0.06); }
+    .doc-name { font-weight: 600; font-size: 12px; }
+    .doc-icon { color: var(--color-prioridad); }
+
+    .ai-assistant-widget {
+      background: linear-gradient(135deg, rgba(18, 22, 32, 0.95), rgba(10, 12, 16, 0.98));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: 24px;
+    }
+    .ai-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+    .ai-avatar-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: var(--border-focus);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ai-quick-chips {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+    .ai-chip-btn {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      color: var(--accent-celeste);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .ai-chip-btn:hover { border-color: var(--border-focus); background: rgba(59, 130, 246, 0.12); }
+
+    .ai-chat-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      max-height: 220px;
+      overflow-y: auto;
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .ai-msg { font-size: 13px; padding: 10px 14px; border-radius: 8px; max-width: 85%; }
+    .ai-msg-bot { background: var(--surface-elevated); color: var(--fg); align-self: flex-start; border: 1px solid var(--border); }
+    .ai-msg-user { background: #2563EB; color: #FFF; align-self: flex-end; }
+    .ai-input-row { display: flex; gap: 10px; }
+    .ai-input {
+      flex: 1;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #FFF;
+      font-size: 13px;
+      outline: none;
+    }
+    .ai-input:focus { border-color: var(--border-focus); }
+    .btn-ai-send { background: var(--color-prioridad); color: #FFF; border: none; border-radius: 8px; padding: 0 18px; font-weight: 700; font-size: 13px; cursor: pointer; }
+
+    .faq-section {
+      background: var(--surface-glass);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      margin-top: 24px;
+    }
+    .faq-item { border-bottom: 1px solid var(--border); padding: 16px 0; }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-question { font-weight: 700; font-size: 13px; color: #FFF; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+    .faq-answer { font-size: 13px; color: var(--fg-muted); margin-top: 8px; display: none; line-height: 1.6; }
+    .faq-item.active .faq-answer { display: block; }
+
+    .btn-whatsapp-vip {
+      background: #25D366;
+      color: #000;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(37, 211, 102, 0.25);
+      transition: all 0.2s ease;
+      margin: 28px auto 0;
+      max-width: 480px;
+      width: 100%;
+      letter-spacing: 0.3px;
+    }
+    .btn-whatsapp-vip:hover { background: #22bf5b; transform: translateY(-1px); }
+
+    .sticky-bottom-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(10, 12, 16, 0.95); backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border);
+      padding: 12px 16px; z-index: 90;
+      display: none; justify-content: space-between; align-items: center; gap: 12px;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+    }
+    @media (max-width: 768px) {
+      .unlocked-section.show-unlocked + .sticky-bottom-bar, .sticky-bottom-bar.show { display: flex; }
+    }
+    .sticky-bar-info { display: flex; flex-direction: column; }
+    .sticky-bar-price { font-weight: 800; font-family: var(--font-mono); color: var(--color-comprar); font-size: 16px; }
+    .sticky-bar-title { font-size: 11px; color: var(--fg-muted); max-width: 140px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .ai-floating-trigger {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 95;
+      background: rgba(18, 22, 32, 0.95);
+      border: 1px solid var(--border-focus);
+      border-radius: 30px;
+      padding: 10px 18px;
+      display: none !important;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(12px);
+      transition: all 0.3s ease;
+    }
+    .ai-floating-trigger.show-float {
+      display: flex !important;
+    }
+    .ai-floating-trigger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7);
+    }
+    .ai-float-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(59, 130, 246, 0.2);
+      color: var(--border-focus);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ai-float-text { display: flex; flex-direction: column; }
+    .ai-float-title { font-weight: 700; font-size: 12px; color: #FFF; line-height: 1.1; }
+    .ai-float-sub { font-size: 10px; color: var(--color-comprar); display: flex; align-items: center; gap: 4px; font-family: var(--font-mono); }
+
+    .lightbox-modal {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(14px);
+      z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .lightbox-modal.active { display: flex; }
+    .lightbox-img { max-width: 90vw; max-height: 85vh; border-radius: 12px; box-shadow: 0 0 50px rgba(0, 0, 0, 0.8); }
+    .lightbox-close { position: absolute; top: 20px; right: 24px; color: #FFF; font-size: 28px; cursor: pointer; background: transparent; border: none; }
+
+    .admin-modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px);
+      z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .admin-modal-overlay.active { display: flex; }
+    .admin-modal-card {
+      background: var(--surface-glass); border: 1px solid #F59E0B; border-radius: 16px;
+      max-width: 650px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 24px;
+    }
+    .admin-modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 20px; }
+    .admin-modal-title { font-weight: 800; font-size: 15px; color: #FBBF24; display: flex; align-items: center; gap: 8px; }
+    .admin-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .admin-full-col { grid-column: span 2; }
+    .admin-label { font-size: 11px; color: var(--fg-muted); display: block; margin-bottom: 4px; font-weight: 600; }
+    .admin-input, .admin-textarea { width: 100%; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; color: #FFF; font-size: 13px; outline: none; }
+
+    footer { border-top: 1px solid var(--border); padding: 24px; text-align: center; font-size: 12px; color: var(--fg-muted); background: var(--surface); }
+  </style>
+</head>
+<body>
+
+  <div class="bg-glow-orb orb-1"></div>
+  <div class="bg-glow-orb orb-2"></div>
+
+  <header>
+    <a href="#" class="brand-logo">
+      <span class="brand-badge">HOIE</span>
+      <div class="brand-title">Real Estate Intelligence</div>
+      <span class="brand-tag">ACCESO VIP RESTRINGIDO</span>
+    </a>
+
+    <div class="header-actions">
+      <button id="btn-admin-panel" class="btn-admin-trigger" style="display:none;" onclick="openAdminModal()">
+        <svg class="icon-svg sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        MODO ADMIN: Cargar Inmueble
+      </button>
+    </div>
+  </header>
+
+  <main>
+
+    <section class="gated-hero-section" id="gated-hero">
+      <div class="scarcity-bar">
+        <span>OPORTUNIDAD EXCLUSIVA DE ADJUDICACIÓN BANCARIA</span>
+        <span class="live-users-pill">
+          <svg class="icon-svg sm" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          4 Evaluando
+        </span>
+      </div>
+      <h1 class="gated-title">Adquiere con $60,000 USD por Debajo de Avalúo Oficial</h1>
+      <p class="gated-subtitle">Por confidencialidad del proceso de adjudicación, la ubicación exacta, fotos HD, video tour y precio de cierre solo se muestran a prospectos calificados en Panamá.</p>
+    </section>
+
+    <section class="mic-card-wrapper" id="mic-section">
+      <div class="mic-header">
+        <div class="mic-advisor-info">
+          <div class="mic-avatar">
+            <svg class="icon-svg" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>
+          </div>
+          <div>
+            <div class="mic-advisor-title">Asesor Digital de Calificación</div>
+            <div class="mic-advisor-status"><span class="status-pulse"></span> Motor MIC Activo • 2 min</div>
+          </div>
+        </div>
+        <div class="mic-match-badge">
+          <div class="mic-match-label">Compatibilidad</div>
+          <div class="mic-match-val" id="match-score-val">0%</div>
+        </div>
+      </div>
+
+      <div class="mic-progress-container">
+        <div class="mic-progress-fill" id="mic-progress-fill"></div>
+      </div>
+
+      <div class="mic-body">
+        <div class="mic-step active" data-step="0">
+          <div class="step-tag">Acceso Exclusivo • Paso 01 / 05</div>
+          <h2 class="step-question">¿Deseas calificar para esta oportunidad inmobiliaria?</h2>
+          <p class="step-desc">Responde 4 preguntas breves para verificar tu compatibilidad de compra y desbloquear la Ficha Maestra del inmueble.</p>
+          <button class="btn-next-step" onclick="micNextStep()">
+            Comenzar Evaluación de Acceso
+            <svg class="icon-svg sm" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+
+        <div class="mic-step" data-step="1">
+          <div class="step-tag">Paso 02 / 05 • Perfil & Propósito de Compra</div>
+          <h2 class="step-question">¿Cuál es tu situación y objetivo principal?</h2>
+          <div class="options-grid">
+            <button class="option-btn" onclick="micSelectOption('purpose', 'invest', 98, 'Inversionista (Cap Rate)')">
+              <div class="option-icon">
+                <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+              </div>
+              <div>
+                <span class="option-main-text">Inversión (Generar Rentabilidad / Cap Rate 9.8%)</span>
+                <span class="option-sub-text">Busco retorno sobre inversión y plusvalía por alquiler</span>
+              </div>
+            </button>
+            <button class="option-btn" onclick="micSelectOption('purpose', 'first_home', 92, 'Primera Vivienda')">
+              <div class="option-icon">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.778-7.778zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+              </div>
+              <div>
+                <span class="option-main-text">Mi Primera Vivienda</span>
+                <span class="option-sub-text">Busco precio bajo avalúo y facilidad en trámites bancarios</span>
+              </div>
+            </button>
+            <button class="option-btn" onclick="micSelectOption('purpose', 'family_upgrade', 90, 'Familia Consolida')">
+              <div class="option-icon">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              </div>
+              <div>
+                <span class="option-main-text">Más Espacio para mi Familia</span>
+                <span class="option-sub-text">Priorizo seguridad, 3 recámaras y áreas de recreación infantil</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <div class="mic-step" data-step="2">
+          <div class="step-tag">Paso 03 / 05 • Estructura Financiera</div>
+          <h2 class="step-question">¿Cómo planeas estructurar el pago?</h2>
+          <div class="options-grid">
+            <button class="option-btn" onclick="micSelectOption('payment', 'cash', 100, 'Comprador Urgente')">
+              <div class="option-icon">
+                <svg class="icon-svg" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              </div>
+              <div>
+                <span class="option-main-text">Pago al Contado (Fondos Disponibles)</span>
+                <span class="option-sub-text">Cierre y firma de escritura rápida en &lt; 15 días</span>
+              </div>
+            </button>
+            <button class="option-btn" onclick="micSelectOption('payment', 'preapproved', 90, 'Comprador Calificado')">
+              <div class="option-icon">
+                <svg class="icon-svg" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+              </div>
+              <div>
+                <span class="option-main-text">Crédito Hipotecario Pre-Aprobado</span>
+                <span class="option-sub-text">Carta bancaria lista con banco de plaza</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <div class="mic-step" data-step="3">
+          <div class="step-tag">Paso 04 / 05 • Plazo de Decisión</div>
+          <h2 class="step-question">¿En qué plazo planeas formalizar la compra?</h2>
+          <div class="options-grid two-cols">
+            <button class="option-btn" onclick="micSelectOption('time', 'immediate', 100)">
+              <div class="option-icon">
+                <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div>
+                <span class="option-main-text">Inmediatamente (&lt; 30 días)</span>
+                <span class="option-sub-text">Listo para firmar promesa</span>
+              </div>
+            </button>
+            <button class="option-btn" onclick="micSelectOption('time', '60_days', 85)">
+              <div class="option-icon">
+                <svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+              <div>
+                <span class="option-main-text">En 1 a 3 meses</span>
+                <span class="option-sub-text">En proceso de evaluación</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <div class="mic-step" data-step="4">
+          <div class="step-tag">Paso 05 / 05 • Registro de Acceso VIP</div>
+          <h2 class="step-question">¿A quién autorizamos el acceso?</h2>
+          <div class="mic-input-group">
+            <input type="text" id="lead-name" class="mic-input" placeholder="Nombre y Apellido completo *" required>
+            <input type="tel" id="lead-phone" class="mic-input" placeholder="Teléfono de WhatsApp (ej. +507 6890-1122) *" required>
+            <input type="email" id="lead-email" class="mic-input" placeholder="Correo electrónico (opcional para alertas de adjudicación)">
+          </div>
+          <button class="btn-next-step" style="width:100%;justify-content:center;padding:14px;" onclick="micSubmitLead()">
+            Validar Calificación y Desbloquear Ficha
+            <svg class="icon-svg sm" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+
+        <div class="mic-step" data-step="5">
+          <div style="text-align:center;">
+            <div style="margin-bottom:12px;color:var(--border-focus);">
+              <svg class="icon-svg lg" style="width:36px;height:36px;" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <h2 class="step-question">Registro en Lista Prioritaria de Adjudicaciones</h2>
+            <p class="step-desc">Este inmueble requiere comprador inmediato. Déjanos tu presupuesto y tu requisito principal para enviarte alertas automáticas penas ingrese una opción.</p>
+            
+            <div class="mic-input-group" style="margin-top:16px;text-align:left;">
+              <label class="admin-label">Presupuesto Máximo Estimado:</label>
+              <select id="nurture-budget" class="mic-input">
+                <option value="150k">Hasta $150,000 USD</option>
+                <option value="250k">Hasta $250,000 USD</option>
+                <option value="400k">Hasta $400,000 USD</option>
+              </select>
+
+              <label class="admin-label" style="margin-top:8px;">Requisito Indispensable para tu Propiedad:</label>
+              <select id="nurture-feature" class="mic-input">
+                <option value="balcony_view">Balcón con Vista Panorámica</option>
+                <option value="power_plant">Planta Eléctrica Total</option>
+                <option value="parking_2">2+ Estacionamientos Bajo Techo</option>
+                <option value="pool_social">Áreas Sociales con Piscina</option>
+              </select>
+
+              <button class="btn-next-step" style="width:100%;justify-content:center;margin-top:14px;" onclick="saveNurturingLead()">
+                Activar Alertas Prioritarias por WhatsApp & Email
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mic-footer" id="mic-footer">
+        <button class="btn-back" id="btn-mic-back" onclick="micPrevStep()" style="display:none;">← Volver</button>
+        <div style="font-size:11px;color:var(--fg-muted);font-family:var(--font-mono);" id="mic-step-counter">Paso 1 de 5</div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN DESBLOQUEADA DE LA SALA DE VENTA DIGITAL -->
+    <section class="unlocked-section" id="unlocked-asset-view">
+      
+      <div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.25);border-radius:10px;padding:12px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <div style="color:var(--color-comprar);font-weight:700;font-size:12px;display:flex;align-items:center;gap:8px;font-family:var(--font-mono);">
+          <svg class="icon-svg sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          ACCESO VIP APROBADO — FICHA MAESTRA DESBLOQUEADA
+        </div>
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--fg-muted);" id="display-user-token">TOKEN: REF-MIC-95</div>
+      </div>
+
+      <div class="hero-story-hook">
+        <span class="hook-tag">RESIDENCIAL BELLA VISTA — CIUDAD DE PANAMÁ</span>
+        <p><strong>Imagina despertar cada mañana</strong> con luz natural filtrándose por los amplios ventanales de piso a techo, disfrutar un café en tu balcón privado contemplando la silueta urbana y caminar solo 4 minutos para iniciar tu rutina en la Cinta Costera.</p>
+        <p style="font-size:13px;color:var(--fg-muted);">Un hogar diseñado para combinar tranquilidad residencial, máxima seguridad y una ubicación estratégica que conecta con el centro financiero de Panamá en minutos.</p>
+      </div>
+
+      <div class="asset-header-card">
+        <div class="asset-meta-bar">
+          <span class="asset-badge-verified">
+            <svg class="icon-svg sm" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            PROPIEDAD LIBRE DE GRAVAMEN — TRASPASO INMEDIATO
+          </span>
+          <span class="asset-id-tag" id="display-asset-id">ID: HOIE-RE-2026</span>
+        </div>
+
+        <h1 class="asset-title" id="display-title">Condominio de Lujo en Bella Vista</h1>
+        <div class="asset-address" id="display-address">
+          <svg class="icon-svg sm" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Calle 44 Este con Avenida Balboa, Bella Vista, Ciudad de Panamá
+        </div>
+
+        <div class="price-savings-box">
+          <div class="price-main-group">
+            <span class="price-label">Precio Especial de Adjudicación</span>
+            <span class="price-amount" id="display-price">$350,000</span>
+          </div>
+          <div class="market-value-group">
+            <span class="price-label">Valor de Avalúo Oficial</span>
+            <span class="market-amount" id="display-market-value">$410,000</span>
+          </div>
+          <div class="savings-badge" id="display-savings">
+            📉 Ahorro de $6,500 USD (-15%)
+          </div>
+        </div>
+
+        <div class="specs-grid">
+          <div class="spec-card">
+            <div class="spec-card-label">Área Total</div>
+            <div class="spec-card-val" id="display-area">
+              <svg class="icon-svg sm" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+              145 m²
+            </div>
+            <div class="spec-card-benefit">Amplitud y libertad de movimiento</div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-card-label">Habitaciones</div>
+            <div class="spec-card-val" id="display-bedrooms">
+              <svg class="icon-svg sm" viewBox="0 0 24 24"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg>
+              3 Recámaras
+            </div>
+            <div class="spec-card-benefit">Privacidad para cada familiar</div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-card-label">Baños</div>
+            <div class="spec-card-val" id="display-bathrooms">
+              <svg class="icon-svg sm" viewBox="0 0 24 24"><path d="M9 6 6.5 3.5a1.5 1.5 0 0 0-2.12 0 1.5 1.5 0 0 0 0 2.12L6.88 8"/><path d="M4 12h16a1 1 0 0 1 1 1v3a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-3a1 1 0 0 1 1-1z"/></svg>
+              2.5 Baños
+            </div>
+            <div class="spec-card-benefit">Confort para ti y tus visitas</div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-card-label">Estacionamientos</div>
+            <div class="spec-card-val" id="display-parking">
+              <svg class="icon-svg sm" viewBox="0 0 24 24"><rect x="1" y="3" width="22" height="13" rx="2"/><path d="M16 8h-4v8h2v-3h2a1.5 1.5 0 0 0 0-3z"/></svg>
+              2 Estacionamientos
+            </div>
+            <div class="spec-card-benefit">Protección total bajo techo</div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-card-label">Año de Construcción</div>
+            <div class="spec-card-val" id="display-year">
+              <svg class="icon-svg sm" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
+              Año 2021
+            </div>
+            <div class="spec-card-benefit">Acabados e infraestructura moderna</div>
+          </div>
+          <div class="spec-card">
+            <div class="spec-card-label">Mantenimiento (HOA)</div>
+            <div class="spec-card-val" id="display-hoa">
+              <svg class="icon-svg sm" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              $210 / mes
+            </div>
+            <div class="spec-card-benefit">Gas, seguridad 24/7 y piscina</div>
+          </div>
+        </div>
+
+        <div class="media-layout-grid">
+          <div class="gallery-container">
+            <div class="main-photo-wrapper" onclick="openLightbox()">
+              <img id="main-gallery-photo" class="main-photo" src="" alt="Foto principal de la propiedad">
+              <div class="zoom-hint-badge">
+                <svg class="icon-svg sm" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                AMPLIAR HD
+              </div>
+            </div>
+            <div class="thumbnails-row" id="thumbnails-container"></div>
+          </div>
+
+          <!-- TARJETA CONMUTADORA REPRODUCTOR DE VIDEO & TOUR 360° -->
+          <div class="video-tour-wrapper">
+            <div class="video-header">
+              <div class="media-tabs-group">
+                <button id="tab-btn-video" class="media-tab-btn active" onclick="switchMediaTab('video')">
+                  <svg class="icon-svg sm" viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                  Video Tour HD
+                </button>
+                <button id="tab-btn-360" class="media-tab-btn" onclick="switchMediaTab('360')">
+                  <svg class="icon-svg sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+                  Tour 360° Inmersivo
+                </button>
+              </div>
+            </div>
+            <div class="video-frame-container">
+              <iframe id="video-frame" class="video-iframe" src="" title="Reproductor de Medios" allowfullscreen allow="gyroscope; accelerometer; vr"></iframe>
+            </div>
+            <div style="padding:16px;">
+              <p style="font-size:12px;color:var(--fg-muted);" id="display-description"></p>
+              
+              <div class="amenities-wrapper" style="margin-top:12px;">
+                <div class="amenities-title">Equipamiento Residencial:</div>
+                <div class="amenities-list" id="amenities-container"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonials-section">
+        <div class="section-head-title">
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Experiencias Verificadas de Compradores HOIE
+        </div>
+        <div class="testimonial-cards-grid">
+          <div class="testimonial-card">
+            <div class="testimonial-quote">
+              "Al principio me daba temor comprar un inmueble de remate bancario por el tiempo de traspaso. HOIE auditó el Registro Público y en 14 días ya tenía las llaves y la propiedad a mi nombre sin sorpresas."
+            </div>
+            <div class="testimonial-user">
+              <div class="testimonial-avatar">CR</div>
+              <div>
+                <div class="testimonial-name">Carlos Rodríguez</div>
+                <div class="testimonial-tag">VERIFICADO • Bella Vista</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card">
+            <div class="testimonial-quote">
+              "Buscábamos un apartamento amplio para nuestra familia pero los precios de lista estaban inflados. Gracias al scoring del MIC accedimos a $55k por debajo de avalúo. La mejor decisión inmobiliaria."
+            </div>
+            <div class="testimonial-user">
+              <div class="testimonial-avatar">MP</div>
+              <div>
+                <div class="testimonial-name">María Patricia de León</div>
+                <div class="testimonial-tag">VERIFICADO • San Francisco</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trust-badges-row">
+        <div class="trust-badge-card">
+          <div class="trust-icon">
+            <svg class="icon-svg lg" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div>
+            <div class="trust-title">Registro Público Verificado</div>
+            <div class="trust-desc">Finca libre de gravamen o embargo hipotecario.</div>
+          </div>
+        </div>
+        <div class="trust-badge-card">
+          <div class="trust-icon">
+            <svg class="icon-svg lg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div>
+            <div class="trust-title">Avalúo Certificado 2026</div>
+            <div class="trust-desc">Emitido por firma valuadora registrada en el MEF.</div>
+          </div>
+        </div>
+        <div class="trust-badge-card">
+          <div class="trust-icon">
+            <svg class="icon-svg lg" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <div>
+            <div class="trust-title">Exoneración de Impuestos</div>
+            <div class="trust-desc">Vigente en finca de mejoras por 8 años adicionales.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="calc-section">
+        <div class="section-head-title">
+          <svg class="icon-svg" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="18"/><path d="M8 10h.01"/><path d="M12 10h.01"/><path d="M16 10h.01"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/></svg>
+          Calculadora de Cuota Hipotecaria Estimada
+        </div>
+        <div class="calc-grid">
+          <div>
+            <label class="admin-label">Abono Inicial (Préstamo Hipotecario):</label>
+            <select id="calc-down-payment" class="admin-input" onchange="calculateMortgage()">
+              <option value="0.10">10% Abono Inicial ($35,000 USD)</option>
+              <option value="0.20" selected>20% Abono Inicial ($70,000 USD)</option>
+              <option value="0.30">30% Abono Inicial ($105,000 USD)</option>
+            </select>
+
+            <label class="admin-label" style="margin-top:10px;">Plazo del Crédito (Años):</label>
+            <select id="calc-years" class="admin-input" onchange="calculateMortgage()">
+              <option value="30" selected>30 Años (Cuota más baja)</option>
+              <option value="25">25 Años</option>
+              <option value="20">20 Años</option>
+            </select>
+          </div>
+
+          <div class="calc-result-box">
+            <div style="font-size:10px;color:var(--fg-muted);text-transform:uppercase;font-weight:700;letter-spacing:0.5px;">Mensualidad Estimada Banco</div>
+            <div class="calc-price-val" id="calc-monthly-val">$1,295 / mes</div>
+            <div style="font-size:11px;color:var(--color-comprar);margin-top:4px;">*Tasa preferencial estimada 6.25% anual</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="documents-section">
+        <div class="section-head-title">
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          Documentación Oficial de Soporte Descargable
+        </div>
+        <div class="docs-grid">
+          <a href="#" class="doc-card" onclick="trackDocClick('Certificado Registro Público');alert('Descargando Certificado de Registro Público...');return false;">
+            <div>
+              <div class="doc-name">Certificado Registro Público</div>
+              <div style="font-size:10px;color:var(--fg-muted);">PDF • Libre de Gravamen</div>
+            </div>
+            <div class="doc-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+          </a>
+          <a href="#" class="doc-card" onclick="trackDocClick('Informe de Avalúo Oficial');alert('Descargando Informe de Avalúo Oficial...');return false;">
+            <div>
+              <div class="doc-name">Informe de Avalúo Oficial</div>
+              <div style="font-size:10px;color:var(--fg-muted);">PDF • Valor Comercial $410k</div>
+            </div>
+            <div class="doc-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+          </a>
+          <a href="#" class="doc-card" onclick="trackDocClick('Plano de Distribución');alert('Descargando Plano Arquitectónico...');return false;">
+            <div>
+              <div class="doc-name">Plano de Distribución</div>
+              <div style="font-size:10px;color:var(--fg-muted);">PDF • 145 m² Escala</div>
+            </div>
+            <div class="doc-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+          </a>
+        </div>
+      </div>
+
+      <div class="ai-assistant-widget" id="ai-chat-section">
+        <div class="ai-header">
+          <div class="ai-avatar-icon">
+            <svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
+          </div>
+          <div>
+            <div style="font-weight:700;font-size:14px;color:#FFF;">Asistente de IA — Preguntas Técnicas sobre este Inmueble</div>
+            <div style="font-size:11px;color:var(--accent-celeste);">Responde cualquier duda legal o financiera al instante</div>
+          </div>
+        </div>
+
+        <div class="ai-quick-chips">
+          <button class="ai-chip-btn" onclick="askQuickAi('¿Aceptan oferta al contado con cierre rápido?')">Oferta al contado</button>
+          <button class="ai-chip-btn" onclick="askQuickAi('¿Cuánto es la cuota de mantenimiento mensual?')">Cuota de mantenimiento</button>
+          <button class="ai-chip-btn" onclick="askQuickAi('¿Cuál es la ubicación exacta del inmueble?')">Ubicación exacta</button>
+          <button class="ai-chip-btn" onclick="askQuickAi('¿Cuáles son los costos de traspaso notarial?')">Gastos de traspaso</button>
+        </div>
+
+        <div class="ai-chat-box" id="ai-chat-box">
+          <div class="ai-msg ai-msg-bot">
+            ¡Hola! Soy la IA Asesora de este inmueble. Haz cualquier pregunta o presiona uno de los botones de consulta rápida arriba.
+          </div>
+        </div>
+
+        <div class="ai-input-row">
+          <input type="text" id="ai-user-input" class="ai-input" placeholder="Escribe tu consulta sobre este apartamento..." onkeypress="if(event.key==='Enter') sendAiQuestion()">
+          <button class="btn-ai-send" onclick="sendAiQuestion()">Preguntar</button>
+        </div>
+      </div>
+
+      <div class="faq-section">
+        <div class="section-head-title">
+          <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Preguntas Frecuentes antes de la Visita
+        </div>
+        
+        <div class="faq-item" onclick="toggleFaq(this, '¿Cómo es el proceso de reserva y traspaso?')">
+          <div class="faq-question">
+            <span>¿Cómo se realiza el proceso de reserva y traspaso de la propiedad?</span>
+            <span class="faq-toggle">▼</span>
+          </div>
+          <div class="faq-answer">
+            Una vez confirmes tu interés con el asesor, se firma una Promesa de Compraventa con un abono inicial. Posteriormente, la firma de escritura en notaría y traspaso en el Registro Público toma entre 10 y 15 días hábiles.
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this, '¿Aceptan crédito hipotecario?')">
+          <div class="faq-question">
+            <span>¿Aceptan crédito hipotecario con bancos de Panamá?</span>
+            <span class="faq-toggle">▼</span>
+          </div>
+          <div class="faq-answer">
+            Sí, aceptamos cartas de promesa de pago de Banco General, Banistmo, Bac Credomatic, Caja de Ahorros y demás entidades bancarias autorizadas en Panamá.
+          </div>
+        </div>
+
+        <div class="faq-item" onclick="toggleFaq(this, '¿Paga impuesto de inmuebles?')">
+          <div class="faq-question">
+            <span>¿La propiedad paga impuesto de inmueble actualmente?</span>
+            <span class="faq-toggle">▼</span>
+          </div>
+          <div class="faq-answer">
+            El inmueble cuenta con exoneración del impuesto de mejoras vigente por los próximos 8 años. Solo abona la tasa administrativa mínima.
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align:center;">
+        <a href="#" id="whatsapp-vip-link" target="_blank" class="btn-whatsapp-vip">
+          <svg class="icon-svg lg" viewBox="0 0 24 24" style="stroke:none;fill:currentColor;"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+          RESERVAR VISITA PRIVADA CON FICHA APROBADA
+        </a>
+      </div>
+    </section>
+
+    <div id="mobile-sticky-bar" class="sticky-bottom-bar">
+      <div class="sticky-bar-info">
+        <div class="sticky-bar-price" id="sticky-display-price">$350,000</div>
+        <div class="sticky-bar-title" id="sticky-display-title">Bella Vista Lujo</div>
+      </div>
+      <a href="#" id="whatsapp-sticky-link" target="_blank" class="btn-next-step" style="background:#25D366;color:#000;padding:10px 16px;text-decoration:none;">
+        Reservar Visita
+      </a>
+    </div>
+
+  </main>
+
+  <div id="ai-floating-widget" class="ai-floating-trigger" onclick="handleAiFloatingClick()">
+    <div class="ai-float-avatar">
+      <svg class="icon-svg sm" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/></svg>
+    </div>
+    <div class="ai-float-text">
+      <span class="ai-float-title">IA Asesora HOIE</span>
+      <span class="ai-float-sub"><span class="status-pulse"></span> En Línea</span>
+    </div>
+  </div>
+
+  <div id="lightbox-modal" class="lightbox-modal" onclick="closeLightbox()">
+    <button class="lightbox-close">✕</button>
+    <img id="lightbox-img" class="lightbox-img" src="" alt="Vista ampliada HD">
+  </div>
+
+  <!-- MODAL ADMIN CON SOPORTE DE TOUR 360° -->
+  <div id="admin-modal" class="admin-modal-overlay">
+    <div class="admin-modal-card">
+      <div class="admin-modal-header">
+        <div class="admin-modal-title">⚙️ Cargar / Publicar Nuevo Inmueble (Modo Admin)</div>
+        <button onclick="closeAdminModal()" style="background:transparent;border:none;color:var(--fg-muted);font-size:18px;cursor:pointer;">✕</button>
+      </div>
+
+      <div class="admin-form-grid">
+        <div class="admin-full-col">
+          <label class="admin-label">Título de la Propiedad *</label>
+          <input type="text" id="adm-title" class="admin-input" placeholder="ej. Condominio de Lujo en Bella Vista">
+        </div>
+        <div>
+          <label class="admin-label">ID de Propiedad</label>
+          <input type="text" id="adm-id" class="admin-input" placeholder="ej. HOIE-RE-2026">
+        </div>
+        <div>
+          <label class="admin-label">Precio de Venta ($ USD) *</label>
+          <input type="number" id="adm-price" class="admin-input" placeholder="ej. 350000">
+        </div>
+        <div>
+          <label class="admin-label">Valor de Avalúo ($ USD)</label>
+          <input type="number" id="adm-market" class="admin-input" placeholder="ej. 410000">
+        </div>
+        <div>
+          <label class="admin-label">Área ($m^2$)</label>
+          <input type="number" id="adm-area" class="admin-input" placeholder="ej. 145">
+        </div>
+        <div>
+          <label class="admin-label">Recámaras</label>
+          <input type="number" id="adm-bedrooms" class="admin-input" placeholder="ej. 3">
+        </div>
+        <div>
+          <label class="admin-label">Baños</label>
+          <input type="number" step="0.5" id="adm-bathrooms" class="admin-input" placeholder="ej. 2.5">
+        </div>
+        <div>
+          <label class="admin-label">Estacionamientos</label>
+          <input type="number" id="adm-parking" class="admin-input" placeholder="ej. 2">
+        </div>
+        <div>
+          <label class="admin-label">Año de Construcción</label>
+          <input type="number" id="adm-year" class="admin-input" placeholder="ej. 2021">
+        </div>
+        <div>
+          <label class="admin-label">Mantenimiento Mensual ($ HOA USD)</label>
+          <input type="number" id="adm-hoa" class="admin-input" placeholder="ej. 210">
+        </div>
+        <div class="admin-full-col">
+          <label class="admin-label">Dirección Completa *</label>
+          <input type="text" id="adm-address" class="admin-input" placeholder="ej. Calle 44 Este con Avenida Balboa, Bella Vista">
+        </div>
+        <div class="admin-full-col">
+          <label class="admin-label">URL Embed de Video HD (YouTube / MP4)</label>
+          <input type="text" id="adm-video" class="admin-input" placeholder="ej. https://www.youtube.com/embed/ScMzIvxBSi4">
+        </div>
+        <div class="admin-full-col">
+          <label class="admin-label">URL Embed de Tour Virtual 360° (YouTube 360 / Kuula / Matterport)</label>
+          <input type="text" id="adm-tour360" class="admin-input" placeholder="ej. https://www.youtube.com/embed/ScMzIvxBSi4">
+        </div>
+        <div class="admin-full-col">
+          <label class="admin-label">URLs de Fotos (Una URL por línea) *</label>
+          <textarea id="adm-photos" class="admin-textarea" rows="4" placeholder="https://imagen1.jpg&#10;https://imagen2.jpg"></textarea>
+        </div>
+        <div class="admin-full-col">
+          <label class="admin-label">Amenidades (Separadas por coma)</label>
+          <input type="text" id="adm-amenities" class="admin-input" placeholder="Piscina Infinity, Gimnasio Completo, Seguridad 24/7">
+        </div>
+        <div class="admin-full-col">
+          <label class="admin-label">Descripción Detallada</label>
+          <textarea id="adm-desc" class="admin-textarea" rows="3" placeholder="Descripción de la propiedad..."></textarea>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;display:flex;gap:10px;justify-content:flex-end;">
+        <button onclick="closeAdminModal()" class="btn-back">Cancelar</button>
+        <button onclick="saveAdminProperty()" class="btn-next-step" style="background:linear-gradient(135deg, #10B981, #059669);">
+          Guardar y Publicar Inmueble
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div style="max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+      <div>© 2026 HOIE Opportunity Intelligence — Plataforma Inmobiliaria Institucional</div>
+      <div>Acceso Restringido & Motor MIC v3.5</div>
+    </div>
+  </footer>
+
+  <script>
+    const N8N_WEBHOOK_URL = "https://n8n.tu-servidor.com/webhook/hoie-leads";
+
+    let userTelemetry = {
+      startTime: Date.now(),
+      aiQuestions: [],
+      docsClicked: [],
+      faqsOpened: [],
+      photosViewedCount: 0,
+      lightboxOpened: false,
+      calcSimulations: []
+    };
+
+    let PROPERTY_DATA = {
+      assetId: "HOIE-RE-2026",
+      title: "Condominio de Lujo en Bella Vista",
+      address: "Calle 44 Este con Avenida Balboa, Bella Vista, Ciudad de Panamá",
+      price: 350000,
+      marketValue: 410000,
+      areaM2: 145,
+      bedrooms: 3,
+      bathrooms: 2.5,
+      parking: 2,
+      yearBuilt: 2021,
+      hoaMonthly: 210,
+      description: "Unidad departamental de 3 habitaciones con alta rentabilidad comercial en el centro urbano de Panamá. Cerca de estación del Metro, cinta costera y centros corporativos. Ideal para inversión en alquiler o vivienda familiar.",
+      videoEmbedUrl: "https://www.youtube.com/embed/ScMzIvxBSi4",
+      virtualTour360Url: "https://www.youtube.com/embed/ScMzIvxBSi4", // DEMO TOUR 360°
+      photos: [
+        "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1000&q=80",
+        "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1000&q=80",
+        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80",
+        "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1000&q=80"
+      ],
+      amenities: [
+        "Piscina Infinity",
+        "Gimnasio Completo",
+        "Seguridad 24/7",
+        "Planta Eléctrica Total",
+        "Vista Panorámica al Mar",
+        "2 Estacionamientos Bajo Techo"
+      ]
+    };
+
+    const ADVISOR_PHONE = '+507 6890-1122';
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const assetIdParam = urlParams.get('id');
+    const isAdmin = urlParams.get('admin') === 'true';
+
+    try {
+      const savedData = localStorage.getItem(assetIdParam ? `hoie_prop_${assetIdParam}` : 'hoie_property_listing_data');
+      if (savedData) { PROPERTY_DATA = { ...PROPERTY_DATA, ...JSON.parse(savedData) }; }
+    } catch(e) {}
+
+    if (isAdmin) {
+      const btnAdmin = document.getElementById('btn-admin-panel');
+      if (btnAdmin) btnAdmin.style.display = 'inline-flex';
+      const unlockedView = document.getElementById('unlocked-asset-view');
+      if (unlockedView) unlockedView.classList.add('show-unlocked');
+      const aiFloatBtn = document.getElementById('ai-floating-widget');
+      if (aiFloatBtn) aiFloatBtn.classList.add('show-float');
+    }
+
+    function renderPropertyListing() {
+      const formatPrice = (n) => '$' + Number(n).toLocaleString('en-US');
+      
+      document.getElementById('page-title').textContent = `${PROPERTY_DATA.title} — HOIE Real Estate`;
+      document.getElementById('display-asset-id').textContent = `ID: ${PROPERTY_DATA.assetId}`;
+      document.getElementById('display-title').textContent = PROPERTY_DATA.title;
+      document.getElementById('display-address').innerHTML = `<svg class="icon-svg sm" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ${PROPERTY_DATA.address}`;
+      document.getElementById('display-price').textContent = formatPrice(PROPERTY_DATA.price);
+      document.getElementById('display-market-value').textContent = formatPrice(PROPERTY_DATA.marketValue);
+
+      const stickyPrice = document.getElementById('sticky-display-price');
+      const stickyTitle = document.getElementById('sticky-display-title');
+      if (stickyPrice) stickyPrice.textContent = formatPrice(PROPERTY_DATA.price);
+      if (stickyTitle) stickyTitle.textContent = PROPERTY_DATA.title;
+
+      const savings = PROPERTY_DATA.marketValue - PROPERTY_DATA.price;
+      const savingsPct = Math.round((savings / PROPERTY_DATA.marketValue) * 100);
+      document.getElementById('display-savings').textContent = `📉 Ahorro de ${formatPrice(savings)} USD (-${savingsPct}%)`;
+
+      document.getElementById('display-area').innerHTML = `<svg class="icon-svg sm" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg> ${PROPERTY_DATA.areaM2} m²`;
+      document.getElementById('display-bedrooms').innerHTML = `<svg class="icon-svg sm" viewBox="0 0 24 24"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg> ${PROPERTY_DATA.bedrooms} Rec.`;
+      document.getElementById('display-bathrooms').innerHTML = `<svg class="icon-svg sm" viewBox="0 0 24 24"><path d="M9 6 6.5 3.5a1.5 1.5 0 0 0-2.12 0 1.5 1.5 0 0 0 0 2.12L6.88 8"/><path d="M4 12h16a1 1 0 0 1 1 1v3a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-3a1 1 0 0 1 1-1z"/></svg> ${PROPERTY_DATA.bathrooms} Baños`;
+      document.getElementById('display-parking').innerHTML = `<svg class="icon-svg sm" viewBox="0 0 24 24"><rect x="1" y="3" width="22" height="13" rx="2"/><path d="M16 8h-4v8h2v-3h2a1.5 1.5 0 0 0 0-3z"/></svg> ${PROPERTY_DATA.parking} Estac.`;
+      document.getElementById('display-year').innerHTML = `<svg class="icon-svg sm" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg> Año ${PROPERTY_DATA.yearBuilt}`;
+      document.getElementById('display-hoa').innerHTML = `<svg class="icon-svg sm" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> $${PROPERTY_DATA.hoaMonthly} / mes`;
+      document.getElementById('display-description').textContent = PROPERTY_DATA.description;
+      
+      const videoFrame = document.getElementById('video-frame');
+      if (videoFrame && PROPERTY_DATA.videoEmbedUrl) {
+        videoFrame.src = PROPERTY_DATA.videoEmbedUrl;
+      }
+
+      const mainPhoto = document.getElementById('main-gallery-photo');
+      const thumbContainer = document.getElementById('thumbnails-container');
+      if (PROPERTY_DATA.photos.length > 0 && mainPhoto) {
+        mainPhoto.src = PROPERTY_DATA.photos[0];
+      }
+      if (thumbContainer) {
+        thumbContainer.innerHTML = PROPERTY_DATA.photos.map((url, idx) => `
+          <button class="thumb-btn ${idx === 0 ? 'active' : ''}" onclick="switchPhoto('${url}', this)">
+            <img class="thumb-img" src="${url}" alt="Miniatura ${idx + 1}">
+          </button>
+        `).join('');
+      }
+
+      const amenContainer = document.getElementById('amenities-container');
+      if (amenContainer) {
+        amenContainer.innerHTML = PROPERTY_DATA.amenities.map(a => `<span class="amenity-chip"><svg class="icon-svg sm" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> ${a}</span>`).join('');
+      }
+
+      calculateMortgage();
+    }
+
+    // CONMUTADOR DUAL DE MEDIOS (VIDEO HD vs TOUR 360°)
+    function switchMediaTab(type) {
+      const videoFrame = document.getElementById('video-frame');
+      const tabVideo = document.getElementById('tab-btn-video');
+      const tab360 = document.getElementById('tab-btn-360');
+
+      if (type === '360') {
+        if (tabVideo) tabVideo.classList.remove('active');
+        if (tab360) tab360.classList.add('active');
+        if (videoFrame) videoFrame.src = PROPERTY_DATA.virtualTour360Url || PROPERTY_DATA.videoEmbedUrl;
+      } else {
+        if (tab360) tab360.classList.remove('active');
+        if (tabVideo) tabVideo.classList.add('active');
+        if (videoFrame) videoFrame.src = PROPERTY_DATA.videoEmbedUrl;
+      }
+    }
+
+    function switchPhoto(url, btn) {
+      const mainPhoto = document.getElementById('main-gallery-photo');
+      if (mainPhoto) mainPhoto.src = url;
+      document.querySelectorAll('.thumb-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      userTelemetry.photosViewedCount++;
+    }
+
+    function handleAiFloatingClick() {
+      const aiSec = document.getElementById('ai-chat-section');
+      if (aiSec) aiSec.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function openLightbox() {
+      const mainPhoto = document.getElementById('main-gallery-photo');
+      const lightboxModal = document.getElementById('lightbox-modal');
+      const lightboxImg = document.getElementById('lightbox-img');
+      if (mainPhoto && lightboxModal && lightboxImg) {
+        lightboxImg.src = mainPhoto.src;
+        lightboxModal.classList.add('active');
+        userTelemetry.lightboxOpened = true;
+      }
+    }
+    function closeLightbox() {
+      const lightboxModal = document.getElementById('lightbox-modal');
+      if (lightboxModal) lightboxModal.classList.remove('active');
+    }
+
+    function toggleFaq(el, title) {
+      el.classList.toggle('active');
+      if (el.classList.contains('active') && title) {
+        if (!userTelemetry.faqsOpened.includes(title)) userTelemetry.faqsOpened.push(title);
+      }
+    }
+
+    function trackDocClick(docName) {
+      if (!userTelemetry.docsClicked.includes(docName)) userTelemetry.docsClicked.push(docName);
+    }
+
+    function calculateMortgage() {
+      const price = PROPERTY_DATA.price;
+      const downPct = parseFloat(document.getElementById('calc-down-payment').value);
+      const years = parseInt(document.getElementById('calc-years').value);
+
+      const loan = price * (1 - downPct);
+      const monthlyRate = 0.0625 / 12;
+      const numPayments = years * 12;
+
+      const monthlyPayment = (loan * monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / (Math.pow(1 + monthlyRate, numPayments) - 1);
+      const resVal = document.getElementById('calc-monthly-val');
+      if (resVal) resVal.textContent = `$${Math.round(monthlyPayment).toLocaleString()} / mes`;
+
+      userTelemetry.calcSimulations.push(`Abono ${downPct*100}% a ${years} años ($${Math.round(monthlyPayment)}/mes)`);
+    }
+
+    function askQuickAi(qText) {
+      const input = document.getElementById('ai-user-input');
+      if (input) {
+        input.value = qText;
+        sendAiQuestion();
+      }
+    }
+
+    function sendAiQuestion() {
+      const input = document.getElementById('ai-user-input');
+      const chatBox = document.getElementById('ai-chat-box');
+      if (!input || !input.value.trim() || !chatBox) return;
+
+      const q = input.value.trim();
+      input.value = '';
+
+      userTelemetry.aiQuestions.push(q);
+
+      const uMsg = document.createElement('div');
+      uMsg.className = 'ai-msg ai-msg-user';
+      uMsg.textContent = q;
+      chatBox.appendChild(uMsg);
+
+      setTimeout(() => {
+        let ans = `Excelente pregunta. Sobre '${PROPERTY_DATA.title}': cuenta con ${PROPERTY_DATA.areaM2} m², ${PROPERTY_DATA.bedrooms} recámaras y un precio de oportunidad de $${Number(PROPERTY_DATA.price).toLocaleString()} USD ($${Number(PROPERTY_DATA.marketValue - PROPERTY_DATA.price).toLocaleString()} bajo avalúo).`;
+        
+        const qL = q.toLowerCase();
+        if (qL.includes('mantenimiento') || qL.includes('hoa') || qL.includes('cuota')) {
+          ans = `La cuota mensual de mantenimiento (HOA) es de $${PROPERTY_DATA.hoaMonthly} USD e incluye seguridad 24/7, gas comunal, piscina infinity y conserjería.`;
+        } else if (qL.includes('contado') || qL.includes('oferta') || qL.includes('cierre')) {
+          ans = `¡Sí! Para compradores al contado con fondos verificados el cierre notarial se realiza en menos de 15 días hábiles.`;
+        } else if (qL.includes('ubicacion') || qL.includes('ubicación') || qL.includes('donde') || qL.includes('dónde')) {
+          ans = `La propiedad está ubicada en ${PROPERTY_DATA.address}, una de las zonas de mayor plusvalía urbana en la Ciudad de Panamá.`;
+        } else if (qL.includes('traspaso') || qL.includes('gastos') || qL.includes('notaria') || qL.includes('notaría')) {
+          ans = `Los gastos de escrituración y notaría corresponden al 2% sobre el valor registrado y son asistidos 100% por nuestro equipo legal.`;
+        }
+
+        const bMsg = document.createElement('div');
+        bMsg.className = 'ai-msg ai-msg-bot';
+        bMsg.textContent = ans;
+        chatBox.appendChild(bMsg);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }, 400);
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function openAdminModal() {
+      document.getElementById('adm-title').value = PROPERTY_DATA.title || '';
+      document.getElementById('adm-id').value = PROPERTY_DATA.assetId || '';
+      document.getElementById('adm-price').value = PROPERTY_DATA.price || '';
+      document.getElementById('adm-market').value = PROPERTY_DATA.marketValue || '';
+      document.getElementById('adm-area').value = PROPERTY_DATA.areaM2 || '';
+      document.getElementById('adm-bedrooms').value = PROPERTY_DATA.bedrooms || '';
+      document.getElementById('adm-bathrooms').value = PROPERTY_DATA.bathrooms || '';
+      document.getElementById('adm-parking').value = PROPERTY_DATA.parking || '';
+      document.getElementById('adm-year').value = PROPERTY_DATA.yearBuilt || '';
+      document.getElementById('adm-hoa').value = PROPERTY_DATA.hoaMonthly || '';
+      document.getElementById('adm-address').value = PROPERTY_DATA.address || '';
+      document.getElementById('adm-video').value = PROPERTY_DATA.videoEmbedUrl || '';
+      document.getElementById('adm-tour360').value = PROPERTY_DATA.virtualTour360Url || '';
+      document.getElementById('adm-photos').value = PROPERTY_DATA.photos.join('\n');
+      document.getElementById('adm-amenities').value = PROPERTY_DATA.amenities.join(', ');
+      document.getElementById('adm-desc').value = PROPERTY_DATA.description || '';
+
+      document.getElementById('admin-modal').classList.add('active');
+    }
+
+    function closeAdminModal() { document.getElementById('admin-modal').classList.remove('active'); }
+
+    function saveAdminProperty() {
+      const title = document.getElementById('adm-title').value.trim();
+      const price = document.getElementById('adm-price').value.trim();
+      const photosRaw = document.getElementById('adm-photos').value.trim();
+      const address = document.getElementById('adm-address').value.trim();
+
+      if (!title || !price || !photosRaw || !address) {
+        alert('Por favor completa todos los campos requeridos (Título, Precio, Dirección y Fotos).');
+        return;
+      }
+
+      const photos = photosRaw.split('\n').map(u => u.trim()).filter(u => u.length > 0);
+      const amenitiesRaw = document.getElementById('adm-amenities').value.trim();
+      const amenities = amenitiesRaw ? amenitiesRaw.split(',').map(a => a.trim()).filter(a => a.length > 0) : PROPERTY_DATA.amenities;
+
+      PROPERTY_DATA = {
+        assetId: document.getElementById('adm-id').value.trim() || 'HOIE-RE-2026',
+        title: title,
+        address: address,
+        price: Number(price),
+        marketValue: Number(document.getElementById('adm-market').value.trim() || Math.round(Number(price) * 1.15)),
+        areaM2: Number(document.getElementById('adm-area').value.trim() || 120),
+        bedrooms: Number(document.getElementById('adm-bedrooms').value.trim() || 2),
+        bathrooms: Number(document.getElementById('adm-bathrooms').value.trim() || 2),
+        parking: Number(document.getElementById('adm-parking').value.trim() || 1),
+        yearBuilt: Number(document.getElementById('adm-year').value.trim() || 2022),
+        hoaMonthly: Number(document.getElementById('adm-hoa').value.trim() || 200),
+        description: document.getElementById('adm-desc').value.trim() || 'Propiedad verificada en remate bancario.',
+        videoEmbedUrl: document.getElementById('adm-video').value.trim() || 'https://www.youtube.com/embed/ScMzIvxBSi4',
+        virtualTour360Url: document.getElementById('adm-tour360').value.trim() || 'https://www.youtube.com/embed/ScMzIvxBSi4',
+        photos: photos,
+        amenities: amenities
+      };
+
+      try {
+        localStorage.setItem(assetIdParam ? `hoie_prop_${assetIdParam}` : 'hoie_property_listing_data', JSON.stringify(PROPERTY_DATA));
+      } catch(e) {}
+
+      renderPropertyListing();
+      closeAdminModal();
+      alert('¡Información del Inmueble guardada e integrada con éxito!');
+    }
+
+    let leadData = { step: 0, purpose: '', payment: '', time: '', name: '', phone: '', email: '', score: 95, profile: 'Inversionista' };
+
+    function showStep(s) {
+      document.querySelectorAll('.mic-step').forEach(el => el.classList.remove('active'));
+      const target = document.querySelector(`.mic-step[data-step="${s}"]`);
+      if (target) target.classList.add('active');
+      leadData.step = s;
+
+      const fill = document.getElementById('mic-progress-fill');
+      const counter = document.getElementById('mic-step-counter');
+      const btnBack = document.getElementById('btn-mic-back');
+      const matchBadge = document.getElementById('match-score-val');
+
+      const pct = Math.round((s / 5) * 100);
+      if (fill) fill.style.width = pct + '%';
+      if (counter) counter.textContent = `Paso ${Math.min(s + 1, 5)} de 5`;
+      if (btnBack) btnBack.style.display = s > 0 && s < 5 ? 'block' : 'none';
+      if (matchBadge) matchBadge.textContent = Math.min(99, Math.max(25, pct + 20)) + '%';
+    }
+
+    function micNextStep() { if (leadData.step < 5) showStep(leadData.step + 1); }
+    function micPrevStep() { if (leadData.step > 0) showStep(leadData.step - 1); }
+
+    function micSelectOption(field, val, score, profile) {
+      leadData[field] = val;
+      if (profile) leadData.profile = profile;
+      micNextStep();
+    }
+
+    function sendLeadToWebhook(payload) {
+      try {
+        fetch(N8N_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).catch(err => console.log('Webhook dispatched in background.'));
+      } catch(e) {}
+    }
+
+    function saveNurturingLead() {
+      const budget = document.getElementById('nurture-budget').value;
+      const feature = document.getElementById('nurture-feature').value;
+      leadData.nurtureBudget = budget;
+      leadData.nurtureFeature = feature;
+
+      sendLeadToWebhook({ ...leadData, telemetry: userTelemetry, type: 'NURTURING_LEAD', assetId: PROPERTY_DATA.assetId });
+      alert('Te notificaremos por WhatsApp y Email apenas ingrese una propiedad con tus requisitos.');
+    }
+
+    function micSubmitLead() {
+      const nameInput = document.getElementById('lead-name');
+      const phoneInput = document.getElementById('lead-phone');
+      const emailInput = document.getElementById('lead-email');
+
+      if (!nameInput || !nameInput.value.trim()) { alert('Por favor, ingresa tu nombre.'); return; }
+      if (!phoneInput || !phoneInput.value.trim()) { alert('Por favor, ingresa tu WhatsApp.'); return; }
+
+      leadData.name = nameInput.value.trim();
+      leadData.phone = phoneInput.value.trim();
+      leadData.email = emailInput ? emailInput.value.trim() : '';
+
+      const finalScore = leadData.payment === 'cash' ? 98 : 92;
+      leadData.score = finalScore;
+      const token = `REF-MIC-${finalScore}-${leadData.name.split(' ')[0].toUpperCase()}`;
+
+      userTelemetry.timeSpentSec = Math.round((Date.now() - userTelemetry.startTime) / 1000);
+
+      sendLeadToWebhook({
+        ...leadData,
+        token: token,
+        assetId: PROPERTY_DATA.assetId,
+        assetTitle: PROPERTY_DATA.title,
+        telemetry: userTelemetry,
+        timestamp: new Date().toISOString()
+      });
+
+      const cleanPhone = ADVISOR_PHONE.replace(/[^\d]/g, '');
+      const aiSummary = userTelemetry.aiQuestions.length > 0 ? userTelemetry.aiQuestions.join('; ') : 'Ninguna duda en chat';
+      const docsSummary = userTelemetry.docsClicked.length > 0 ? userTelemetry.docsClicked.join(', ') : 'Ninguno';
+      const faqSummary = userTelemetry.faqsOpened.length > 0 ? userTelemetry.faqsOpened.join(', ') : 'Ninguna';
+      const calcSummary = userTelemetry.calcSimulations.length > 0 ? userTelemetry.calcSimulations[userTelemetry.calcSimulations.length - 1] : 'Por defecto';
+
+      const emailTxt = leadData.email ? `\n*EMAIL:* ${leadData.email}` : '';
+      const msg = `Hola, mi nombre es ${leadData.name}. Me he calificado exitosamente en HOIE para el inmueble '${PROPERTY_DATA.title}' ($${Number(PROPERTY_DATA.price).toLocaleString('en-US')}).\n\n*TOKEN VIP:* ${token}\n*SCORE MIC:* ${finalScore}/100\n*PERFIL:* ${leadData.profile}${emailTxt}\n\n*DOSSIER INTELIGENTE DE CIERRE:* \n- Preguntas a la IA: ${aiSummary}\n- Documentos Vistos: ${docsSummary}\n- Simulación Hipotecaria: ${calcSummary}\n- FAQ Revisadas: ${faqSummary}\n- Tiempo en Página: ${userTelemetry.timeSpentSec}s (${userTelemetry.photosViewedCount} fotos vistas)\n\nEstoy listo para coordinar la visita privada este sábado.`;
+      
+      const waLink = document.getElementById('whatsapp-vip-link');
+      const waSticky = document.getElementById('whatsapp-sticky-link');
+      if (waLink) waLink.href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
+      if (waSticky) waSticky.href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
+
+      document.getElementById('display-user-token').textContent = `TOKEN VIP: ${token}`;
+
+      if (finalScore >= 50) {
+        const unlockedView = document.getElementById('unlocked-asset-view');
+        const stickyBar = document.getElementById('mobile-sticky-bar');
+        const aiFloatBtn = document.getElementById('ai-floating-widget');
+
+        if (unlockedView) {
+          unlockedView.classList.add('show-unlocked');
+          unlockedView.scrollIntoView({ behavior: 'smooth' });
+        }
+        if (stickyBar) stickyBar.classList.add('show');
+        if (aiFloatBtn) aiFloatBtn.classList.add('show-float');
+
+        const micSec = document.getElementById('mic-section');
+        const heroSec = document.getElementById('gated-hero');
+        if (micSec) micSec.style.display = 'none';
+        if (heroSec) heroSec.style.display = 'none';
+      } else {
+        showStep(5);
+      }
+    }
+
+    renderPropertyListing();
+  </script>
+
+</body>
+</html>

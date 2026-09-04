@@ -113,15 +113,22 @@ export async function run(ctx) {
             : 20
 
       // ═══════════════════════════════════════════════════════════
-      // FINAL COMPOSITE SCORE
+      // FINAL COMPOSITE SCORE (configurable weights from .env)
       // ═══════════════════════════════════════════════════════════
+      const wPrice = parseFloat(process.env.SCORE_WEIGHT_PRICE_VALUE) || 0.35
+      const wComps = parseFloat(process.env.SCORE_WEIGHT_COMPARABLES) || 0.25
+      const wData = parseFloat(process.env.SCORE_WEIGHT_RISK || process.env.SCORE_WEIGHT_CONFIDENCE) || 0.15
+      const wLiq = parseFloat(process.env.SCORE_WEIGHT_LIQUIDITY) || 0.10
+      const wSeller = parseFloat(process.env.SCORE_WEIGHT_SELLER_MOTIVATION) || 0.10
+      const wLoc = parseFloat(process.env.SCORE_WEIGHT_LOCATION) || 0.05
+
       const finalScore = Math.min(100, Math.max(0, Math.round(
-        priceScore         * 0.35 +
-        compQualityScore   * 0.25 +
-        dataQualityScore   * 0.15 +
-        liquidityScore     * 0.10 +
-        sellerScore        * 0.10 +
-        locScore           * 0.05
+        priceScore         * wPrice +
+        compQualityScore   * wComps +
+        dataQualityScore   * wData +
+        liquidityScore     * wLiq +
+        sellerScore        * wSeller +
+        locScore           * wLoc
       )))
 
       const confidence = valuationConfidence

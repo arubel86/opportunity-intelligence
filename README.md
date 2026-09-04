@@ -23,10 +23,10 @@ hermes/
 
 ```bash
 # Install dependencies
-pnpm install
+npm install
 
 # Start development
-pnpm dev
+npm run dev
 
 # Run migrations
 supabase db push

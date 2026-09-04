@@ -44,7 +44,8 @@ export const AssetSchema = z.object({
     }).optional()
   }).optional(),
   seller_type: z.string().optional(),
-  tags: z.array(z.string()).optional()
+  tags: z.array(z.string()).optional(),
+  raw_data: z.record(z.any()).optional()
 })
 
 // Opportunity Score schema

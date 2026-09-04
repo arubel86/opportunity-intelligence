@@ -29,10 +29,13 @@ export async function run(ctx) {
     }
     if (!a.price_amount || a.price_amount <= 0) {
       failures.push('invalid_price')
-    } else if (a.price_amount < 10000) {
-      failures.push('price_below_minimum') // $10,000 min for real estate
-    } else if (a.price_amount > 100000000) {
-      failures.push('price_above_maximum') // $100M sanity check
+    } else {
+      const minPrice = a.vertical === 'vehicles' ? 1000 : 10000
+      if (a.price_amount < minPrice) {
+        failures.push('price_below_minimum')
+      } else if (a.price_amount > 100000000) {
+        failures.push('price_above_maximum') // $100M sanity check
+      }
     }
     if (!a.source_listing_url) {
       failures.push('missing_source_url')

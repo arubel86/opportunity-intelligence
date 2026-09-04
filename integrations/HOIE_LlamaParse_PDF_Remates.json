@@ -1,0 +1,1084 @@
+{
+  "name": "HOIE - Extractor de PDFs y Remates Bancarios con LlamaParse (n8n)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "hoie-upload-pdf",
+        "options": {}
+      },
+      "id": "node-webhook-pdf",
+      "name": "Webhook Ingesta PDF",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -900,
+        340
+      ],
+      "webhookId": "hoie-upload-pdf"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.pdf_url }}",
+        "options": {
+          "responseFormat": "file"
+        }
+      },
+      "id": "node-download-pdf",
+      "name": "Descargar Archivo PDF",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -720,
+        340
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check_pdf_download_ok",
+              "leftValue": "={{ $json.error != null }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-if-pdf-download-ok",
+      "name": "¿Descarga de PDF Exitosa?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -580,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "=⚠️ <b>ERROR EN PIPELINE HOIE (Descarga PDF)</b>\n\n🏛️ <b>Fuente:</b> {{ $('Webhook Ingesta PDF').item.json.source_name || 'Desconocida' }}\n🔗 <b>PDF:</b> {{ $('Webhook Ingesta PDF').item.json.pdf_url }}\n❌ <b>Causa:</b> {{ $json.error?.message || 'No se pudo descargar el archivo binario' }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "node-telegram-pdf-download-error-alert",
+      "name": "Alerta Telegram Error Descarga PDF",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -440,
+        480
+      ],
+      "continueOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "TELEGRAM_CREDENTIAL",
+          "name": "Telegram Bot HOIE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloud.llamaindex.ai/api/parsing/upload",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.LLAMA_CLOUD_API_KEY }}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBinaryData": true,
+        "binaryPropertyName": "data",
+        "options": {}
+      },
+      "id": "node-llamaparse-upload",
+      "name": "Subir PDF a LlamaParse",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -440,
+        340
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check_pdf_upload_ok",
+              "leftValue": "={{ $json.error != null || $json.id == null }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-if-pdf-upload-ok",
+      "name": "¿Subida a LlamaParse Exitosa?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -300,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "=⚠️ <b>ERROR EN PIPELINE HOIE (Subida LlamaParse)</b>\n\n🏛️ <b>Fuente:</b> {{ $('Webhook Ingesta PDF').item.json.source_name || 'Desconocida' }}\n🔗 <b>PDF:</b> {{ $('Webhook Ingesta PDF').item.json.pdf_url }}\n❌ <b>Causa:</b> {{ $json.error?.message || 'LlamaParse no devolvió un ID de trabajo válido' }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "node-telegram-pdf-upload-error-alert",
+      "name": "Alerta Telegram Error Subida LlamaParse",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -160,
+        480
+      ],
+      "continueOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "TELEGRAM_CREDENTIAL",
+          "name": "Telegram Bot HOIE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { ...$json, poll_attempts: 0 } }];"
+      },
+      "id": "node-init-polling",
+      "name": "Inicializar Contador Polling",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -160,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.cloud.llamaindex.ai/api/parsing/job/{{ $json.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.LLAMA_CLOUD_API_KEY }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-llamaparse-status",
+      "name": "Consultar Status LlamaParse",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        20,
+        340
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "let prevAttempts = 0;\ntry {\n  prevAttempts = $('Esperar Polling LlamaParse').item.json.poll_attempts;\n} catch (e) {\n  try {\n    prevAttempts = $('Inicializar Contador Polling').item.json.poll_attempts;\n  } catch (err) {\n    prevAttempts = 0;\n  }\n}\nreturn [{ json: { ...$json, poll_attempts: prevAttempts + 1 } }];"
+      },
+      "id": "node-increment-polling",
+      "name": "Incrementar Contador Polling",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        200,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check_status_done",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "SUCCESS",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-if-llamaparse-done",
+      "name": "¿Completado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        360,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check_status_pending",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "PENDING",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "check_poll_attempts",
+              "leftValue": "={{ $json.poll_attempts }}",
+              "rightValue": 24,
+              "operator": {
+                "type": "number",
+                "operation": "smaller"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-if-llamaparse-pending",
+      "name": "¿Sigue Pendiente?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        360,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 5,
+        "unit": "seconds"
+      },
+      "id": "node-wait-llamaparse",
+      "name": "Esperar Polling LlamaParse",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        20,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.cloud.llamaindex.ai/api/parsing/job/{{ $json.id }}/result/markdown",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.LLAMA_CLOUD_API_KEY }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-llamaparse-result",
+      "name": "Obtener Markdown de LlamaParse",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        520,
+        340
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check_markdown_ok",
+              "leftValue": "={{ $json.markdown != null && $json.markdown.length > 10 }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-if-markdown-ok",
+      "name": "¿Markdown Válido?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        700,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "=⚠️ <b>ERROR EN PIPELINE HOIE (Polling LlamaParse)</b>\n\n🏛️ <b>Fuente:</b> {{ $('Webhook Ingesta PDF').item.json.source_name || 'Desconocida' }}\n🔗 <b>PDF:</b> {{ $('Webhook Ingesta PDF').item.json.pdf_url }}\n⏱️ <b>Intentos:</b> {{ $json.poll_attempts || 'N/A' }} / 24\n❌ <b>Causa:</b> {{ $json.error?.message || $json.status || 'No se pudo descargar el Markdown' }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "node-telegram-pdf-error-alert",
+      "name": "Alerta Telegram Error PDF",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        520,
+        160
+      ],
+      "continueOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "TELEGRAM_CREDENTIAL",
+          "name": "Telegram Bot HOIE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.markdown || $json.text || $json.data }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Eres un especialista en extracción de remates judiciales y bienes reposeídos en Panamá.\n\nAnaliza el texto y tablas extraídas de este documento oficial/boletín bancario y extrae TODOS los bienes listados.\n\nCAMPOS REQUERIDOS:\n- 'title': Tipo de inmueble/auto + Sector (ej. 'Apartamento en Bella Vista', 'Toyota Hilux 4x4').\n- 'price_amount': Precio base de remate o valor del avalúo en USD numérico.\n- 'vertical': 'real_estate' o 'vehicles'.\n- 'location': { 'province', 'district', 'corregimiento' }.\n- 'specs': { 'area_m2', 'bedrooms', 'bathrooms', 'year', 'mileage', 'finca_folio' }.\n- 'contact_phone': Teléfono o contacto del juzgado o departamento de remates si aparece.\n- 'court_or_bank': Nombre del banco o juzgado.\n\nContexto adicional:\n- Fuente original sugerida: {{ $('Webhook Ingesta PDF').item.json.source_name }}\n- Vertical sugerida: {{ $('Webhook Ingesta PDF').item.json.vertical }}\n\nSi no puedes inferir la institución o la vertical del texto, usa estos valores sugeridos."
+            }
+          ]
+        }
+      },
+      "id": "node-llm-pdf-chain",
+      "name": "Extracción Estructurada IA",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        880,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {
+          "temperature": 0.1,
+          "baseURL": "https://api.groq.com/openai/v1"
+        }
+      },
+      "id": "node-groq-pdf",
+      "name": "Groq Llama 3.3",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        540
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "GROQ_API_CREDENTIAL",
+          "name": "Groq API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"remates\": [\n    {\n      \"title\": \"Apartamento en San Francisco Remate BNP\",\n      \"vertical\": \"real_estate\",\n      \"price_amount\": 165000,\n      \"currency\": \"USD\",\n      \"description\": \"Remate judicial en primera convocatoria.\",\n      \"location\": {\n        \"province\": \"Panamá\",\n        \"district\": \"Panamá\",\n        \"corregimiento\": \"San Francisco\"\n      },\n      \"specs\": {\n        \"area_m2\": 110,\n        \"bedrooms\": 2,\n        \"bathrooms\": 2,\n        \"finca_folio\": \"12345/6789\"\n      },\n      \"contact_phone\": \"+507 505-1234\",\n      \"court_or_bank\": \"Banco Nacional de Panamá\"\n    }\n  ]\n}"
+      },
+      "id": "node-pdf-parser",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1080,
+        540
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Formatear remates de PDF para Supabase con UUID determinista\nconst parsed = $json.output || $json;\nconst list = Array.isArray(parsed.remates) ? parsed.remates : [];\nconst validItems = [];\n\nconst webhookData = $('Webhook Ingesta PDF').item.json;\nconst defaultSourceName = webhookData.source_name || 'remate-bancario-pdf';\nconst defaultVertical = webhookData.vertical || 'real_estate';\n\nfunction generateDeterministicUUID(seed) {\n  let hash1 = 0x811c9dc5;\n  let hash2 = 0x5bd1e995;\n  for (let i = 0; i < seed.length; i++) {\n    const ch = seed.charCodeAt(i);\n    hash1 = Math.imul(hash1 ^ ch, 0x01000193);\n    hash2 = Math.imul(hash2 ^ (ch << 1), 0x5bd1e995);\n  }\n  const hex1 = ('00000000' + (hash1 >>> 0).toString(16)).slice(-8);\n  const hex2 = ('00000000' + (hash2 >>> 0).toString(16)).slice(-8);\n  const hex3 = ('00000000' + ((hash1 ^ hash2) >>> 0).toString(16)).slice(-8);\n  const hex4 = ('00000000' + ((hash1 + hash2) >>> 0).toString(16)).slice(-8);\n  const fullHex = (hex1 + hex2 + hex3 + hex4).slice(0, 32);\n  \n  return (\n    fullHex.substring(0, 8) + '-' +\n    fullHex.substring(8, 12) + '-' +\n    '4' + fullHex.substring(13, 16) + '-' +\n    ((parseInt(fullHex.substring(16, 18), 16) & 0x3f) | 0x80).toString(16) + fullHex.substring(18, 20) + '-' +\n    fullHex.substring(20, 32)\n  );\n}\n\nlet sourceId = webhookData.source_id;\nconst isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;\nif (!sourceId || !isUuid.test(sourceId)) {\n  sourceId = generateDeterministicUUID('source::' + defaultSourceName.toLowerCase());\n}\n\nfor (const item of list) {\n  const price = Number(item.price_amount);\n  if (!item.title || isNaN(price) || price <= 0) continue;\n\n  const normalizedTitle = String(item.title)\n    .toLowerCase()\n    .normalize('NFD')\n    .replace(/[\\u0300-\\u036f]/g, '')\n    .trim()\n    .replace(/\\s+/g, ' ');\n\n  const folio = item.specs?.finca_folio || normalizedTitle;\n  const hashSeed = sourceId + '::' + folio;\n  const assetId = generateDeterministicUUID(hashSeed);\n\n  const loc = item.location || {};\n  const province = loc.province || 'Panamá';\n  const corregimiento = loc.corregimiento || 'Bella Vista';\n  const district = loc.district || (province === 'Panamá' ? 'Panamá' : corregimiento);\n\n  validItems.push({\n    asset_id: assetId,\n    source_id: sourceId,\n    source_listing_url: webhookData.pdf_url || '',\n    vertical: (item.vertical === 'vehicles' || defaultVertical === 'vehicles') ? 'vehicles' : 'real_estate',\n    title: String(item.title).trim(),\n    description: item.description || 'Remate extraído de documento PDF.',\n    price_amount: price,\n    price_currency: 'USD',\n    location: {\n      province: province,\n      district: district,\n      corregimiento: corregimiento\n    },\n    raw_data: {\n      specs: item.specs || {},\n      area_m2: item.specs?.area_m2 || null,\n      bedrooms: item.specs?.bedrooms || null,\n      bathrooms: item.specs?.bathrooms || null,\n      contact_phone: item.contact_phone ? String(item.contact_phone).trim() : null,\n      source_pdf: true,\n      extracted_by: 'llamaparse_groq',\n      extracted_at: new Date().toISOString()\n    },\n    status: 'active',\n    updated_at: new Date().toISOString()\n  });\n}\n\nif (validItems.length === 0) {\n  return [{\n    json: {\n      is_empty_error: true,\n      source_name: defaultSourceName,\n      pdf_url: webhookData.pdf_url || ''\n    }\n  }];\n}\n\nreturn validItems.map(obj => ({ json: obj }));"
+      },
+      "id": "node-pdf-formatter",
+      "name": "Normalizar & Formatear Schema",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1180,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check_empty_pdf_extraction",
+              "leftValue": "={{ $json.is_empty_error }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-pdf-if-empty-ingest",
+      "name": "¿Ingesta PDF Vacía?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1320,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "=⚠️ <b>ADVERTENCIA EN PIPELINE HOIE (Ingesta Vacía PDF)</b>\n\n🏛️ <b>Fuente:</b> {{ $json.source_name }}\n🔗 <b>PDF:</b> {{ $json.pdf_url }}\n❌ <b>Causa:</b> El LLM no extrajo ningún remate válido del documento. Posible PDF con formato incompatible o escaneado sin OCR.",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "node-pdf-telegram-empty-alert",
+      "name": "Alerta Telegram Ingesta Vacía PDF",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1460,
+        480
+      ],
+      "continueOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "TELEGRAM_CREDENTIAL",
+          "name": "Telegram Bot HOIE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ (() => { if (!$env.SUPABASE_URL) throw new Error('SUPABASE_URL no está configurada'); return $env.SUPABASE_URL.replace(/\\/+$/, ''); })() }}/rest/v1/assets?on_conflict=asset_id",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY || $env.SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation,resolution=merge-duplicates"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "node-pdf-supabase",
+      "name": "Insertar Remates en Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1460,
+        340
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check_pdf_supabase_save_ok",
+              "leftValue": "={{ $json.error != null }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-pdf-if-supabase-ok",
+      "name": "¿Guardado en Supabase Exitoso?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "=⚠️ <b>ERROR EN PIPELINE HOIE (Supabase PDF)</b>\n\n🏛️ <b>Fuente:</b> {{ $('Normalizar & Formatear Schema').item.json.source_id || 'Desconocida' }}\n📌 <b>Activo:</b> {{ $('Normalizar & Formatear Schema').item.json.title }}\n❌ <b>Causa:</b> {{ $json.error?.message || 'Error desconocido en upsert' }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "node-pdf-telegram-supabase-error-alert",
+      "name": "Alerta Telegram Error Supabase",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1740,
+        480
+      ],
+      "continueOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "TELEGRAM_CREDENTIAL",
+          "name": "Telegram Bot HOIE"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check_is_real_estate",
+              "leftValue": "={{ $('Normalizar & Formatear Schema').item.json.vertical }}",
+              "rightValue": "real_estate",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-pdf-if-vertical-real-estate",
+      "name": "¿Es Vertical Real Estate?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1740,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ (() => { if (!$env.SUPABASE_URL) throw new Error('SUPABASE_URL no está configurada'); return $env.SUPABASE_URL.replace(/\\/+$/, ''); })() }}/rest/v1/assets?select=price_amount&vertical=eq.{{ $('Normalizar & Formatear Schema').item.json.vertical }}&location->>corregimiento=eq.{{ $('Normalizar & Formatear Schema').item.json.location.corregimiento }}&asset_id=neq.{{ $('Normalizar & Formatear Schema').item.json.asset_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.SUPABASE_SERVICE_ROLE_KEY || $env.SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "node-pdf-supabase-get-market",
+      "name": "Obtener Precios Corregimiento",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1880,
+        340
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Calcular si el activo actual es una oportunidad basada en comparables de Supabase\nconst items = $input.all();\nconst prices = items.map(item => Number(item.json.price_amount)).filter(p => !isNaN(p) && p > 0);\n\n// Obtener los datos del activo actual desde el formateador PDF\nconst currentAsset = $('Normalizar & Formatear Schema').item.json;\nconst currentPrice = Number(currentAsset.price_amount);\nconst vertical = currentAsset.vertical;\n\nlet isOpportunity = false;\nlet reason = '';\nlet avgPrice = 0;\n\nif (vertical === 'vehicles') {\n  isOpportunity = currentPrice <= 25000;\n  reason = `Auto bajo límite estático de $25,000 (Precio actual: $${currentPrice.toLocaleString('en-US')})`;\n} else {\n  if (prices.length >= 3) {\n    const sum = prices.reduce((a, b) => a + b, 0);\n    avgPrice = Math.round(sum / prices.length);\n    const discount = ((avgPrice - currentPrice) / avgPrice) * 100;\n    isOpportunity = discount >= 15;\n    reason = `Precio actual ($${currentPrice.toLocaleString('en-US')}) es ${discount.toFixed(1)}% menor al promedio de la zona ($${avgPrice.toLocaleString('en-US')}) basado en ${prices.length} activos`;\n  } else {\n    isOpportunity = currentPrice <= 180000;\n    reason = `Datos insuficientes en zona. Oportunidad bajo límite estático de $180,000 (Precio actual: $${currentPrice.toLocaleString('en-US')})`;\n  }\n}\n\nreturn [{\n  json: {\n    ...currentAsset,\n    is_opportunity: isOpportunity,\n    opportunity_reason: reason,\n    avg_zone_price: avgPrice || null\n  }\n}];"
+      },
+      "id": "node-pdf-calc-dynamic-opportunity",
+      "name": "Calcular Oportunidad Dinámica",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2060,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check_opportunity_alert",
+              "leftValue": "={{ $json.is_opportunity }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-pdf-if-opportunity",
+      "name": "¿Es Oportunidad Crítica?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2240,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "=⚖️ <b>¡NUEVO REMATE BANCARIO EXTRAÍDO DE PDF!</b>\n\n📌 <b>{{ $json.title }}</b>\n💰 <b>Precio Base:</b> ${{ Number($json.price_amount).toLocaleString('en-US') }} USD\n📍 <b>Ubicación:</b> {{ $json.location.corregimiento }}, {{ $json.location.province }}\n🏛️ <b>Institución:</b> {{ $json.source_id }}\n📞 <b>Contacto:</b> {{ $json.raw_data.contact_phone || 'No especificado' }}\n💡 <b>Análisis:</b> {{ $json.opportunity_reason }}\n\n<i>Procesado por LlamaParse & Opportunity Intelligence</i>",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "node-telegram-pdf-alert",
+      "name": "Alerta Telegram Remate",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2420,
+        270
+      ],
+      "continueOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "TELEGRAM_CREDENTIAL",
+          "name": "Telegram Bot HOIE"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook Ingesta PDF": {
+      "main": [
+        [
+          {
+            "node": "Descargar Archivo PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar Archivo PDF": {
+      "main": [
+        [
+          {
+            "node": "¿Descarga de PDF Exitosa?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Descarga de PDF Exitosa?": {
+      "main": [
+        [
+          {
+            "node": "Subir PDF a LlamaParse",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alerta Telegram Error Descarga PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subir PDF a LlamaParse": {
+      "main": [
+        [
+          {
+            "node": "¿Subida a LlamaParse Exitosa?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Subida a LlamaParse Exitosa?": {
+      "main": [
+        [
+          {
+            "node": "Inicializar Contador Polling",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alerta Telegram Error Subida LlamaParse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Inicializar Contador Polling": {
+      "main": [
+        [
+          {
+            "node": "Consultar Status LlamaParse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Consultar Status LlamaParse": {
+      "main": [
+        [
+          {
+            "node": "Incrementar Contador Polling",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Incrementar Contador Polling": {
+      "main": [
+        [
+          {
+            "node": "¿Completado?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Completado?": {
+      "main": [
+        [
+          {
+            "node": "Obtener Markdown de LlamaParse",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "¿Sigue Pendiente?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Sigue Pendiente?": {
+      "main": [
+        [
+          {
+            "node": "Esperar Polling LlamaParse",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alerta Telegram Error PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Esperar Polling LlamaParse": {
+      "main": [
+        [
+          {
+            "node": "Consultar Status LlamaParse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener Markdown de LlamaParse": {
+      "main": [
+        [
+          {
+            "node": "¿Markdown Válido?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Markdown Válido?": {
+      "main": [
+        [
+          {
+            "node": "Extracción Estructurada IA",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alerta Telegram Error PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Llama 3.3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Extracción Estructurada IA",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Extracción Estructurada IA",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extracción Estructurada IA": {
+      "main": [
+        [
+          {
+            "node": "Normalizar & Formatear Schema",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar & Formatear Schema": {
+      "main": [
+        [
+          {
+            "node": "¿Ingesta PDF Vacía?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Ingesta PDF Vacía?": {
+      "main": [
+        [
+          {
+            "node": "Alerta Telegram Ingesta Vacía PDF",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Insertar Remates en Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insertar Remates en Supabase": {
+      "main": [
+        [
+          {
+            "node": "¿Guardado en Supabase Exitoso?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Guardado en Supabase Exitoso?": {
+      "main": [
+        [
+          {
+            "node": "¿Es Vertical Real Estate?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alerta Telegram Error Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es Vertical Real Estate?": {
+      "main": [
+        [
+          {
+            "node": "Obtener Precios Corregimiento",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Calcular Oportunidad Dinámica",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener Precios Corregimiento": {
+      "main": [
+        [
+          {
+            "node": "Calcular Oportunidad Dinámica",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calcular Oportunidad Dinámica": {
+      "main": [
+        [
+          {
+            "node": "¿Es Oportunidad Crítica?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es Oportunidad Crítica?": {
+      "main": [
+        [
+          {
+            "node": "Alerta Telegram Remate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
