@@ -3,12 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title id="page-title">Vehículo en Oportunidad Exclusiva — HOIE Auto Intelligence</title>
+  <title id="page-title">Vehículo en Oportunidad Exclusiva — OI Auto Intelligence</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23131722'/%3E%3Cstop offset='50%25' stop-color='%231e40af'/%3E%3Cstop offset='100%25' stop-color='%233b82f6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='25' fill='url(%23g)'/%3E%3Ctext x='50' y='56' font-family='Arial, sans-serif' font-weight='bold' font-size='56' fill='%23F1F5F9' text-anchor='middle' dominant-baseline='central'%3EOI%3C/text%3E%3C/svg%3E">
   
-  <!-- Tipografía Inter y JetBrains Mono -->
+  <!-- Tipografía Inter, Manrope y JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Manrope:wght@600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -90,16 +91,28 @@
       text-decoration: none;
       color: var(--fg);
     }
-    .brand-badge {
-      background: linear-gradient(135deg, #1E293B, #0F172A);
-      border: 1px solid rgba(245, 158, 11, 0.4);
-      color: #FBBF24;
+    .brand-oi-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--surface-elevated);
+      border: 1.5px solid var(--border-focus);
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 14px rgba(59, 130, 246, 0.25);
+      color: #ffffff;
+      font-family: 'Manrope', 'Inter', sans-serif;
       font-weight: 800;
-      font-size: 12px;
-      padding: 4px 8px;
-      border-radius: 6px;
-      letter-spacing: 1px;
-      font-family: var(--font-mono);
+      font-size: 14px;
+      letter-spacing: -0.02em;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+    .brand-logo:hover .brand-oi-icon {
+      border-color: #60A5FA;
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.45);
+      transform: translateY(-1px);
     }
     .brand-title { font-weight: 700; font-size: 14px; letter-spacing: 0.3px; }
     .brand-tag {
@@ -894,8 +907,8 @@
   <div class="bg-glow-orb orb-2"></div>
 
   <header>
-    <a href="#" class="brand-logo">
-      <span class="brand-badge">HOIE AUTO</span>
+    <a href="/dashboard" class="brand-logo" title="Ir al Dashboard">
+      <div class="brand-oi-icon">OI</div>
       <div class="brand-title">Vehicles Intelligence</div>
       <span class="brand-tag">ACCESO VIP RESTRINGIDO</span>
     </a>
@@ -1560,7 +1573,7 @@
 
   <footer>
     <div style="max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
-      <div>© 2026 HOIE Opportunity Intelligence — Plataforma Automotriz Institucional</div>
+      <div>© 2026 Opportunity Intelligence — Plataforma Automotriz Institucional</div>
       <div>Acceso Restringido & Motor MIC v3.5</div>
     </div>
   </footer>
