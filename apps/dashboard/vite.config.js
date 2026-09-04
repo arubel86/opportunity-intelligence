@@ -9,8 +9,12 @@ function cleanUrlsPlugin() {
   const routes = {
     '/login': '/login.html',
     '/dashboard': '/index.html',
-    '/landing-1': '/landing-1.html',
-    '/landing-2': '/landing-2.html'
+    '/propiedades': '/landing1.html',
+    '/autos': '/landing2.html',
+    '/landing1': '/landing1.html',
+    '/landing2': '/landing2.html',
+    '/landing-1': '/landing1.html',
+    '/landing-2': '/landing2.html'
   }
 
   const handler = (req, res, next) => {
@@ -58,8 +62,8 @@ export default defineConfig(({ mode }) => {
         input: {
           main: resolve(__dirname, 'index.html'),
           login: resolve(__dirname, 'login.html'),
-          'landing-1': resolve(__dirname, 'landing-1.html'),
-          'landing-2': resolve(__dirname, 'landing-2.html')
+          landing1: resolve(__dirname, 'landing1.html'),
+          landing2: resolve(__dirname, 'landing2.html')
         }
       }
     }
