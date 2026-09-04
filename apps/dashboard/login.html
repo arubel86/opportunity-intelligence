@@ -761,10 +761,14 @@ input::-ms-reveal, input::-ms-clear { display: none !important; }
   </main>
 </div>
 
-<script>
+<script type="module">
+import { createClient } from '@insforge/sdk';
+
 // ── Configuration ──
-const INSFORGE_BASE_URL = 'https://insforge.aizprua.com';
-const INSFORGE_API_KEY  = 'ik_2bed7411a0830c9985681c4a5ccf2dadc81df1c78a3f30b8e8710d64ecb2d13f';
+const INSFORGE_BASE_URL = import.meta.env.VITE_INSFORGE_URL || 'https://insforge.aizprua.com';
+const INSFORGE_API_KEY  = import.meta.env.VITE_INSFORGE_API_KEY || 'ik_2bed7411a0830c9985681c4a5ccf2dadc81df1c78a3f30b8e8710d64ecb2d13f';
+
+const client = createClient({ baseUrl: INSFORGE_BASE_URL, anonKey: INSFORGE_API_KEY });
 
 const $ = (id) => document.getElementById(id);
 const alertBox      = $('alert-box');
@@ -873,33 +877,23 @@ authForm.addEventListener('submit', async (e) => {
   setLoading(true);
 
   try {
-    const res = await fetch(`${INSFORGE_BASE_URL}/api/auth/sign-in`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': INSFORGE_API_KEY
-      },
-      body: JSON.stringify({ email, password })
-    });
+    const { data, error } = await client.auth.signInWithPassword({ email, password });
 
-    const result = await res.json();
-
-    if (!res.ok || result.error) {
+    if (error) {
       failedAttempts++;
       if (failedAttempts >= MAX_ATTEMPTS) {
         setLoading(false);
         startLockout();
         return;
       }
-      const errorMsg = result.message || result.error?.message || 'Credenciales inválidas. Por favor verifique sus datos.';
+      const errorMsg = error.message || 'Credenciales inválidas. Por favor verifique sus datos.';
       showAlert(errorMsg);
       setLoading(false);
       return;
     }
 
     // Autenticación Exitosa
-    const sessionData = result.data || result;
-    const token = sessionData.accessToken || sessionData.token || (sessionData.user && sessionData.user.id);
+    const token = data.accessToken || data.user?.id;
 
     if (rememberCheck.checked) {
       localStorage.setItem('oi_access_token', token);
@@ -913,7 +907,7 @@ authForm.addEventListener('submit', async (e) => {
 
     setTimeout(() => {
       window.location.href = '/dashboard';
-    }, 500);
+    }, 400);
 
   } catch (err) {
     console.error('Error durante la autenticación:', err);
