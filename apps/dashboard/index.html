@@ -1097,6 +1097,119 @@
       min-height: 38px;
     }
 
+    /* ── DROPDOWN FLOTANTE DESACOPLADO DEL BUSCADOR (SEPARADO A 8PX) ── */
+    .custom-dropdown-container {
+      position: relative;
+      width: 100%;
+    }
+
+    .custom-dropdown-trigger {
+      width: 100%;
+      background-color: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      padding: 11px 16px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      font-family: 'Inter', sans-serif;
+      text-align: left;
+      user-select: none;
+    }
+
+    .custom-dropdown-trigger:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .custom-dropdown-container.open .custom-dropdown-trigger,
+    .custom-dropdown-trigger:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+    }
+
+    .custom-dropdown-chevron {
+      width: 13px;
+      height: 13px;
+      stroke: var(--fg-muted);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      transition: transform 0.25s ease, stroke 0.2s;
+      flex-shrink: 0;
+      margin-left: 10px;
+    }
+
+    .custom-dropdown-container.open .custom-dropdown-chevron {
+      transform: rotate(180deg);
+      stroke: var(--border-focus);
+    }
+
+    /* El menú flota a 8px por debajo del buscador, sin montarse encima */
+    .custom-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      right: 0;
+      background: rgba(14, 18, 27, 0.98);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 6px;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      z-index: 1100;
+      display: none;
+      max-height: 240px;
+      overflow-y: auto;
+      animation: dropdownFadeIn 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .custom-dropdown-container.open .custom-dropdown-menu {
+      display: block;
+    }
+
+    @keyframes dropdownFadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .custom-dropdown-item {
+      padding: 9px 12px;
+      font-size: 13px;
+      color: var(--fg);
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .custom-dropdown-item:hover {
+      background: rgba(59, 130, 246, 0.15);
+      color: #FFF;
+      padding-left: 15px;
+    }
+
+    .custom-dropdown-item.active {
+      background: rgba(59, 130, 246, 0.25);
+      color: var(--border-focus);
+      font-weight: 600;
+    }
+
+    .custom-dropdown-item.active::after {
+      content: '✓';
+      font-size: 11px;
+      color: var(--border-focus);
+    }
+
     /* Checkboxes interactivos */
     .legend-interactive {
       display: flex;
@@ -3909,8 +4022,108 @@
         }
         if (searchText) searchText.value = '';
         renderAll(false);
+        syncCustomDropdownLabels();
         if (leafletMap) {
           leafletMap.flyTo([8.9824, -79.5199], 12, { duration: 0.9 });
+        }
+      });
+    }
+
+    // ── DROPDOWNS DESACOPLADOS FLOTANTES A 8PX DEL BUSCADOR ──
+    function syncCustomDropdownLabels() {
+      [selectVertical, selectProvince, selectSource].forEach(sel => {
+        if (!sel) return;
+        const wrap = $('cd-wrap-' + sel.id);
+        if (wrap) {
+          const label = wrap.querySelector('.custom-dropdown-label');
+          const opt = sel.options[sel.selectedIndex];
+          if (label && opt) label.textContent = opt.textContent;
+          wrap.querySelectorAll('.custom-dropdown-item').forEach(i => {
+            if (i.dataset.value === sel.value) i.classList.add('active');
+            else i.classList.remove('active');
+          });
+        }
+      });
+    }
+
+    function initCustomDropdowns() {
+      const selects = [selectVertical, selectProvince, selectSource];
+      selects.forEach(sel => {
+        if (!sel || sel.dataset.customized === 'true') return;
+        sel.dataset.customized = 'true';
+        sel.style.display = 'none';
+
+        const container = document.createElement('div');
+        container.className = 'custom-dropdown-container';
+        container.id = 'cd-wrap-' + sel.id;
+
+        const trigger = document.createElement('button');
+        trigger.type = 'button';
+        trigger.className = 'custom-dropdown-trigger';
+        trigger.setAttribute('aria-expanded', 'false');
+
+        const label = document.createElement('span');
+        label.className = 'custom-dropdown-label';
+        const currentOpt = sel.options[sel.selectedIndex];
+        label.textContent = currentOpt ? currentOpt.textContent : sel.value;
+
+        const chevron = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        chevron.setAttribute('class', 'custom-dropdown-chevron');
+        chevron.setAttribute('viewBox', '0 0 24 24');
+        chevron.innerHTML = '<polyline points="6 9 12 15 18 9"></polyline>';
+
+        trigger.appendChild(label);
+        trigger.appendChild(chevron);
+
+        const menu = document.createElement('div');
+        menu.className = 'custom-dropdown-menu';
+
+        Array.from(sel.options).forEach(opt => {
+          const item = document.createElement('div');
+          item.className = 'custom-dropdown-item' + (opt.value === sel.value ? ' active' : '');
+          item.dataset.value = opt.value;
+          item.textContent = opt.textContent;
+
+          item.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sel.value = opt.value;
+            label.textContent = opt.textContent;
+            menu.querySelectorAll('.custom-dropdown-item').forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            container.classList.remove('open');
+            trigger.setAttribute('aria-expanded', 'false');
+            sel.dispatchEvent(new Event('change', { bubbles: true }));
+          });
+
+          menu.appendChild(item);
+        });
+
+        trigger.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const wasOpen = container.classList.contains('open');
+          document.querySelectorAll('.custom-dropdown-container').forEach(c => {
+            c.classList.remove('open');
+            const t = c.querySelector('.custom-dropdown-trigger');
+            if (t) t.setAttribute('aria-expanded', 'false');
+          });
+          if (!wasOpen) {
+            container.classList.add('open');
+            trigger.setAttribute('aria-expanded', 'true');
+          }
+        });
+
+        container.appendChild(trigger);
+        container.appendChild(menu);
+        sel.parentNode.insertBefore(container, sel);
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.custom-dropdown-container')) {
+          document.querySelectorAll('.custom-dropdown-container').forEach(c => {
+            c.classList.remove('open');
+            const t = c.querySelector('.custom-dropdown-trigger');
+            if (t) t.setAttribute('aria-expanded', 'false');
+          });
         }
       });
     }
@@ -4797,6 +5010,7 @@
     updateWeightsTotal();
 
     // ── INIT INMEDIATO ──
+    initCustomDropdowns();
     renderAll();
     loadProperties();
 </script>
