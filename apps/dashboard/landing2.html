@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title id="page-title">Vehículo en Oportunidad Exclusiva — OI Auto Intelligence</title>
+  <title id="page-title">Vehículo en Oportunidad Exclusiva — OI Auto</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23131722'/%3E%3Cstop offset='50%25' stop-color='%231e40af'/%3E%3Cstop offset='100%25' stop-color='%233b82f6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='25' fill='url(%23g)'/%3E%3Ctext x='50' y='56' font-family='Arial, sans-serif' font-weight='bold' font-size='56' fill='%23F1F5F9' text-anchor='middle' dominant-baseline='central'%3EOI%3C/text%3E%3C/svg%3E">
   
   <!-- Tipografía Inter, Manrope y JetBrains Mono -->
@@ -909,7 +909,7 @@
   <header>
     <a href="/dashboard" class="brand-logo" title="Ir al Dashboard">
       <div class="brand-oi-icon">OI</div>
-      <div class="brand-title">Vehicles Intelligence</div>
+      <div class="brand-title">Vehicles</div>
       <span class="brand-tag">ACCESO VIP RESTRINGIDO</span>
     </a>
 
@@ -1671,7 +1671,7 @@
     function renderVehicleListing() {
       const formatPrice = (n) => '$' + Number(n).toLocaleString('en-US');
       
-      document.getElementById('page-title').textContent = `${VEHICLE_DATA.title} — OI Auto Intelligence`;
+      document.getElementById('page-title').textContent = `${VEHICLE_DATA.title} — OI Auto`;
       document.getElementById('display-asset-id').textContent = `ID: ${VEHICLE_DATA.assetId}`;
       document.getElementById('display-title').textContent = VEHICLE_DATA.title;
       document.getElementById('display-address').innerHTML = `<svg class="icon-svg sm" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ${VEHICLE_DATA.address}`;
