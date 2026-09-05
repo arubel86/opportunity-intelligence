@@ -2876,6 +2876,7 @@
         margin-bottom: 10px;
       }
 
+      .alert-item-tactical.alert-info { border-left-color: var(--accent-celeste); }
       .alert-item-tactical.alert-success { border-left-color: var(--color-comprar); }
       .alert-item-tactical.alert-warning { border-left-color: var(--color-negociar); }
       .alert-item-tactical.alert-danger { border-left-color: var(--color-evitar); }
@@ -3215,6 +3216,13 @@
             <div class="mobile-kpi-card"><span class="mobile-kpi-label">Confianza</span><span class="mobile-kpi-value color-conf" id="m-kpi-conf">—</span></div>
           </div>
 
+          <div class="mobile-search-bar" style="margin: 12px 0 10px 0;">
+            <div class="search-input-wrapper" style="width: 100%;">
+              <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" class="search-input" id="m-search-text" placeholder="Buscar por título, marca, ubicación..." style="width: 100%;">
+            </div>
+          </div>
+
           <div class="mobile-list-header">
             <span class="mobile-list-title">Activos del mercado</span>
           </div>
@@ -3235,11 +3243,7 @@
         <!-- TAB: Alertas -->
         <div class="mobile-tab-content" id="tab-alertas">
           <div class="mobile-pane-title">Alertas del Sistema</div>
-          <div id="m-alerts-list">
-            <div class="alert-item-tactical alert-success"><span class="alert-time">HOY 18:00</span><span class="alert-text">Pipeline ejecutado correctamente. 15 activos procesados sin errores.</span></div>
-            <div class="alert-item-tactical alert-warning"><span class="alert-time">HOY 16:30</span><span class="alert-text">Confianza promedio de vehículos por debajo del 15%. Se requieren más fuentes.</span></div>
-            <div class="alert-item-tactical alert-danger"><span class="alert-time">AYER 23:15</span><span class="alert-text">Local Comercial Obarrio reportado con conflicto administrativo. Score reducido.</span></div>
-          </div>
+          <div id="m-alerts-list"></div>
         </div>
       </div>
     </div>
@@ -4020,6 +4024,12 @@
 
         const fin = calculateFinancialMetrics(item);
         const waUrl = generateWhatsAppLink(item);
+        const loc = [item.corregimiento, item.province].filter(Boolean).join(', ');
+        const metaList = [];
+        if (loc) metaList.push(loc);
+        if (item.source) metaList.push(item.source);
+        if (item.conf) metaList.push(`Conf ${item.conf}%`);
+        const metaExtra = metaList.join(' • ');
 
         card.innerHTML=`
           <div class="mobile-card-left">
@@ -4031,11 +4041,13 @@
               </div>
               <div class="mobile-card-title">${ic} ${item.title}</div>
               <div class="mobile-card-subtitle">${item.specs} • <span style="color:var(--color-comprar);">${fin.lbl1}: ${fin.val1}</span></div>
+              ${metaExtra ? `<div style="font-size:10px;color:var(--fg-muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${metaExtra}</div>` : ''}
             </div>
           </div>
-          <div style="text-align:right;">
+          <div style="text-align:right;flex-shrink:0;">
             <div class="mobile-card-price">${formatPrice(item.price)}</div>
-            <div style="display:flex;gap:4px;justify-content:flex-end;margin-top:6px;">
+            <div style="display:flex;gap:4px;justify-content:flex-end;margin-top:6px;align-items:center;">
+              <a href="${item.url || '#'}" target="_blank" class="table-link-btn" style="padding:3px 6px;font-size:10px;" onclick="event.stopPropagation();">Ver <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:1px;vertical-align:middle;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>
               <a href="${waUrl}" target="_blank" class="table-btn-wa" style="padding:3px 6px;font-size:10px;" onclick="event.stopPropagation();"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle;margin-right:3px;"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 15 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67Z"/></svg>WA</a>
               <button class="table-btn-delete" style="padding:3px 6px;font-size:10px;" title="Eliminar Activo" onclick="deleteProperty('${item.id}', event)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
             </div>
@@ -4233,7 +4245,23 @@
         renderAll(true);
       });
     }
-    if (searchText) searchText.addEventListener('input', () => renderAll(true));
+    const mSearchText = $('m-search-text');
+    if (searchText) {
+      searchText.addEventListener('input', () => {
+        if (mSearchText && mSearchText.value !== searchText.value) {
+          mSearchText.value = searchText.value;
+        }
+        renderAll(true);
+      });
+    }
+    if (mSearchText) {
+      mSearchText.addEventListener('input', () => {
+        if (searchText && searchText.value !== mSearchText.value) {
+          searchText.value = mSearchText.value;
+        }
+        renderAll(true);
+      });
+    }
 
     if (btnClear) {
       btnClear.addEventListener('click', () => {
@@ -4253,6 +4281,7 @@
           if (confVal) confVal.textContent = 0;
         }
         if (searchText) searchText.value = '';
+        if (mSearchText) mSearchText.value = '';
         renderAll(false);
         syncCustomDropdownLabels();
         if (leafletMap) {
@@ -4637,6 +4666,10 @@
 
       if (NOTIFICATIONS.length === 0) {
         notifyList.innerHTML = '<div class="notify-empty">No hay alertas recientes.</div>';
+        const mAlertsList = $('m-alerts-list');
+        if (mAlertsList) {
+          mAlertsList.innerHTML = '<div style="text-align:center;color:var(--fg-muted);padding:30px 10px;font-size:12px;">No hay alertas del sistema registradas.</div>';
+        }
         return;
       }
 
@@ -4665,6 +4698,34 @@
 
         notifyList.appendChild(div);
       });
+
+      // Sincronizar pestaña de Alertas en móvil
+      const mAlertsList = $('m-alerts-list');
+      if (mAlertsList) {
+        mAlertsList.innerHTML = '';
+        NOTIFICATIONS.forEach(n => {
+          let mClass = 'alert-info';
+          if (n.type === 'error') mClass = 'alert-danger';
+          if (n.type === 'success') mClass = 'alert-success';
+          if (n.type === 'warning') mClass = 'alert-warning';
+
+          const itemDiv = document.createElement('div');
+          itemDiv.className = `alert-item-tactical ${mClass}`;
+          itemDiv.style.cursor = 'pointer';
+          itemDiv.innerHTML = `
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <span class="alert-time">${n.time}</span>
+              ${n.unread ? '<span style="width:7px;height:7px;border-radius:50%;background:var(--accent-celeste);display:inline-block;" title="No leída"></span>' : ''}
+            </div>
+            <span class="alert-text">${n.text}</span>
+          `;
+          itemDiv.addEventListener('click', () => {
+            n.unread = false;
+            renderNotifications();
+          });
+          mAlertsList.appendChild(itemDiv);
+        });
+      }
     }
 
     if (btnNotification && notificationDropdown) {
