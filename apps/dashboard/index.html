@@ -1484,20 +1484,38 @@
     /* Ficha Técnica / Tooltip flotante en Mapa */
     .map-property-tooltip {
       position: absolute;
-      bottom: 24px;
+      bottom: 12px;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 85;
-      background: rgba(19, 23, 34, 0.9);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      z-index: 120;
+      background: rgba(14, 18, 28, 0.96);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border: 1px solid var(--border-focus);
-      border-radius: 10px;
-      width: 380px;
-      padding: 16px;
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+      border-radius: 12px;
+      width: 360px;
+      max-width: min(360px, calc(100% - 24px));
+      max-height: calc(100% - 24px);
       display: none;
-      animation: slideUpFade 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      flex-direction: column;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding: 14px 16px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      animation: slideUpFade 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .map-property-tooltip::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .map-property-tooltip::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+
+    .map-property-tooltip::-webkit-scrollbar-track {
+      background: transparent;
     }
 
     @keyframes slideUpFade {
@@ -1648,6 +1666,7 @@
       justify-content: center;
       gap: 8px;
       width: 100%;
+      flex-shrink: 0;
       background: linear-gradient(135deg, #10B981 0%, #059669 100%);
       color: #FFFFFF !important;
       text-decoration: none;
@@ -1740,6 +1759,7 @@
       justify-content: center;
       gap: 6px;
       width: 100%;
+      flex-shrink: 0;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border);
       color: var(--accent-celeste) !important;
@@ -1766,6 +1786,7 @@
       justify-content: center;
       gap: 6px;
       width: 100%;
+      flex-shrink: 0;
       background: rgba(239, 68, 68, 0.08);
       border: 1px solid rgba(239, 68, 68, 0.25);
       color: #EF4444 !important;
@@ -2875,7 +2896,7 @@
         </div>
 
         <!-- Tooltip / Ficha Técnica de Inversión Avanzada -->
-        <div class="map-property-tooltip" id="map-property-tooltip" data-od-id="property-detail-modal" style="max-width: 320px;">
+        <div class="map-property-tooltip" id="map-property-tooltip" data-od-id="property-detail-modal">
           <div class="tooltip-header">
             <div class="tooltip-title" id="tooltip-title">—</div>
             <button class="tooltip-close" id="tooltip-close">&times;</button>
@@ -3603,7 +3624,8 @@
           btnDel.onclick = (e) => deleteProperty(item.id, e);
         }
 
-        mapPropertyTooltip.style.display = 'block';
+        mapPropertyTooltip.style.display = 'flex';
+        mapPropertyTooltip.scrollTop = 0;
 
         if (shouldFly && leafletMap && item.lat && item.lng) {
           leafletMap.flyTo([item.lat, item.lng], Math.max(leafletMap.getZoom(), 14), { duration: 0.6 });
