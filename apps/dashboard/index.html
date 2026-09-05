@@ -2190,7 +2190,12 @@
     .mobile-tab-bar,
     .mobile-fab-filters,
     .mobile-scrollable-panel,
-    .mobile-map-controls { display: none; }
+    .mobile-map-controls,
+    .mobile-drawer-header,
+    .mobile-apply-bar,
+    .mobile-filters-backdrop,
+    .mobile-sheet-backdrop,
+    .mobile-sheet-handle { display: none; }
 
     /* ================================================================
        RESPONSIVE — TABLETA (768px – 1024px)
@@ -2264,12 +2269,14 @@
         display: none !important;
       }
 
-      .btn-admin span {
-        display: none;
+      .btn-admin span,
+      .btn-logout span {
+        display: none !important;
       }
 
-      .btn-admin {
-        padding: 6px;
+      .btn-admin,
+      .btn-logout {
+        padding: 6px !important;
       }
 
       /* ─── Layout principal ─── */
@@ -2278,8 +2285,118 @@
         flex-direction: column;
       }
 
+      /* ─── Cajón de Filtros Móvil (Drawer) ─── */
+      .mobile-filters-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 56px;
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 1040;
+        display: none;
+      }
+
+      .mobile-filters-backdrop.visible {
+        display: block;
+      }
+
       .sidebar-filters {
-        display: none !important;
+        display: none;
+        position: fixed !important;
+        top: 40px;
+        left: 0;
+        right: 0;
+        bottom: 56px;
+        width: 100% !important;
+        height: calc(100vh - 96px) !important;
+        background: rgba(12, 15, 24, 0.98) !important;
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: none !important;
+        border-top: 1.5px solid var(--border-focus) !important;
+        border-radius: 20px 20px 0 0;
+        z-index: 1050;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.9);
+        padding: 0 0 80px 0 !important;
+        animation: slideUpMobile 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+
+      .sidebar-filters.mobile-open {
+        display: block !important;
+      }
+
+      .mobile-drawer-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        background: rgba(12, 15, 24, 0.98);
+        z-index: 10;
+      }
+
+      .mobile-drawer-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #fff;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .mobile-drawer-close {
+        background: none;
+        border: none;
+        color: var(--fg-muted);
+        font-size: 26px;
+        cursor: pointer;
+        line-height: 1;
+        padding: 0 4px;
+      }
+
+      .mobile-drawer-close:hover {
+        color: #fff;
+      }
+
+      .mobile-apply-bar {
+        display: block;
+        position: sticky;
+        bottom: 0;
+        padding: 12px 16px;
+        background: rgba(12, 15, 24, 0.98);
+        border-top: 1px solid var(--border);
+        z-index: 10;
+      }
+
+      .btn-apply-mobile {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: linear-gradient(135deg, var(--color-prioridad) 0%, #2563EB 100%);
+        border: 1px solid rgba(255,255,255,0.2);
+        color: #fff;
+        font-size: 13px;
+        font-weight: 700;
+        padding: 12px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+      }
+
+      .apply-count-pill {
+        background: rgba(255,255,255,0.2);
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-family: var(--font-mono);
       }
 
       .right-content-pane {
@@ -2296,14 +2413,21 @@
 
       /* ─── Mapa en móvil ─── */
       .map-section {
-        height: 42vh !important;
-        min-height: 220px;
+        display: none;
+        height: calc(100vh - 112px) !important;
+        min-height: calc(100vh - 112px);
+        width: 100%;
         flex-shrink: 0;
+        border-bottom: none !important;
+      }
+
+      .map-section.mobile-active {
+        display: block !important;
       }
 
       .layer-control-card {
         top: auto;
-        bottom: 60px;
+        bottom: 64px;
         right: 12px;
         width: 140px;
         padding: 8px;
@@ -2319,18 +2443,24 @@
       .mobile-map-controls {
         display: flex;
         position: absolute;
-        bottom: 12px;
-        right: 12px;
+        bottom: 16px;
+        right: 16px;
         flex-direction: column;
         gap: 8px;
         z-index: 110;
       }
 
+      .map-zoom-controls {
+        top: 16px !important;
+        left: 16px !important;
+        z-index: 100;
+      }
+
       .map-control-btn {
-        width: 36px;
-        height: 36px;
-        border-radius: 6px;
-        background: rgba(19, 23, 34, 0.85);
+        width: 38px;
+        height: 38px;
+        border-radius: 8px;
+        background: rgba(19, 23, 34, 0.88);
         backdrop-filter: blur(8px);
         -webkit-backdrop-filter: blur(8px);
         border: 1px solid var(--border);
@@ -2627,26 +2757,85 @@
         stroke: var(--bg) !important;
       }
 
-      /* ─── Tooltip como Bottom Sheet ─── */
-      .map-property-tooltip {
+      /* ─── Backdrop y Handle para Ficha Móvil ─── */
+      .mobile-sheet-backdrop {
         position: fixed;
-        bottom: 56px;
+        top: 0;
         left: 0;
         right: 0;
-        width: 100%;
-        transform: none;
-        border-radius: 16px 16px 0 0;
-        border: none;
-        border-top: 1px solid var(--border-focus);
-        box-shadow: 0 -10px 30px rgba(0,0,0,0.8);
-        z-index: 1000;
-        padding: 20px 20px 24px 20px;
-        animation: slideUpMobile 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        bottom: 56px;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        z-index: 999;
+        display: none;
+      }
+
+      .mobile-sheet-backdrop.visible {
+        display: block;
+      }
+
+      .mobile-sheet-handle {
+        width: 38px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.25);
+        border-radius: 2px;
+        margin: 0 auto 10px auto;
+        display: block;
+      }
+
+      /* ─── Tooltip como Bottom Sheet ─── */
+      .map-property-tooltip {
+        position: fixed !important;
+        bottom: 56px !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: calc(100vh - 112px) !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+        transform: none !important;
+        border-radius: 18px 18px 0 0 !important;
+        border: none !important;
+        border-top: 1.5px solid var(--border-focus) !important;
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.9) !important;
+        z-index: 1000 !important;
+        padding: 12px 18px 24px 18px !important;
+        animation: slideUpMobile 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       }
 
       @keyframes slideUpMobile {
         from { transform: translateY(100%); opacity: 0; }
         to { transform: translateY(0); opacity: 1; }
+      }
+
+      /* ─── Responsive Admin Modal & Dropdown ─── */
+      .notification-dropdown {
+        right: -8px !important;
+        max-width: calc(100vw - 24px) !important;
+      }
+
+      .admin-modal-container {
+        height: 85vh !important;
+        max-height: 85vh !important;
+      }
+
+      .admin-tabs-bar {
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .admin-tab-btn {
+        flex-shrink: 0;
+        padding: 10px 14px;
+        font-size: 11px;
+      }
+
+      .admin-landings-grid {
+        grid-template-columns: 1fr !important;
       }
 
       /* ─── Paneles de Insights/Alertas ─── */
@@ -2766,8 +2955,14 @@
        ════════════════════════════════════════════════════════════════ -->
   <div class="dashboard-layout" data-od-id="dashboard-layout">
     
-    <!-- PANEL LATERAL IZQUIERDO (FILTROS) — Solo Desktop -->
+    <div class="mobile-filters-backdrop" id="mobile-filters-backdrop"></div>
+
+    <!-- PANEL LATERAL IZQUIERDO (FILTROS) -->
     <aside class="sidebar-filters" id="sidebar-filters" data-od-id="sidebar-filters">
+      <div class="mobile-drawer-header">
+        <span class="mobile-drawer-title">Filtros de Mercado</span>
+        <button type="button" class="mobile-drawer-close" id="btn-close-mobile-filters" aria-label="Cerrar filtros">&times;</button>
+      </div>
       <div class="filters-content">
         <div class="sidebar-title">
           <span>Filtros de Mercado</span>
@@ -2861,6 +3056,12 @@
         </div>
 
         <button class="btn-clear" id="btn-clear" data-od-id="btn-clear">Limpiar filtros aplicados</button>
+        <div class="mobile-apply-bar">
+          <button type="button" class="btn-apply-mobile" id="btn-apply-mobile-filters">
+            <span>Aplicar Filtros</span>
+            <span class="apply-count-pill" id="m-filter-apply-count">15</span>
+          </button>
+        </div>
       </div>
     </aside>
 
@@ -2895,8 +3096,11 @@
           </button>
         </div>
 
+        <div class="mobile-sheet-backdrop" id="mobile-sheet-backdrop"></div>
+
         <!-- Tooltip / Ficha Técnica de Inversión Avanzada -->
         <div class="map-property-tooltip" id="map-property-tooltip" data-od-id="property-detail-modal">
+          <div class="mobile-sheet-handle"></div>
           <div class="tooltip-header">
             <div class="tooltip-title" id="tooltip-title">—</div>
             <button class="tooltip-close" id="tooltip-close">&times;</button>
@@ -3626,6 +3830,10 @@
 
         mapPropertyTooltip.style.display = 'flex';
         mapPropertyTooltip.scrollTop = 0;
+        const mobileBackdrop = $('mobile-sheet-backdrop');
+        if (mobileBackdrop && window.innerWidth < 768) {
+          mobileBackdrop.classList.add('visible');
+        }
 
         if (shouldFly && leafletMap && item.lat && item.lng) {
           leafletMap.flyTo([item.lat, item.lng], Math.max(leafletMap.getZoom(), 14), { duration: 0.6 });
@@ -3892,6 +4100,7 @@
       const data = getFilteredData();
       renderPins(data); renderTable(data); updateKPIs(data); updateSummaryCard(data);
       renderMobileCards(data); renderMobileKPIs(data); renderMobileInsights(data);
+      updateMobileFilterCount();
       
       if (shouldFitBounds && data.length > 0) {
         autoFitMapBounds(data);
@@ -4165,10 +4374,19 @@
     if (tooltipClose) {
       tooltipClose.addEventListener('click', () => {
         if (mapPropertyTooltip) mapPropertyTooltip.style.display = 'none';
+        const mobileBackdrop = $('mobile-sheet-backdrop');
+        if (mobileBackdrop) mobileBackdrop.classList.remove('visible');
         activeSelectedId = null;
         document.querySelectorAll('.custom-marker-container').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('#table-body tr').forEach(r => r.classList.remove('row-selected'));
         document.querySelectorAll('.mobile-property-card').forEach(c => c.classList.remove('selected'));
+      });
+    }
+
+    const mobileBackdrop = $('mobile-sheet-backdrop');
+    if (mobileBackdrop) {
+      mobileBackdrop.addEventListener('click', () => {
+        if (tooltipClose) tooltipClose.click();
       });
     }
 
@@ -4266,12 +4484,33 @@
         const scrollPanel = $('mobile-scrollable-panel');
 
         if (tab === 'map') {
-          if (mapSection) mapSection.style.height = '100vh';
+          if (mapSection) {
+            mapSection.classList.add('mobile-active');
+            mapSection.style.display = 'block';
+            mapSection.style.height = 'calc(100vh - 112px)';
+            mapSection.style.minHeight = 'calc(100vh - 112px)';
+          }
           if (scrollPanel) scrollPanel.style.display = 'none';
+
+          // Invalidar tamaño en Leaflet para recalcular tiles nítidamente
+          setTimeout(() => {
+            if (leafletMap) {
+              leafletMap.invalidateSize();
+              if (activeSelectedId) {
+                const db = (Array.isArray(PROPERTIES_DATABASE) && PROPERTIES_DATABASE.length > 0) ? PROPERTIES_DATABASE : PROPERTIES_DATABASE_MOCK;
+                const item = db.find(p => p.id === activeSelectedId);
+                if (item && item.lat && item.lng) {
+                  leafletMap.flyTo([item.lat, item.lng], Math.max(leafletMap.getZoom(), 14), { duration: 0.6 });
+                }
+              }
+            }
+          }, 120);
         } else {
           if (mapSection) {
+            mapSection.classList.remove('mobile-active');
             mapSection.style.height = '0';
             mapSection.style.minHeight = '0';
+            mapSection.style.display = 'none';
           }
           if (scrollPanel) scrollPanel.style.display = 'block';
           document.querySelectorAll('.mobile-tab-content').forEach(tc => tc.classList.remove('active'));
@@ -4281,57 +4520,36 @@
       });
     });
 
-    // ── MOBILE: FAB filter toggle ──
+    // ── MOBILE: Filtros nativos en cajón deslizable (Mobile Drawer) ──
     const fabFilters = $('mobile-fab-filters');
-    if (fabFilters) {
-      fabFilters.addEventListener('click', () => {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        
-        const mapSection = $('map-pane');
-        const scrollPanel = $('mobile-scrollable-panel');
-        if (mapSection) {
-          mapSection.style.height = '0';
-          mapSection.style.minHeight = '0';
-        }
-        if (scrollPanel) scrollPanel.style.display = 'block';
+    const filtersDrawer = $('sidebar-filters');
+    const filtersBackdrop = $('mobile-filters-backdrop');
+    const closeFiltersBtn = $('btn-close-mobile-filters');
+    const applyFiltersBtn = $('btn-apply-mobile-filters');
 
-        document.querySelectorAll('.mobile-tab-content').forEach(tc => tc.classList.remove('active'));
-        const tabFiltros = $('tab-filtros');
-        if (tabFiltros) tabFiltros.classList.add('active');
-
-        // Clone filter controls into mobile panel if not already there
-        const mf = $('mobile-filters-inline');
-        if (mf && !mf.hasChildNodes()) {
-          const fc = document.querySelector('.filters-content');
-          if (fc) {
-            const clone = fc.cloneNode(true);
-            // Sync cloned inputs with originals
-            clone.querySelectorAll('select, input').forEach(el => {
-              const origId = el.id;
-              if (origId) {
-                el.id = 'm-' + origId;
-                el.addEventListener('change', () => {
-                  const orig = $(origId);
-                  if (orig) {
-                    orig.value = el.value;
-                    if(orig.type==='checkbox') orig.checked = el.checked;
-                    orig.dispatchEvent(new Event('change'));
-                  }
-                });
-                el.addEventListener('input', () => {
-                  const orig = $(origId);
-                  if (orig) {
-                    orig.value = el.value;
-                    orig.dispatchEvent(new Event('input'));
-                  }
-                });
-              }
-            });
-            mf.appendChild(clone);
-          }
-        }
-      });
+    function openMobileFilters() {
+      if (filtersDrawer) filtersDrawer.classList.add('mobile-open');
+      if (filtersBackdrop) filtersBackdrop.classList.add('visible');
+      updateMobileFilterCount();
     }
+
+    function closeMobileFilters() {
+      if (filtersDrawer) filtersDrawer.classList.remove('mobile-open');
+      if (filtersBackdrop) filtersBackdrop.classList.remove('visible');
+    }
+
+    function updateMobileFilterCount() {
+      const countEl = $('m-filter-apply-count');
+      if (countEl) {
+        const filtered = getFilteredData();
+        countEl.textContent = `${filtered.length} oportunidades`;
+      }
+    }
+
+    if (fabFilters) fabFilters.addEventListener('click', openMobileFilters);
+    if (closeFiltersBtn) closeFiltersBtn.addEventListener('click', closeMobileFilters);
+    if (applyFiltersBtn) applyFiltersBtn.addEventListener('click', closeMobileFilters);
+    if (filtersBackdrop) filtersBackdrop.addEventListener('click', closeMobileFilters);
 
     // ── MOBILE: Layer toggle button ──
     const btnToggleLayers = $('btn-toggle-layers');
@@ -5279,7 +5497,7 @@
             </div>
           </div>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px;">
+          <div class="admin-landings-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px;">
             <!-- Card Landing Inmuebles -->
             <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;">
               <div>
