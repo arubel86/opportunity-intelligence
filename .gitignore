@@ -37,3 +37,6 @@ Thumbs.db
 
 # Local V1 dashboard
 # (keep source only, not running artifacts)
+
+# Generated pipeline reports
+reports/

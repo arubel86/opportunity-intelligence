@@ -1563,7 +1563,7 @@
   </footer>
 
   <script>
-    const N8N_WEBHOOK_URL = "https://n8n.tu-servidor.com/webhook/hoie-leads";
+    const N8N_WEBHOOK_URL = "https://n8n.aizprua.com/webhook/oie-leads";
 
     let userTelemetry = {
       startTime: Date.now(),
@@ -1977,7 +1977,70 @@
       }
     }
 
+    const INSFORGE_API_BASE = 'https://insforge.aizprua.com';
+    const INSFORGE_ANON_KEY = window.INSFORGE_KEY || 'ik_2bed7411a0830c9985681c4a5ccf2dadc81df1c78a3f30b8e8710d64ecb2d13f';
+
+    async function loadVehicleFromInsForge() {
+      if (!assetIdParam) return;
+      try {
+        const endpoint = `${INSFORGE_API_BASE}/api/database/records/v_asset_pipeline?asset_id=eq.${encodeURIComponent(assetIdParam)}`;
+        const res = await fetch(endpoint, {
+          headers: {
+            'apikey': INSFORGE_ANON_KEY,
+            'Authorization': `Bearer ${INSFORGE_ANON_KEY}`,
+            'Accept': 'application/json'
+          }
+        });
+        if (!res.ok) return;
+        const records = await res.json();
+        if (!Array.isArray(records) || records.length === 0) return;
+        const item = records[0];
+        const raw = item.raw_data || {};
+        const loc = item.location || {};
+        const comps = item.components || {};
+
+        VEHICLE_DATA.assetId = item.asset_id;
+        if (item.title) VEHICLE_DATA.title = item.title;
+
+        const locParts = [loc.corregimiento || loc.neighborhood, loc.district, loc.province].filter(Boolean);
+        if (locParts.length > 0) {
+          VEHICLE_DATA.address = `Disponible para inspección en: ${locParts.join(', ')}, Panamá`;
+        }
+
+        if (item.price_amount) VEHICLE_DATA.price = Number(item.price_amount);
+        if (comps.estimated_value) {
+          VEHICLE_DATA.marketValue = Number(comps.estimated_value);
+        } else if (VEHICLE_DATA.price) {
+          VEHICLE_DATA.marketValue = Math.round(VEHICLE_DATA.price * 1.25);
+        }
+
+        if (raw.year) VEHICLE_DATA.year = Number(raw.year);
+        if (raw.mileage) VEHICLE_DATA.km = Number(raw.mileage);
+        if (raw.transmission) VEHICLE_DATA.transmission = raw.transmission;
+        if (raw.fuel) VEHICLE_DATA.fuel = raw.fuel;
+        if (raw.engine) VEHICLE_DATA.engine = raw.engine;
+        if (raw.history) VEHICLE_DATA.history = raw.history;
+
+        if (item.description || item.thesis_text) {
+          VEHICLE_DATA.description = item.description || item.thesis_text;
+        }
+
+        if (Array.isArray(raw.photos) && raw.photos.length > 0) {
+          VEHICLE_DATA.photos = raw.photos;
+        }
+
+        if (Array.isArray(raw.equipment) && raw.equipment.length > 0) {
+          VEHICLE_DATA.equipment = raw.equipment;
+        }
+
+        renderVehicleListing();
+      } catch (err) {
+        console.warn('Carga dinámica de vehículo desde InsForge:', err);
+      }
+    }
+
     renderVehicleListing();
+    loadVehicleFromInsForge();
   </script>
 
 </body>

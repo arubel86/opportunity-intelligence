@@ -13,7 +13,7 @@
  * Results are stored in the `comparisons` table.
  */
 
-import { extractAreaFields } from './utils.mjs'
+import { extractAreaFields, extractVehicleFields } from './utils.mjs'
 import { calculateHaversineDistanceKm, geocodeLocation } from './geocoder.mjs'
 
 /**
@@ -30,6 +30,7 @@ export async function findComparables(asset, supabase) {
   if (!price) return []
 
   const vertical = asset.vertical || 'real_estate'
+  const isVehicle = vertical === 'vehicles'
   const loc = asset.location || {}
   const district = (loc.district || '').trim()
   const province = (loc.province || '').trim()
@@ -37,11 +38,14 @@ export async function findComparables(asset, supabase) {
   const sourceId = asset.source_id || ''
   const selfListingId = asset.asset_id || asset.source_listing_id || ''
 
-  // Parse area/beds/baths from asset description if not directly available
-  const extracted = extractAreaFields(asset)
+  // Parse area/beds/baths for real estate
+  const extracted = isVehicle ? {} : extractAreaFields(asset)
   const areaM2 = extracted.area_m2 || null
   const bedrooms = extracted.bedrooms || null
   const bathrooms = extracted.bathrooms || null
+
+  // Parse automotive fields if vehicle
+  const targetVeh = isVehicle ? extractVehicleFields(asset) : null
 
   // ── Query pool candidates from DB ───────────────────────────────────
   const candidates = await queryCandidatePool(supabase, {
@@ -70,70 +74,161 @@ export async function findComparables(asset, supabase) {
       ? { lat: cLoc.lat, lng: cLoc.lng }
       : geocodeLocation({ neighborhood: cNeigh, district: cDist, province: cProv, title: c.title, id: c.asset_id })
 
-    // ── Metric Distance (Haversine km) ───────────────────────────
+    // Metric Distance (Haversine km)
     const distanceKm = calculateHaversineDistanceKm(targetGeo.lat, targetGeo.lng, cGeo.lat, cGeo.lng)
+    const cPrice = parseFloat(c.price_amount) || 0
 
-    // Parse candidate's area/beds
+    // Recency (common for both verticals)
+    const scrapedAt = c.scraped_at ? new Date(c.scraped_at) : null
+    const now = new Date()
+    let recencyScore = 0.5
+    if (scrapedAt) {
+      const ageDays = (now - scrapedAt) / (1000 * 60 * 60 * 24)
+      recencyScore = Math.max(0, Math.min(1, 1 - ageDays / 90))
+    }
+    const ageDays = scrapedAt ? Math.round((now - scrapedAt) / (1000 * 60 * 60 * 24)) : null
+
+    // Price similarity factor (common)
+    let priceScore = 0
+    if (cPrice > 0 && price > 0) {
+      const ratio = Math.min(cPrice, price) / Math.max(cPrice, price)
+      priceScore = Math.max(0, Math.min(1, ratio * 2 - 0.5))
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // RAMA 1: VEHÍCULOS (Opción A: Marca/Modelo, Año, Km, Precio)
+    // ─────────────────────────────────────────────────────────────
+    if (isVehicle) {
+      const cVeh = extractVehicleFields(c)
+
+      // 1. MAKE & MODEL MATCH (weight: 0.35)
+      let makeModelScore = 0.20
+      const targetMake = (targetVeh.make || '').toLowerCase()
+      const cMake = (cVeh.make || '').toLowerCase()
+      const targetModel = (targetVeh.model || '').toLowerCase()
+      const cModel = (cVeh.model || '').toLowerCase()
+
+      if (targetMake && cMake) {
+        if (targetMake === cMake) {
+          if (targetModel && cModel && targetModel === cModel) {
+            makeModelScore = 1.0 // Misma marca y modelo exacto (ej. Toyota Hilux)
+          } else if (targetModel && cModel) {
+            makeModelScore = 0.45 // Misma marca, distinto modelo (ej. Toyota Fortuner vs Hilux)
+          } else {
+            makeModelScore = 0.70 // Misma marca, modelo no especificado
+          }
+        } else {
+          makeModelScore = 0.10 // Distinta marca
+        }
+      } else {
+        // Fallback por análisis de coincidencia en título
+        const tLower = (asset.title || '').toLowerCase()
+        const cTitleLower = (c.title || '').toLowerCase()
+        const commonWords = tLower.split(/\s+/).filter(w => w.length > 3 && cTitleLower.includes(w))
+        makeModelScore = commonWords.length >= 2 ? 0.75 : (commonWords.length === 1 ? 0.40 : 0.20)
+      }
+
+      // 2. YEAR SIMILARITY (weight: 0.25)
+      let yearScore = 0.50
+      if (targetVeh.year && cVeh.year) {
+        const yearDiff = Math.abs(targetVeh.year - cVeh.year)
+        if (yearDiff === 0) yearScore = 1.0
+        else if (yearDiff === 1) yearScore = 0.85
+        else if (yearDiff === 2) yearScore = 0.70
+        else if (yearDiff === 3) yearScore = 0.55
+        else if (yearDiff === 4) yearScore = 0.40
+        else yearScore = Math.max(0.10, 0.40 - (yearDiff - 4) * 0.08)
+      }
+
+      // 3. MILEAGE / KILOMETRAJE (weight: 0.20)
+      let mileageScore = 0.50
+      if (targetVeh.mileage && cVeh.mileage && targetVeh.mileage > 0 && cVeh.mileage > 0) {
+        const kmRatio = Math.min(targetVeh.mileage, cVeh.mileage) / Math.max(targetVeh.mileage, cVeh.mileage)
+        mileageScore = Math.max(0, Math.min(1, kmRatio * 2 - 0.4))
+      }
+
+      // 4. UBICACIÓN & RECENCIA (weight: 0.05)
+      const provScore = (selfProv && cProv && selfProv === cProv) ? 1.0 : 0.70
+      const locRecencyScore = provScore * 0.5 + recencyScore * 0.5
+
+      // Factor de gating de marca: si la marca es completamente diferente, se penaliza drásticamente el composite
+      let brandGate = 1.0
+      if (targetMake && cMake) {
+        if (targetMake !== cMake) {
+          brandGate = 0.40 // Distinta marca: nunca puede ser un comparable fiable
+        } else if (targetModel && cModel && targetModel !== cModel) {
+          brandGate = 0.65 // Misma marca pero distinto modelo (ej. Hilux vs Yaris)
+        }
+      }
+
+      const rawComposite = (
+        makeModelScore   * 0.35 +
+        yearScore        * 0.25 +
+        mileageScore     * 0.20 +
+        priceScore       * 0.15 +
+        locRecencyScore  * 0.05
+      )
+
+      // Calidad ponderada para vehículos
+      const qualityScore = Math.round(rawComposite * brandGate * 100) / 100
+
+      const matchReason = buildVehicleMatchReason(targetVeh, cVeh, distanceKm)
+
+      return {
+        comp_asset_id: c.asset_id,
+        price: cPrice,
+        title: c.title,
+        location: { ...cLoc, lat: cGeo.lat, lng: cGeo.lng },
+        distance_km: distanceKm,
+        age_days: ageDays,
+        quality_score: qualityScore,
+        similarity_factors: {
+          make_model: makeModelScore,
+          year: yearScore,
+          mileage: mileageScore,
+          price: priceScore,
+          recency: recencyScore,
+        },
+        match_reason: matchReason,
+      }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // RAMA 2: BIENES RAÍCES (Fórmula Inmobiliaria Original)
+    // ─────────────────────────────────────────────────────────────
     const cExtracted = extractAreaFields(c)
     const cArea = cExtracted.area_m2 || null
     const cBeds = cExtracted.bedrooms || null
     const cBaths = cExtracted.bathrooms || null
 
-    const cPrice = parseFloat(c.price_amount) || 0
-
-    // ── Factor scores [0..1] ──────────────────────────────────────
-
-    // 1. LOCATION MATCH (weight: 0.30) - Based on Real Metric Distance
+    // 1. LOCATION MATCH (weight: 0.30)
     let locationScore = 0
-    if (distanceKm <= 1.0) {
-      locationScore = 1.0
-    } else if (distanceKm <= 3.0) {
-      locationScore = 0.85
-    } else if (distanceKm <= 7.0) {
-      locationScore = 0.65
-    } else if (distanceKm <= 20.0) {
-      locationScore = 0.40
-    } else {
-      locationScore = 0.15
-    }
+    if (distanceKm <= 1.0) locationScore = 1.0
+    else if (distanceKm <= 3.0) locationScore = 0.85
+    else if (distanceKm <= 7.0) locationScore = 0.65
+    else if (distanceKm <= 20.0) locationScore = 0.40
+    else locationScore = 0.15
 
-    // 2. PRICE SIMILARITY (weight: 0.25)
-    // How close is candidate's price to target price (ratio)
-    let priceScore = 0
-    if (cPrice > 0 && price > 0) {
-      const ratio = Math.min(cPrice, price) / Math.max(cPrice, price)
-      priceScore = Math.max(0, Math.min(1, ratio * 2 - 0.5)) // 0.5 ratio → 0.5, 0.75 ratio → 1.0
-    }
-
-    // 3. AREA SIMILARITY (weight: 0.20)
-    let areaScore = 0.5 // neutral default if no data
+    // 2. AREA SIMILARITY (weight: 0.20)
+    let areaScore = 0.5
     if (areaM2 && cArea && areaM2 > 0 && cArea > 0) {
       const areaRatio = Math.min(areaM2, cArea) / Math.max(areaM2, cArea)
-      areaScore = Math.max(0, Math.min(1, areaRatio * 2 - 0.3)) // 0.65 ratio → 1.0
+      areaScore = Math.max(0, Math.min(1, areaRatio * 2 - 0.3))
     }
 
-    // 4. BEDROOM MATCH (weight: 0.10)
+    // 3. BEDROOM MATCH (weight: 0.10)
     let bedScore = 0.5
     if (bedrooms !== null && cBeds !== null && bedrooms > 0 && cBeds > 0) {
       bedScore = bedrooms === cBeds ? 1.0 : (Math.abs(bedrooms - cBeds) <= 1 ? 0.7 : 0.3)
     }
 
-    // 5. BATHROOM MATCH (weight: 0.10)
+    // 4. BATHROOM MATCH (weight: 0.10)
     let bathScore = 0.5
     if (bathrooms !== null && cBaths !== null && bathrooms > 0 && cBaths > 0) {
       bathScore = bathrooms === cBaths ? 1.0 : (Math.abs(bathrooms - cBaths) <= 1 ? 0.7 : 0.3)
     }
 
-    // 6. RECENCY (weight: 0.05)
-    let recencyScore = 0.5
-    const scrapedAt = c.scraped_at ? new Date(c.scraped_at) : null
-    const now = new Date()
-    if (scrapedAt) {
-      const ageDays = (now - scrapedAt) / (1000 * 60 * 60 * 24)
-      recencyScore = Math.max(0, Math.min(1, 1 - ageDays / 90)) // decays over 90 days
-    }
-
-    // ── Weighted composite ────────────────────────────────────────
+    // Weighted composite inmobiliario
     const qualityScore = Math.round(
       (locationScore * 0.30 +
        priceScore     * 0.25 +
@@ -143,12 +238,6 @@ export async function findComparables(asset, supabase) {
        recencyScore   * 0.05) * 100
     ) / 100
 
-    // ── Age in days ───────────────────────────────────────────────
-    const ageDays = scrapedAt
-      ? Math.round((now - scrapedAt) / (1000 * 60 * 60 * 24))
-      : null
-
-    // ── Match reason ──────────────────────────────────────────────
     const matchReason = buildMatchReason(
       { neighborhood: selfNeigh, district: selfDist, province: selfProv },
       { neighborhood: cNeigh, district: cDist, province: cProv },
@@ -260,3 +349,28 @@ function buildMatchReason(locA, locB, vertical, areaA, areaB, distanceKm) {
   if (areaA && areaB) parts.push(`dif. área: ${Math.abs(areaA - areaB)}m²`)
   return parts.join(', ')
 }
+
+function buildVehicleMatchReason(targetVeh, cVeh, distanceKm) {
+  const parts = []
+  if (targetVeh && cVeh) {
+    if (targetVeh.make && cVeh.make && targetVeh.make.toLowerCase() === cVeh.make.toLowerCase()) {
+      if (targetVeh.model && cVeh.model && targetVeh.model.toLowerCase() === cVeh.model.toLowerCase()) {
+        parts.push(`Misma marca y modelo (${targetVeh.make} ${targetVeh.model})`)
+      } else {
+        parts.push(`Misma marca (${targetVeh.make})`)
+      }
+    }
+    if (targetVeh.year && cVeh.year) {
+      const d = Math.abs(targetVeh.year - cVeh.year)
+      parts.push(d === 0 ? `Mismo año (${targetVeh.year})` : `Año ${cVeh.year} (dif. ${d}a)`)
+    }
+    if (targetVeh.mileage && cVeh.mileage) {
+      parts.push(`Km: ${Math.round(cVeh.mileage / 1000)}k vs ${Math.round(targetVeh.mileage / 1000)}k`)
+    }
+  }
+  if (distanceKm != null && distanceKm <= 15.0) {
+    parts.push(`mismo mercado (${distanceKm} km)`)
+  }
+  return parts.join(', ') || 'Vehículo de segmento similar'
+}
+

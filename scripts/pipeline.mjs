@@ -53,14 +53,9 @@ async function main() {
   console.log('╚═══════════════════════════════════════════════╝')
   console.log('')
 
-  // ── Supabase client (shared across scoring, persistence) ────────────────
-  const supabaseUrl = process.env.SUPABASE_URL
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-  let supabase = null
-  if (supabaseUrl && supabaseKey) {
-    const { createClient } = await import('@supabase/supabase-js')
-    supabase = createClient(supabaseUrl, supabaseKey)
-  }
+  // ── Database client (InsForge / Supabase universal) ───────────────────
+  const { getDbClient } = await import('../lib/db.mjs')
+  const supabase = await getDbClient()
 
   // ── Shared context passed through stages ───────────────────────────────
   const ctx = {

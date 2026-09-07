@@ -1709,6 +1709,57 @@
       box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
     }
 
+    /* Botón de Landing VIP en Tabla Desktop */
+    .table-btn-landing {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: #F59E0B;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    .table-btn-landing:hover {
+      background: #F59E0B;
+      color: #000000 !important;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+    }
+
+    /* Botón de Landing VIP en Tooltip / Drawer */
+    .btn-landing-vip-action {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+      color: #000000 !important;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 9px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.25);
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+    }
+
+    .btn-landing-vip-action:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(245, 158, 11, 0.55);
+      filter: brightness(1.08);
+    }
+
     /* Botones Selector de Estilo de Mapa */
     .map-style-btn {
       background: var(--bg);
@@ -1999,17 +2050,20 @@
     }
 
     table.data-table th {
-      background-color: var(--surface-elevated);
+      background: rgba(22, 27, 39, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       color: var(--fg-muted);
-      font-weight: 600;
+      font-weight: 700;
       text-transform: uppercase;
       font-size: 10px;
       letter-spacing: 0.08em;
-      padding: 10px 16px;
+      padding: 11px 16px;
       position: sticky;
       top: 0;
       z-index: 10;
       border-bottom: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
     }
 
     table.data-table td {
@@ -2240,7 +2294,7 @@
        ================================================================ */
     @media (max-width: 767px) {
       body {
-        padding-bottom: 56px;
+        padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
         overflow: hidden;
       }
 
@@ -2281,7 +2335,7 @@
 
       /* ─── Layout principal ─── */
       .dashboard-layout {
-        height: calc(100vh - 56px - 56px);
+        height: calc(100vh - 56px - 56px - env(safe-area-inset-bottom, 0px));
         flex-direction: column;
       }
 
@@ -2574,74 +2628,123 @@
         color: var(--fg);
       }
 
+      /* ─── Quick Filter Chips Móvil ─── */
+      .mobile-quick-chips {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding: 4px 0 12px 0;
+        margin-bottom: 6px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .mobile-quick-chips::-webkit-scrollbar {
+        display: none;
+      }
+      .quick-chip {
+        flex-shrink: 0;
+        padding: 6px 14px;
+        font-size: 11px;
+        font-weight: 600;
+        border-radius: 20px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--fg-muted);
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .quick-chip:active {
+        transform: scale(0.96);
+      }
+      .quick-chip.active {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(37, 99, 235, 0.15) 100%);
+        border-color: var(--border-focus);
+        color: #FFFFFF;
+        box-shadow: 0 2px 10px rgba(59, 130, 246, 0.25);
+      }
+
       .mobile-properties-list {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 12px;
         padding-bottom: 80px;
       }
 
+      /* ─── Tarjeta Móvil Rediseñada (Formato Ergonómico de 2 Niveles) ─── */
       .mobile-property-card {
         background: var(--surface);
         border: 1px solid var(--border);
-        border-radius: 8px;
-        padding: 12px;
+        border-radius: 12px;
+        padding: 14px;
         display: flex;
-        align-items: center;
-        justify-content: space-between;
+        flex-direction: column;
+        gap: 10px;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .mobile-property-card::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3.5px;
+        background: var(--card-accent, var(--border));
+        transition: width 0.2s ease;
       }
 
       .mobile-property-card:active {
         background: var(--surface-elevated);
-        border-color: rgba(255, 255, 255, 0.1);
+        transform: scale(0.99);
       }
 
       .mobile-property-card.selected {
         border-color: var(--border-focus);
-        background: rgba(59, 130, 246, 0.05);
-        box-shadow: 0 0 12px rgba(59, 130, 246, 0.15);
+        background: rgba(59, 130, 246, 0.08);
+        box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
       }
 
-      .mobile-card-left {
+      .mobile-property-card.selected::before {
+        width: 5px;
+      }
+
+      .mobile-card-top-row {
         display: flex;
-        align-items: center;
-        gap: 12px;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .mobile-card-main-info {
         flex: 1;
         min-width: 0;
       }
 
-      .mobile-card-score-box {
-        width: 44px;
-        height: 44px;
-        background: rgba(0, 0, 0, 0.2);
-        border: 1px solid var(--border);
-        border-radius: 6px;
+      .mobile-card-badge-row {
         display: flex;
         align-items: center;
-        justify-content: center;
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 16px;
-        font-weight: 700;
-        flex-shrink: 0;
-      }
-
-      .mobile-card-content {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-        min-width: 0;
+        gap: 6px;
+        margin-bottom: 5px;
+        flex-wrap: wrap;
       }
 
       .mobile-card-action-pill {
-        display: flex;
+        display: inline-flex;
         align-items: center;
         gap: 4px;
-        font-size: 8px;
+        font-size: 9px;
         font-weight: 700;
         letter-spacing: 0.05em;
         text-transform: uppercase;
+        padding: 2px 7px;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.06);
       }
 
       .mobile-card-dot {
@@ -2650,35 +2753,169 @@
         border-radius: 50%;
       }
 
-      .mobile-card-title {
-        font-size: 14px;
-        font-weight: 600;
-        color: #fff;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+      .mobile-card-score-badge {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background: rgba(0, 0, 0, 0.35);
+        border: 1px solid currentColor;
+        display: inline-block;
       }
 
-      .mobile-card-subtitle {
-        font-size: 11px;
-        color: var(--fg-muted);
+      .mobile-card-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #FFFFFF;
+        line-height: 1.35;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .mobile-card-pricing-block {
+        text-align: right;
+        flex-shrink: 0;
       }
 
       .mobile-card-price {
         font-family: 'JetBrains Mono', monospace;
-        font-size: 14px;
+        font-size: 15px;
+        font-weight: 800;
+        color: #FFFFFF;
+        letter-spacing: -0.02em;
+      }
+
+      .mobile-card-mid-row {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 11px;
+      }
+
+      .mobile-card-specs-line {
+        color: var(--fg);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .mobile-card-location-line {
+        color: var(--fg-muted);
+        font-size: 10.5px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .mobile-card-fin-highlight {
+        color: var(--color-comprar);
+        font-weight: 600;
+        font-family: 'JetBrains Mono', monospace;
+      }
+
+      /* Barra de acciones táctil ergonómica (36px min touch target) */
+      .mobile-card-actions-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 2px;
+        padding-top: 8px;
+        border-top: 1px solid rgba(255, 255, 255, 0.07);
+      }
+
+      .m-btn-wa-touch {
+        flex: 1;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        color: #FFFFFF !important;
+        font-size: 11.5px;
         font-weight: 700;
-        color: #fff;
-        text-align: right;
-        margin-left: 8px;
-        flex-shrink: 0;
+        border-radius: 8px;
+        text-decoration: none;
+        box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        transition: all 0.15s ease;
+      }
+
+      .m-btn-wa-touch:active {
+        transform: scale(0.97);
+        filter: brightness(0.9);
+      }
+
+      .m-btn-view-touch {
+        height: 36px;
+        padding: 0 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        background: var(--surface-elevated);
+        border: 1px solid var(--border);
+        color: var(--fg) !important;
+        font-size: 11px;
+        font-weight: 600;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: all 0.15s ease;
+      }
+
+      .m-btn-view-touch:active {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .m-btn-landing-touch {
+        height: 36px;
+        padding: 0 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        background: rgba(245, 158, 11, 0.15);
+        border: 1px solid rgba(245, 158, 11, 0.35);
+        color: #F59E0B !important;
+        font-size: 11px;
+        font-weight: 700;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: all 0.15s ease;
+      }
+
+      .m-btn-landing-touch:active {
+        background: rgba(245, 158, 11, 0.3);
+        transform: scale(0.97);
+      }
+
+      .m-btn-del-touch {
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        color: #F87171;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+
+      .m-btn-del-touch:active {
+        background: rgba(239, 68, 68, 0.25);
       }
 
       /* ─── FAB de Filtros ─── */
       .mobile-fab-filters {
         display: flex;
         position: fixed;
-        bottom: 76px;
+        bottom: calc(76px + env(safe-area-inset-bottom, 0px));
         right: 16px;
         width: 52px;
         height: 52px;
@@ -2703,22 +2940,22 @@
         stroke-width: 2.5;
       }
 
-      /* ─── Tab Bar inferior ─── */
+      /* ─── Tab Bar inferior con Safe Area ─── */
       .mobile-tab-bar {
         display: flex;
         position: fixed;
         bottom: 0;
         left: 0;
         right: 0;
-        height: 56px;
+        height: calc(56px + env(safe-area-inset-bottom, 0px));
         background: rgba(19, 23, 34, 0.96);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border-top: 1px solid var(--border);
-        align-items: center;
+        align-items: flex-start;
         justify-content: space-around;
         z-index: 998;
-        padding: 0 16px;
+        padding: 6px 16px calc(6px + env(safe-area-inset-bottom, 0px)) 16px;
       }
 
       .tab-btn {
@@ -3134,6 +3371,17 @@
 
           <div class="tooltip-desc" id="tooltip-desc">—</div>
 
+          <!-- Botón de Presentación Landing VIP y Copiar Enlace -->
+          <div style="display:flex;gap:8px;margin-bottom:8px;">
+            <a href="#" target="_blank" class="btn-landing-vip-action" id="tooltip-btn-landing" onclick="event.stopPropagation();" style="flex:1;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              <span>Ver Landing VIP</span>
+            </a>
+            <button class="btn-copy-landing-action" id="tooltip-btn-copy-landing" title="Copiar enlace de la Landing VIP para compartir" onclick="copyLandingLink(event)" style="background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;padding:0 12px;color:var(--fg);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s ease;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            </button>
+          </div>
+
           <!-- Botón de Negociación por WhatsApp con IA Contextual -->
           <a href="#" target="_blank" class="btn-whatsapp-action" id="tooltip-btn-whatsapp" onclick="event.stopPropagation();">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
@@ -3216,11 +3464,19 @@
             <div class="mobile-kpi-card"><span class="mobile-kpi-label">Confianza</span><span class="mobile-kpi-value color-conf" id="m-kpi-conf">—</span></div>
           </div>
 
-          <div class="mobile-search-bar" style="margin: 12px 0 10px 0;">
+          <div class="mobile-search-bar" style="margin: 12px 0 8px 0;">
             <div class="search-input-wrapper" style="width: 100%;">
               <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
               <input type="text" class="search-input" id="m-search-text" placeholder="Buscar por título, marca, ubicación..." style="width: 100%;">
             </div>
+          </div>
+
+          <!-- Quick Filter Chips Móvil -->
+          <div class="mobile-quick-chips" id="mobile-quick-chips">
+            <button class="quick-chip active" data-filter="all">Todos</button>
+            <button class="quick-chip" data-filter="real_estate">🏠 Inmuebles</button>
+            <button class="quick-chip" data-filter="vehicles">🚗 Autos</button>
+            <button class="quick-chip" data-filter="opportunities">🔥 Oportunidades</button>
           </div>
 
           <div class="mobile-list-header">
@@ -3285,7 +3541,7 @@
     import { createClient } from '@insforge/sdk';
 
     const INSFORGE_URL = import.meta.env.VITE_INSFORGE_URL || 'https://insforge.aizprua.com';
-    const INSFORGE_KEY = import.meta.env.VITE_INSFORGE_API_KEY || 'ik_2bed7411a0830c9985681c4a5ccf2dadc81df1c78a3f30b8e8710d64ecb2d13f';
+    const INSFORGE_KEY = import.meta.env.VITE_INSFORGE_API_KEY || '';
     const insforgeClient = createClient({ baseUrl: INSFORGE_URL, anonKey: INSFORGE_KEY });
     const supabase = insforgeClient.database;
 
@@ -3821,6 +4077,13 @@
           btnWa.href = generateWhatsAppLink(item);
         }
 
+        // Botón Landing VIP
+        const btnLanding = $('tooltip-btn-landing');
+        if (btnLanding) {
+          const landingPath = item.vertical === 'vehicles' ? `/autos?id=${encodeURIComponent(item.id)}` : `/propiedades?id=${encodeURIComponent(item.id)}`;
+          btnLanding.href = landingPath;
+        }
+
         // Botón Google Maps / Street View
         const btnMaps = $('tooltip-btn-maps');
         if (btnMaps && item.lat && item.lng) {
@@ -3842,6 +4105,24 @@
 
         if (shouldFly && leafletMap && item.lat && item.lng) {
           leafletMap.flyTo([item.lat, item.lng], Math.max(leafletMap.getZoom(), 14), { duration: 0.6 });
+        }
+      }
+    }
+
+    // ── FUNCIÓN PARA COPIAR ENLACE DE LANDING VIP ──
+    function copyLandingLink(e) {
+      if (e) e.stopPropagation();
+      const btnLanding = $('tooltip-btn-landing');
+      if (btnLanding && btnLanding.href && btnLanding.href !== '#') {
+        const fullUrl = btnLanding.href.startsWith('http') ? btnLanding.href : (window.location.origin + btnLanding.href);
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(fullUrl).then(() => {
+            alert('¡Enlace VIP copiado al portapapeles!\nPuedes compartirlo directamente con clientes o inversionistas:\n' + fullUrl);
+          }).catch(() => {
+            prompt('Copia este enlace de presentación VIP:', fullUrl);
+          });
+        } else {
+          prompt('Copia este enlace de presentación VIP:', fullUrl);
         }
       }
     }
@@ -3987,6 +4268,7 @@
         }
 
         const waUrl = generateWhatsAppLink(item);
+        const landingUrl = item.vertical === 'vehicles' ? `/autos?id=${encodeURIComponent(item.id)}` : `/propiedades?id=${encodeURIComponent(item.id)}`;
 
         tr.innerHTML=`
           <td class="cell-score" style="color:${ac}">${item.score || 0}</td>
@@ -3998,6 +4280,7 @@
           <td class="cell-source">${item.source || ''}</td>
           <td class="cell-date">${item.date || ''}</td>
           <td style="text-align:left;white-space:nowrap;">
+            <a href="${landingUrl}" target="_blank" class="table-btn-landing" title="Ver Landing VIP para Inversionistas" onclick="event.stopPropagation();"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:3px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>Landing VIP</a>
             <a href="${item.url || '#'}" target="_blank" class="table-link-btn" onclick="event.stopPropagation();">Ver <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:2px;vertical-align:middle;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>
             <a href="${waUrl}" target="_blank" class="table-btn-wa" title="Negociar por WhatsApp" onclick="event.stopPropagation();"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle;margin-right:3px;"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 15 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67Z"/></svg>WhatsApp</a>
             <button class="table-btn-delete" title="Eliminar Activo del Pipeline" onclick="deleteProperty('${item.id}', event)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
@@ -4006,52 +4289,76 @@
       });
     }
 
-    // ── RENDER MOBILE CARDS ──
+    // ── RENDER MOBILE CARDS (ERGONÓMICO DE 2 NIVELES) ──
     function renderMobileCards(data) {
       const list = $('m-properties-list'); if(!list) return;
       list.innerHTML='';
       if(!data.length){list.innerHTML='<div style="text-align:center;color:var(--fg-muted);padding:40px;">Sin activos para estos filtros.</div>';return;}
       data.forEach(item=>{
-        const card=document.createElement('div');card.className=`mobile-property-card ${activeSelectedId===item.id?'selected':''}`;card.dataset.id=item.id;
-        const hex=getActionHex(item.actionKey), ic=item.vertical==='vehicles'?'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:-1px;margin-right:4px;opacity:0.75;"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>':'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:-1px;margin-right:4px;opacity:0.75;"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';
+        const card=document.createElement('div');
+        card.className=`mobile-property-card ${activeSelectedId===item.id?'selected':''}`;
+        card.dataset.id=item.id;
+        const hex=getActionHex(item.actionKey);
+        const ic=item.vertical==='vehicles'
+          ?'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:-1px;margin-right:4px;color:#38BDF8;"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>'
+          :'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:-1px;margin-right:4px;color:#34D399;"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';
         
         let dropBadgeHtml = '';
         if (item.prevPrice && item.prevPrice > item.price) {
           const dropAmt = item.prevPrice - item.price;
           const dropPct = Math.round((dropAmt / item.prevPrice) * 100);
-          dropBadgeHtml = `<span class="badge-price-drop" style="margin-left:6px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline-block;vertical-align:-1px;margin-right:3px;"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline></svg>-${dropPct}%</span>`;
+          dropBadgeHtml = `<span class="badge-price-drop"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline-block;vertical-align:-1px;margin-right:3px;"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline><polyline points="17 18 23 18 23 12"></polyline></svg>-${dropPct}%</span>`;
         }
 
         const fin = calculateFinancialMetrics(item);
         const waUrl = generateWhatsAppLink(item);
+        const landingUrl = item.vertical === 'vehicles' ? `/autos?id=${encodeURIComponent(item.id)}` : `/propiedades?id=${encodeURIComponent(item.id)}`;
         const loc = [item.corregimiento, item.province].filter(Boolean).join(', ');
-        const metaList = [];
-        if (loc) metaList.push(loc);
-        if (item.source) metaList.push(item.source);
-        if (item.conf) metaList.push(`Conf ${item.conf}%`);
-        const metaExtra = metaList.join(' • ');
+        card.style.setProperty('--card-accent', hex);
 
-        card.innerHTML=`
-          <div class="mobile-card-left">
-            <div class="mobile-card-score-box" style="color:${hex};border-color:${hex}">${item.score}</div>
-            <div class="mobile-card-content">
-              <div style="display:flex;align-items:center;">
-                <div class="mobile-card-action-pill" style="color:${hex}"><span class="mobile-card-dot" style="background-color:${hex}"></span>${item.action}</div>
+        card.innerHTML = `
+          <div class="mobile-card-top-row">
+            <div class="mobile-card-main-info">
+              <div class="mobile-card-badge-row">
+                <div class="mobile-card-action-pill" style="color:${hex};">
+                  <span class="mobile-card-dot" style="background-color:${hex};"></span>${item.action}
+                </div>
+                <span class="mobile-card-score-badge" style="color:${hex};border-color:${hex};">Score ${item.score}</span>
                 ${dropBadgeHtml}
               </div>
               <div class="mobile-card-title">${ic} ${item.title}</div>
-              <div class="mobile-card-subtitle">${item.specs} • <span style="color:var(--color-comprar);">${fin.lbl1}: ${fin.val1}</span></div>
-              ${metaExtra ? `<div style="font-size:10px;color:var(--fg-muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${metaExtra}</div>` : ''}
+            </div>
+            <div class="mobile-card-pricing-block">
+              <div class="mobile-card-price">${formatPrice(item.price)}</div>
             </div>
           </div>
-          <div style="text-align:right;flex-shrink:0;">
-            <div class="mobile-card-price">${formatPrice(item.price)}</div>
-            <div style="display:flex;gap:4px;justify-content:flex-end;margin-top:6px;align-items:center;">
-              <a href="${item.url || '#'}" target="_blank" class="table-link-btn" style="padding:3px 6px;font-size:10px;" onclick="event.stopPropagation();">Ver <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:1px;vertical-align:middle;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>
-              <a href="${waUrl}" target="_blank" class="table-btn-wa" style="padding:3px 6px;font-size:10px;" onclick="event.stopPropagation();"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle;margin-right:3px;"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 15 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67Z"/></svg>WA</a>
-              <button class="table-btn-delete" style="padding:3px 6px;font-size:10px;" title="Eliminar Activo" onclick="deleteProperty('${item.id}', event)"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+
+          <div class="mobile-card-mid-row">
+            <div class="mobile-card-specs-line">
+              <span>${item.specs || ''}</span>
+              ${fin.val1 ? `• <span class="mobile-card-fin-highlight">${fin.lbl1}: ${fin.val1}</span>` : ''}
             </div>
-          </div>`;
+            ${loc ? `<div class="mobile-card-location-line"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="opacity:0.6;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>${loc} ${item.source ? '• ' + item.source : ''}</div>` : ''}
+          </div>
+
+          <div class="mobile-card-actions-bar" onclick="event.stopPropagation();">
+            <a href="${landingUrl}" target="_blank" class="m-btn-landing-touch" title="Ver Landing VIP">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              <span>VIP</span>
+            </a>
+            <a href="${waUrl}" target="_blank" class="m-btn-wa-touch">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 15 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67Z"/></svg>
+              <span>Negociar</span>
+            </a>
+            <a href="${item.url || '#'}" target="_blank" class="m-btn-view-touch">
+              <span>Portal</span>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+            <button class="m-btn-del-touch" title="Eliminar Activo" onclick="deleteProperty('${item.id}', event)">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            </button>
+          </div>
+        `;
         card.addEventListener('click',()=>selectProperty(item.id));list.appendChild(card);
       });
     }
@@ -4134,7 +4441,7 @@
       return map[act] || { action: 'OBSERVAR', actionKey: 'observar' };
     }
 
-    // Función asíncrona para cargar datos de Supabase con timeout de 2.5s
+    // Función asíncrona para cargar datos de Supabase con timeout de 8s
     async function loadProperties() {
       const statusDot = $('system-status-dot');
       const statusText = $('system-status-text');
@@ -4143,7 +4450,7 @@
 
       try {
         const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Timeout de conexión a Supabase')), 2500)
+          setTimeout(() => reject(new Error('Timeout de conexión a InsForge (8s)')), 8000)
         );
         const queryPromise = supabase
           .from('v_asset_pipeline')
@@ -4185,6 +4492,20 @@
             }
             const finalUrl = item.source_listing_url || fallbackUrl;
 
+            // Formatear especificaciones ricas para vehículos y propiedades
+            let specsStr = 'Propiedad';
+            if (item.vertical === 'vehicles') {
+              const rd = item.raw_data || {};
+              const parts = [];
+              if (rd.year) parts.push(String(rd.year));
+              if (rd.make) parts.push(rd.make);
+              if (rd.model) parts.push(rd.model);
+              if (rd.mileage) parts.push(`${Number(rd.mileage).toLocaleString()} km`);
+              specsStr = parts.length > 0 ? parts.join(' · ') : (item.title || 'Vehículo');
+            } else if (item.raw_data?.area_m2) {
+              specsStr = `${item.raw_data.bedrooms || 0} hab | ${item.raw_data.bathrooms || 0} baños | ${item.raw_data.area_m2}m²`;
+            }
+
             return {
               id: item.asset_id,
               vertical: item.vertical || 'real_estate',
@@ -4196,7 +4517,7 @@
               action: mapped.action,
               actionKey: mapped.actionKey,
               title: item.title || 'Activo sin título',
-              specs: item.raw_data?.area_m2 ? `${item.raw_data.bedrooms || 0} hab | ${item.raw_data.bathrooms || 0} baños | ${item.raw_data.area_m2}m²` : (item.vertical === 'vehicles' ? 'Vehículo' : 'Propiedad'),
+              specs: specsStr,
               price: item.price_amount || 0,
               desc: item.description || '',
               date: item.scored_at ? new Date(item.scored_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
@@ -4220,9 +4541,9 @@
         if (statusDot) {
           statusDot.style.backgroundColor = 'var(--color-evitar)';
           statusDot.style.boxShadow = '0 0 8px var(--color-evitar)';
-          statusDot.title = 'Desconectado';
+          statusDot.title = 'Desconectado de InsForge - Mostrando datos de respaldo';
         }
-        if (statusText) statusText.textContent = '';
+        if (statusText) statusText.textContent = ' (Modo Sin Conexión)';
       }
     }
 
@@ -4263,6 +4584,35 @@
       });
     }
 
+    // ── Chips de Filtro Rápido Móvil ──
+    const quickChips = document.querySelectorAll('.quick-chip');
+    quickChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        quickChips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        const filter = chip.dataset.filter;
+        if (filter === 'all') {
+          if (selectVertical) selectVertical.value = 'Todas';
+          [chkComprar, chkPrioridad, chkNegociar, chkObservar, chkEvitar].forEach(c => { if (c) c.checked = true; });
+        } else if (filter === 'real_estate') {
+          if (selectVertical) selectVertical.value = 'real_estate';
+          [chkComprar, chkPrioridad, chkNegociar, chkObservar, chkEvitar].forEach(c => { if (c) c.checked = true; });
+        } else if (filter === 'vehicles') {
+          if (selectVertical) selectVertical.value = 'vehicles';
+          [chkComprar, chkPrioridad, chkNegociar, chkObservar, chkEvitar].forEach(c => { if (c) c.checked = true; });
+        } else if (filter === 'opportunities') {
+          if (selectVertical) selectVertical.value = 'Todas';
+          if (chkComprar) chkComprar.checked = true;
+          if (chkPrioridad) chkPrioridad.checked = true;
+          if (chkNegociar) chkNegociar.checked = false;
+          if (chkObservar) chkObservar.checked = false;
+          if (chkEvitar) chkEvitar.checked = false;
+        }
+        syncCustomDropdownLabels();
+        renderAll(true);
+      });
+    });
+
     if (btnClear) {
       btnClear.addEventListener('click', () => {
         if (selectVertical) selectVertical.value = 'Todas';
@@ -4282,6 +4632,7 @@
         }
         if (searchText) searchText.value = '';
         if (mSearchText) mSearchText.value = '';
+        quickChips.forEach(c => c.classList.toggle('active', c.dataset.filter === 'all'));
         renderAll(false);
         syncCustomDropdownLabels();
         if (leafletMap) {

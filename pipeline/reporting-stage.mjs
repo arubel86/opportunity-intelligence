@@ -3,9 +3,10 @@
  * Updates dashboard metrics, generates JSON report, prints console summary.
  */
 
-import { writeFileSync } from 'fs'
+import { writeFileSync, mkdirSync } from 'fs'
 import { resolve } from 'path'
 import { fileURLToPath } from 'url'
+import { getDbClient } from '../lib/db.mjs'
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 const ROOT = resolve(__dirname, '..')
@@ -18,6 +19,10 @@ const ROOT = resolve(__dirname, '..')
 export async function run(ctx) {
   const { decided, source, log, report, pipeline_run_id } = ctx
   const logStage = log.module('REPORTER')
+
+  // Asegurar directorio local de reportes
+  const reportsDir = resolve(ROOT, 'reports')
+  mkdirSync(reportsDir, { recursive: true })
 
   // ── Step 1: Dashboard Metrics ─────────────────────────────────────────
   logStage.section('DASHBOARD')
@@ -46,20 +51,17 @@ export async function run(ctx) {
 
   // Save local cache
   writeFileSync(
-    resolve(ROOT, 'benchmark/reports/dashboard-metrics.json'),
+    resolve(reportsDir, 'dashboard-metrics.json'),
     JSON.stringify(dashboardData, null, 2)
   )
 
-  // Update Supabase
-  const supabaseUrl = process.env.SUPABASE_URL
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (supabaseUrl && supabaseKey) {
+  // Update InsForge / Database
+  const db = await getDbClient()
+  if (db) {
     try {
-      const { createClient } = await import('@supabase/supabase-js')
-      const db = createClient(supabaseUrl, supabaseKey)
       await db.from('dashboard_metrics')
         .upsert({ metric_key: 'pipeline_summary', metric_value: dashboardData }, { onConflict: 'metric_key' })
-      logStage.info('Supabase dashboard_metrics updated')
+      logStage.info('InsForge dashboard_metrics updated')
     } catch (e) {
       logStage.warn(`Dashboard metrics sync skipped: ${e.message}`)
     }
@@ -78,17 +80,15 @@ export async function run(ctx) {
   report.report.generated = true
 
   writeFileSync(
-    resolve(ROOT, 'benchmark/reports/pipeline-report.json'),
+    resolve(reportsDir, 'pipeline-report.json'),
     JSON.stringify(report, null, 2)
   )
   report.report.duration_ms = Date.now() - reportStart
   logStage.info('Pipeline report generated')
 
   // ── Step 3: Update Pipeline Run ───────────────────────────────────────
-  if (supabaseUrl && supabaseKey && pipeline_run_id) {
+  if (db && pipeline_run_id) {
     try {
-      const { createClient } = await import('@supabase/supabase-js')
-      const db = createClient(supabaseUrl, supabaseKey)
       await db.from('pipeline_runs')
         .update({
           status: 'completed',

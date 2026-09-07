@@ -1546,7 +1546,7 @@
   </footer>
 
   <script>
-    const N8N_WEBHOOK_URL = "https://n8n.tu-servidor.com/webhook/hoie-leads";
+    const N8N_WEBHOOK_URL = "https://n8n.aizprua.com/webhook/oie-leads";
 
     let userTelemetry = {
       startTime: Date.now(),
@@ -1960,7 +1960,68 @@
       }
     }
 
+    const INSFORGE_API_BASE = 'https://insforge.aizprua.com';
+    const INSFORGE_ANON_KEY = window.INSFORGE_KEY || 'ik_2bed7411a0830c9985681c4a5ccf2dadc81df1c78a3f30b8e8710d64ecb2d13f';
+
+    async function loadAssetFromInsForge() {
+      if (!assetIdParam) return;
+      try {
+        const endpoint = `${INSFORGE_API_BASE}/api/database/records/v_asset_pipeline?asset_id=eq.${encodeURIComponent(assetIdParam)}`;
+        const res = await fetch(endpoint, {
+          headers: {
+            'apikey': INSFORGE_ANON_KEY,
+            'Authorization': `Bearer ${INSFORGE_ANON_KEY}`,
+            'Accept': 'application/json'
+          }
+        });
+        if (!res.ok) return;
+        const records = await res.json();
+        if (!Array.isArray(records) || records.length === 0) return;
+        const item = records[0];
+        const raw = item.raw_data || {};
+        const loc = item.location || {};
+        const comps = item.components || {};
+
+        PROPERTY_DATA.assetId = item.asset_id;
+        if (item.title) PROPERTY_DATA.title = item.title;
+
+        const addrParts = [loc.corregimiento || loc.neighborhood, loc.district, loc.province].filter(Boolean);
+        if (addrParts.length > 0) PROPERTY_DATA.address = addrParts.join(', ') + ', Panamá';
+
+        if (item.price_amount) PROPERTY_DATA.price = Number(item.price_amount);
+        if (comps.estimated_value) {
+          PROPERTY_DATA.marketValue = Number(comps.estimated_value);
+        } else if (PROPERTY_DATA.price) {
+          PROPERTY_DATA.marketValue = Math.round(PROPERTY_DATA.price * 1.25);
+        }
+
+        if (raw.area_m2) PROPERTY_DATA.areaM2 = Number(raw.area_m2);
+        if (raw.bedrooms) PROPERTY_DATA.bedrooms = Number(raw.bedrooms);
+        if (raw.bathrooms) PROPERTY_DATA.bathrooms = Number(raw.bathrooms);
+        if (raw.parking) PROPERTY_DATA.parking = Number(raw.parking);
+        if (raw.year_built) PROPERTY_DATA.yearBuilt = Number(raw.year_built);
+        if (raw.hoa_monthly) PROPERTY_DATA.hoaMonthly = Number(raw.hoa_monthly);
+
+        if (item.description || item.thesis_text) {
+          PROPERTY_DATA.description = item.description || item.thesis_text;
+        }
+
+        if (Array.isArray(raw.photos) && raw.photos.length > 0) {
+          PROPERTY_DATA.photos = raw.photos;
+        }
+
+        if (Array.isArray(raw.amenities) && raw.amenities.length > 0) {
+          PROPERTY_DATA.amenities = raw.amenities;
+        }
+
+        renderPropertyListing();
+      } catch (err) {
+        console.warn('Carga dinámica desde InsForge en background:', err);
+      }
+    }
+
     renderPropertyListing();
+    loadAssetFromInsForge();
   </script>
 
 </body>

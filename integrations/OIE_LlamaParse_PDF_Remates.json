@@ -1,0 +1,301 @@
+{
+  "name": "OIE - Extractor de PDFs y Remates Bancarios con LlamaParse",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "oie-upload-pdf",
+        "options": {}
+      },
+      "id": "71f6d74c-30b0-4897-a2a2-29cd56585803",
+      "name": "Webhook Ingesta PDF",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -32,
+        -16
+      ],
+      "webhookId": "hoie-upload-pdf"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloud.llamaindex.ai/api/parsing/upload",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.LLAMA_CLOUD_API_KEY }}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c05784ad-2ed5-4b4f-b43a-74e447583b00",
+      "name": "Subir PDF a LlamaParse",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        192,
+        -16
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "=https://api.cloud.llamaindex.ai/api/parsing/job/{{ $json.id }}/result/markdown",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.LLAMA_CLOUD_API_KEY }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "862bcb35-989e-4430-b871-006756439e3f",
+      "name": "Obtener Markdown de LlamaParse",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        416,
+        -16
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.markdown || $json.text || $json.data }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Eres un especialista en extracción de remates judiciales y bienes reposeídos en Panamá.\n\nAnaliza el texto y tablas extraídas de este documento oficial/boletín bancario y extrae TODOS los bienes listados.\n\nCAMPOS REQUERIDOS:\n- 'title': Tipo de inmueble/auto + Sector (ej. 'Apartamento en Bella Vista', 'Toyota Hilux 4x4').\n- 'price_amount': Precio base de remate o valor del avalúo en USD numérico.\n- 'vertical': 'real_estate' o 'vehicles'.\n- 'location': { 'province', 'district', 'corregimiento' }.\n- 'specs': { 'area_m2', 'bedrooms', 'bathrooms', 'year', 'mileage', 'finca_folio' }.\n- 'contact_phone': Teléfono o contacto del juzgado o departamento de remates si aparece.\n- 'court_or_bank': Nombre del banco o juzgado."
+            }
+          ]
+        }
+      },
+      "id": "2e6b6e99-d83f-42f8-a70c-6a44e87726ac",
+      "name": "Extracción Estructurada IA",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        656,
+        -16
+      ]
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {
+          "temperature": 0.1
+        }
+      },
+      "id": "f9dbb5c5-7136-4e32-99f4-dbbba748d8d0",
+      "name": "Groq Llama 3.3",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        656,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"remates\": [\n    {\n      \"title\": \"Apartamento en San Francisco Remate BNP\",\n      \"vertical\": \"real_estate\",\n      \"price_amount\": 165000,\n      \"currency\": \"USD\",\n      \"description\": \"Remate judicial en primera convocatoria.\",\n      \"location\": {\n        \"province\": \"Panamá\",\n        \"district\": \"Panamá\",\n        \"corregimiento\": \"San Francisco\"\n      },\n      \"specs\": {\n        \"area_m2\": 110,\n        \"bedrooms\": 2,\n        \"bathrooms\": 2,\n        \"finca_folio\": \"12345/6789\"\n      },\n      \"contact_phone\": \"+507 505-1234\",\n      \"court_or_bank\": \"Banco Nacional de Panamá\"\n    }\n  ]\n}"
+      },
+      "id": "c2407ad5-7007-4275-8967-6c6051c9e143",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        800,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Formatear remates de PDF para InsForge con hash inmutable\nconst parsed = $json.output || $json;\nconst list = Array.isArray(parsed.remates) ? parsed.remates : [];\nconst validItems = [];\n\nfor (const item of list) {\n  const price = Number(item.price_amount);\n  if (!item.title || isNaN(price) || price <= 0) continue;\n\n  const sourceId = (item.court_or_bank || 'remate-bancario-pdf').toLowerCase().replace(/[^a-z0-9]+/g, '-');\n  const folio = item.specs?.finca_folio || item.title.trim();\n  \n  // Hash inmutable basado en el folio/título y fuente\n  const hashSeed = sourceId + '::' + folio;\n  let hash = 0;\n  for (let i = 0; i < hashSeed.length; i++) {\n    hash = ((hash << 5) - hash) + hashSeed.charCodeAt(i);\n    hash |= 0;\n  }\n  const assetId = 'pdf_' + Math.abs(hash).toString(16);\n\n  const loc = item.location || {};\n  const province = loc.province || 'Panamá';\n  const corregimiento = loc.corregimiento || 'Bella Vista';\n  const district = loc.district || (province === 'Panamá' ? 'Panamá' : corregimiento);\n\n  validItems.push({\n    asset_id: assetId,\n    vertical: item.vertical === 'vehicles' ? 'vehicles' : 'real_estate',\n    title: String(item.title).trim(),\n    price_amount: price,\n    currency: 'USD',\n    location: {\n      province: province,\n      district: district,\n      corregimiento: corregimiento\n    },\n    raw_data: {\n      specs: item.specs || {},\n      description: item.description || 'Remate extraído de documento PDF.',\n      contact_phone: item.contact_phone || '+507 500-0000',\n      source_pdf: true,\n      extracted_by: 'llamaparse_groq',\n      extracted_at: new Date().toISOString()\n    },\n    source_id: sourceId,\n    source_listing_url: '',\n    status: 'active',\n    updated_at: new Date().toISOString()\n  });\n}\n\nreturn validItems.map(obj => ({ json: obj }));"
+      },
+      "id": "e38bae14-3f06-4b5a-b719-5a80436233c8",
+      "name": "Normalizar & Formatear Schema",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        912,
+        -16
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ ($env.INSFORGE_URL || 'https://insforge.aizprua.com').replace(/\\/+$/, '') }}/api/database/records/assets?on_conflict=asset_id",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.INSFORGE_API_KEY || 'ik_2bed7411a0830c9985681c4a5ccf2dadc81df1c78a3f30b8e8710d64ecb2d13f' }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.INSFORGE_API_KEY || 'ik_2bed7411a0830c9985681c4a5ccf2dadc81df1c78a3f30b8e8710d64ecb2d13f' }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "8788756f-abf3-4d95-850d-de9bc5274fd6",
+      "name": "Insertar Remates en InsForge",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1136,
+        -16
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "=⚖️ <b>¡NUEVO REMATE BANCARIO EXTRAÍDO DE PDF!</b>\n\n📌 <b>{{ $('Normalizar & Formatear Schema').item.json.title }}</b>\n💰 <b>Precio Base:</b> ${{ Number($('Normalizar & Formatear Schema').item.json.price_amount).toLocaleString('en-US') }} USD\n📍 <b>Ubicación:</b> {{ $('Normalizar & Formatear Schema').item.json.location.corregimiento }}, {{ $('Normalizar & Formatear Schema').item.json.location.province }}\n🏛️ <b>Institución:</b> {{ $('Normalizar & Formatear Schema').item.json.source_id }}\n📞 <b>Contacto:</b> {{ $('Normalizar & Formatear Schema').item.json.raw_data.contact_phone }}\n\n<i>Procesado por LlamaParse & Opportunity Intelligence</i>",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "7b5d9c45-e683-4d44-aa9e-1020bfe9c8d6",
+      "name": "Alerta Telegram Remate",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1360,
+        -16
+      ],
+      "webhookId": "515d1e4b-8ea1-4ac2-944c-8b601ffe98dd",
+      "continueOnFail": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook Ingesta PDF": {
+      "main": [
+        [
+          {
+            "node": "Subir PDF a LlamaParse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subir PDF a LlamaParse": {
+      "main": [
+        [
+          {
+            "node": "Obtener Markdown de LlamaParse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener Markdown de LlamaParse": {
+      "main": [
+        [
+          {
+            "node": "Extracción Estructurada IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Llama 3.3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Extracción Estructurada IA",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Extracción Estructurada IA",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extracción Estructurada IA": {
+      "main": [
+        [
+          {
+            "node": "Normalizar & Formatear Schema",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar & Formatear Schema": {
+      "main": [
+        [
+          {
+            "node": "Insertar Remates en InsForge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insertar Remates en InsForge": {
+      "main": [
+        [
+          {
+            "node": "Alerta Telegram Remate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "2816d3d3-d3e0-4a6b-b9de-0f38e89096c6",
+  "meta": {
+    "instanceId": "97b3608fad2e9cc78c54d5daa88a84f4acbcb1114166419a849034a52745bc04"
+  },
+  "id": "u9y7BhkZ6HydIblM",
+  "tags": []
+}

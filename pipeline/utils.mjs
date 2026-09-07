@@ -5,23 +5,23 @@
 
 import { createHash } from 'crypto'
 
-// ── Source UUIDs (seeded in Supabase) ─────────────────────────────────────
+// ── Source UUIDs (seeded in InsForge) ──────────────────────────────────────
 export const SOURCE_UUIDS = {
-  'bac-panama':             'd5662882-022f-4096-b192-533a97ee7ef4',
-  'banco-general':          '6e4c1f98-af67-464f-a246-f82dde298b00',
-  'banco-nacional':         '36553830-0a7e-4d6a-96a5-a061773a7da9',
-  'banco-nacional-autos':   'd712251f-ec55-4387-abdf-0e67108824d8',
-  'banistmo':               'f1b03b7b-0544-42a1-abd3-16782a7916db',
-  'caja-ahorros':           '01045869-2ef5-4431-80f9-2924fd6e848f',
-  'caja-ahorros-autos':     'c2a52960-3aa6-493c-8977-e911cab1031b',
-  'carrocarros-pa':         'f72d448d-593d-4e23-9686-f8bf5a71e522',
-  'clasificar-pa':          'd48a989c-b0b0-48b4-91f4-c5f1ed472e86',
-  'compreoalquile':         'cb8a0506-51eb-439e-9560-cd9810db547c',
-  'e24-autos':              '84342de5-9ff2-4d75-a48c-286ae89115b8',
-  'encuentra24':            '89ee5ff1-e448-4ef5-83eb-31252bd89806',
-  'global-bank':            '9cfb428b-c950-4718-83d9-9045cb386dee',
-  'multibank':              'f05e45ae-2fac-4d6b-9738-7f06fa72de72',
-  'superautos-pa':          '5825fb5e-2a4e-4aa9-b1be-90caf09d881d',
+  'encuentra24':            'ccfc07cc-def9-45f1-92c6-16f4d2b339c3',
+  'banco-nacional':         'da63265c-fec1-4b35-9925-5825f6f32357',
+  'caja-ahorros':           '5d6c2ad2-22f3-4d7a-a44d-433be7f9ce91',
+  'bac-panama':             '95b2b994-e2b3-4334-b605-676817e58765',
+  'banistmo':               '429261b7-ab2a-466c-8707-6ceba3a40a40',
+  'banco-general':          '44db95bc-100a-4ff8-af9f-2816e37d7bac',
+  'compreoalquile':         '8f3197b4-320a-422c-b472-bc3092bf9dac',
+  'global-bank':            '06d3c511-afe2-4a6f-8ad6-962e6e5e55df',
+  'multibank':              '79d9399a-7caa-40aa-b042-7a0a8f5f7592',
+  'e24-autos':              '2d79ddc4-877c-4413-879a-3f871f087d1c',
+  'banco-nacional-autos':   '2de274ad-7ab4-419e-b791-a8e862bbad16',
+  'caja-ahorros-autos':     'e9f077bc-9fd7-4090-b2ca-f197694add96',
+  'clasificar-pa':          'bb616cc9-2e8e-43d7-976a-612eda566d87',
+  'carrocarros-pa':         '74335d43-b7d8-46cd-a386-e9e3c6a1d4ed',
+  'superautos-pa':          '6a96bb1d-d6ec-4514-b1dc-7d634bcaf63e',
 }
 
 // ── Content Hash ───────────────────────────────────────────────────────────
@@ -130,3 +130,87 @@ export function extractExtraFields(asset) {
     property_type: asset.property_type || null,
   }
 }
+
+// ── Extract Vehicle Fields from Asset ────────────────────────────────────
+// Used by Comparable Engine to parse make/model/year/mileage for vehicles
+const COMMON_MAKES = [
+  'Toyota', 'Honda', 'Nissan', 'Hyundai', 'Kia', 'Ford', 'Chevrolet',
+  'Mitsubishi', 'Suzuki', 'Mazda', 'Isuzu', 'Mercedes-Benz', 'Mercedes',
+  'BMW', 'Audi', 'Volkswagen', 'Jeep', 'Lexus', 'Subaru', 'Ram'
+]
+
+export function extractVehicleFields(asset) {
+  const raw = asset.raw_data || {}
+  const title = (asset.title || '').trim()
+  const desc = (asset.description || '').trim()
+  const text = `${title} ${desc}`
+
+  // 1. Year
+  let year = raw.year || null
+  if (!year) {
+    const yearMatch = text.match(/\b(19\d\d|20[0-2]\d)\b/)
+    if (yearMatch) year = parseInt(yearMatch[1], 10)
+  }
+
+  // 2. Make
+  let make = (raw.make || '').trim()
+  if (!make) {
+    for (const m of COMMON_MAKES) {
+      const regex = new RegExp(`\\b${m}\\b`, 'i')
+      if (regex.test(text)) {
+        make = m.toLowerCase() === 'mercedes' ? 'Mercedes-Benz' : m
+        break
+      }
+    }
+  }
+
+  // 3. Model
+  let model = (raw.model || '').trim()
+  if (!model && make) {
+    const makeIdx = title.toLowerCase().indexOf(make.toLowerCase())
+    if (makeIdx !== -1) {
+      const afterMake = title.slice(makeIdx + make.length).trim()
+      const parts = afterMake.split(/\s+/)
+      const candidateModel = parts[0]?.replace(/[^\w-]/g, '')
+      if (candidateModel && !/^\d{4}$/.test(candidateModel) && candidateModel.length > 1) {
+        model = candidateModel
+      }
+    }
+  }
+
+  // 4. Mileage / Kilometraje
+  let mileage = raw.mileage || null
+  if (!mileage) {
+    const kmMatch = text.match(/(\d{1,3}(?:[,\.]\d{3})*|\d+)\s*(?:km|kms|kil[oó]metros)\b/i)
+    if (kmMatch) {
+      const numStr = kmMatch[1].replace(/[,\.]/g, '')
+      mileage = parseInt(numStr, 10)
+    }
+  }
+
+  // 5. Transmission
+  let transmission = raw.transmission || null
+  if (!transmission) {
+    if (/\b(autom[aá]tic[ao]|aut)\b/i.test(text)) transmission = 'Automática'
+    else if (/\b(manual|mec[aá]nic[ao])\b/i.test(text)) transmission = 'Manual'
+  }
+
+  // 6. Fuel
+  let fuel = raw.fuel || null
+  if (!fuel) {
+    if (/\b(di[eé]sel)\b/i.test(text)) fuel = 'Diésel'
+    else if (/\b(gasolina)\b/i.test(text)) fuel = 'Gasolina'
+    else if (/\b(h[ií]brid[ao])\b/i.test(text)) fuel = 'Híbrido'
+    else if (/\b(el[eé]ctric[ao])\b/i.test(text)) fuel = 'Eléctrico'
+  }
+
+  return {
+    make: make || null,
+    model: model || null,
+    year: year || null,
+    mileage: mileage || null,
+    transmission: transmission || null,
+    fuel: fuel || null
+  }
+}
+
