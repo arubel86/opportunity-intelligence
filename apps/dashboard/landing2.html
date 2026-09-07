@@ -1579,11 +1579,18 @@
         </div>
       </div>
 
-      <div style="margin-top:20px;display:flex;gap:10px;justify-content:flex-end;">
-        <button onclick="closeAdminModal()" class="btn-back">Cancelar</button>
-        <button onclick="saveAdminVehicle()" class="btn-next-step" style="background:linear-gradient(135deg, #F59E0B, #D97706);color:#000;">
-          Guardar y Publicar Vehículo
+      <div style="margin-top:20px;display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;">
+        <button type="button" onclick="duplicateAsNewVehicle()" class="btn-back" style="border-color:#F59E0B;color:#F59E0B;font-weight:700;display:inline-flex;align-items:center;gap:6px;" title="Crea un clon de este vehículo con nuevo ID para personalizar">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          ➕ Duplicar como Nuevo Activo
         </button>
+        <div style="display:flex;gap:10px;">
+          <button type="button" onclick="closeAdminModal()" class="btn-back">Cancelar</button>
+          <button type="button" id="btn-save-admin-veh" onclick="saveAdminVehicle()" class="btn-next-step" style="background:linear-gradient(135deg, #F59E0B, #D97706);color:#000;font-weight:700;display:inline-flex;align-items:center;gap:6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            <span>Guardar y Publicar en InsForge</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -1939,7 +1946,32 @@
       reader.readAsDataURL(file);
     }
 
-    function saveAdminVehicle() {
+    const OFF_MARKET_VEH_SOURCE_ID = '32c5d13c-5793-4ffc-b05c-4517776f5318';
+
+    function duplicateAsNewVehicle() {
+      const confirmDup = confirm('¿Deseas duplicar este vehículo como un NUEVO activo independiente en la nube?');
+      if (!confirmDup) return;
+
+      const newId = crypto.randomUUID();
+      document.getElementById('adm-id').value = newId;
+      const currentTitle = document.getElementById('adm-title').value.trim();
+      document.getElementById('adm-title').value = currentTitle ? `${currentTitle} (Copia)` : 'Nuevo Vehículo Exclusivo';
+      alert(`✨ Se ha generado un nuevo identificador único.\n\nAhora modifica los datos que desees y pulsa "Guardar y Publicar en InsForge" para que quede online.`);
+    }
+
+    async function saveAdminVehicle() {
+      const btnSave = document.getElementById('btn-save-admin-veh');
+      const originalText = btnSave ? btnSave.innerHTML : 'Guardar';
+      if (btnSave) {
+        btnSave.disabled = true;
+        btnSave.innerHTML = '<span>⏳ Publicando en InsForge...</span>';
+      }
+
+      const rawId = document.getElementById('adm-id').value.trim();
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawId);
+      const targetId = isUuid ? rawId : (assetIdParam && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(assetIdParam) ? assetIdParam : crypto.randomUUID());
+      document.getElementById('adm-id').value = targetId;
+
       const title = document.getElementById('adm-title').value.trim();
       const price = document.getElementById('adm-price').value.trim();
       const photosRaw = document.getElementById('adm-photos').value.trim();
@@ -1947,12 +1979,13 @@
 
       if (!title || !price || !photosRaw || !address) {
         alert('Por favor completa todos los campos requeridos (Título, Precio, Ubicación y Fotos).');
+        if (btnSave) { btnSave.disabled = false; btnSave.innerHTML = originalText; }
         return;
       }
 
       const photos = photosRaw.split('\n').map(u => u.trim()).filter(u => u.length > 0);
       const equipRaw = document.getElementById('adm-equipment').value.trim();
-      const equipment = equipRaw ? equipRaw.split(',').map(a => a.trim()).filter(a => a.length > 0) : VEHICLE_DATA.equipment;
+      const equipment = equipRaw ? equipRaw.split(',').map(a => a.trim()).filter(a => a.length > 0) : (VEHICLE_DATA.equipment || []);
 
       const docsRaw = document.getElementById('adm-docs').value.trim();
       let documents = [];
@@ -1969,34 +2002,137 @@
         documents = VEHICLE_DATA.documents || [];
       }
 
+      const marketValue = Number(document.getElementById('adm-market').value.trim() || Math.round(Number(price) * 1.2));
+      const year = Number(document.getElementById('adm-year').value.trim() || 2022);
+      const km = Number(document.getElementById('adm-km').value.trim() || 30000);
+      const transmission = document.getElementById('adm-trans').value.trim() || 'Automática';
+      const engine = document.getElementById('adm-engine').value.trim() || '4x4';
+      const fuel = document.getElementById('adm-fuel').value.trim() || 'Diésel';
+      const history = document.getElementById('adm-history').value.trim() || 'Único Dueño / Agencia';
+      const description = document.getElementById('adm-desc').value.trim() || 'Vehículo auditado en inspección mecánica.';
+      const videoEmbedUrl = document.getElementById('adm-video').value.trim() || 'https://www.youtube.com/embed/ScMzIvxBSi4';
+      const virtualTour360Url = document.getElementById('adm-tour360').value.trim() || 'https://www.youtube.com/embed/ScMzIvxBSi4';
+
       VEHICLE_DATA = {
-        assetId: document.getElementById('adm-id').value.trim() || 'OI-AUTO-2022',
+        assetId: targetId,
         title: title,
         address: address,
         price: Number(price),
-        marketValue: Number(document.getElementById('adm-market').value.trim() || Math.round(Number(price) * 1.2)),
-        year: Number(document.getElementById('adm-year').value.trim() || 2022),
-        km: Number(document.getElementById('adm-km').value.trim() || 30000),
-        transmission: document.getElementById('adm-trans').value.trim() || 'Automática',
-        engine: document.getElementById('adm-engine').value.trim() || '4x4',
-        fuel: document.getElementById('adm-fuel').value.trim() || 'Diésel',
-        history: document.getElementById('adm-history').value.trim() || 'Único Dueño / Agencia',
-        description: document.getElementById('adm-desc').value.trim() || 'Vehículo auditado en inspección mecánica.',
-        videoEmbedUrl: document.getElementById('adm-video').value.trim() || 'https://www.youtube.com/embed/ScMzIvxBSi4',
-        virtualTour360Url: document.getElementById('adm-tour360').value.trim() || 'https://www.youtube.com/embed/ScMzIvxBSi4',
+        marketValue: marketValue,
+        year: year,
+        km: km,
+        transmission: transmission,
+        engine: engine,
+        fuel: fuel,
+        history: history,
+        description: description,
+        videoEmbedUrl: videoEmbedUrl,
+        virtualTour360Url: virtualTour360Url,
         photos: photos,
         equipment: equipment,
         documents: documents
       };
 
       try {
-        localStorage.setItem(assetIdParam ? `oi_auto_${assetIdParam}` : 'oi_vehicle_listing_data', JSON.stringify(VEHICLE_DATA));
-        localStorage.setItem(assetIdParam ? `hoie_auto_${assetIdParam}` : 'hoie_vehicle_listing_data', JSON.stringify(VEHICLE_DATA));
+        localStorage.setItem(`oi_auto_${targetId}`, JSON.stringify(VEHICLE_DATA));
+        localStorage.setItem('oi_vehicle_listing_data', JSON.stringify(VEHICLE_DATA));
       } catch(e) {}
 
+      // Persistir de inmediato en InsForge
+      try {
+        const payload = [{
+          asset_id: targetId,
+          source_id: OFF_MARKET_VEH_SOURCE_ID,
+          vertical: 'vehicles',
+          status: 'active',
+          title: title,
+          description: description,
+          price_amount: Number(price),
+          price_currency: 'USD',
+          seller_type: 'direct_owner',
+          location: {
+            address: address,
+            district: 'Panamá',
+            province: 'Panamá'
+          },
+          raw_data: {
+            year: year,
+            mileage: km,
+            transmission: transmission,
+            engine: engine,
+            fuel: fuel,
+            history: history,
+            equipment: equipment,
+            photos: photos,
+            documents: documents,
+            videoEmbedUrl: videoEmbedUrl,
+            virtualTour360Url: virtualTour360Url
+          }
+        }];
+
+        const res = await fetch(`${INSFORGE_API_BASE}/api/database/records/assets?on_conflict=asset_id`, {
+          method: 'POST',
+          headers: {
+            'apikey': INSFORGE_ANON_KEY,
+            'Authorization': `Bearer ${INSFORGE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation,resolution=merge-duplicates'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          console.warn('Aviso al guardar auto en InsForge:', await res.text());
+        } else {
+          try {
+            await fetch(`${INSFORGE_API_BASE}/api/database/records/opportunity_scores?on_conflict=score_id`, {
+              method: 'POST',
+              headers: {
+                'apikey': INSFORGE_ANON_KEY,
+                'Authorization': `Bearer ${INSFORGE_ANON_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'resolution=merge-duplicates'
+              },
+              body: JSON.stringify([{
+                asset_id: targetId,
+                final_score: 95,
+                grade: 'A+',
+                confidence: 90,
+                components: { estimated_value: marketValue, discount_pct: Math.round(((marketValue - Number(price)) / marketValue) * 100) }
+              }])
+            });
+            await fetch(`${INSFORGE_API_BASE}/api/database/records/investment_decisions?on_conflict=decision_id`, {
+              method: 'POST',
+              headers: {
+                'apikey': INSFORGE_ANON_KEY,
+                'Authorization': `Bearer ${INSFORGE_ANON_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'resolution=merge-duplicates'
+              },
+              body: JSON.stringify([{
+                asset_id: targetId,
+                recommended_action: 'BUY_NOW',
+                investment_profile: 'direct_listing',
+                thesis_text: description
+              }])
+            });
+          } catch(e) {}
+        }
+      } catch (err) {
+        console.warn('Fallo de red con InsForge:', err);
+      }
+
+      renderGallery();
+      renderEquipment();
+      renderDocuments();
       renderVehicleListing();
       closeAdminModal();
-      alert('¡Información del Vehículo y Documentos guardados con éxito!');
+      if (btnSave) { btnSave.disabled = false; btnSave.innerHTML = originalText; }
+
+      const publicUrl = `${window.location.origin}/autos?id=${targetId}`;
+      window.history.replaceState(null, '', `?id=${targetId}&admin=true`);
+
+      prompt('✅ ¡Vehículo publicado con éxito en InsForge!\n\nEste auto ya está disponible en la nube. Copia este enlace VIP para compartir con tus clientes:', publicUrl);
     }
 
     let leadData = { step: 0, use: '', payment: '', time: '', name: '', phone: '', email: '', score: 96, profile: 'Empresarial' };

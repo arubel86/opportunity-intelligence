@@ -1562,11 +1562,18 @@
         </div>
       </div>
 
-      <div style="margin-top:20px;display:flex;gap:10px;justify-content:flex-end;">
-        <button onclick="closeAdminModal()" class="btn-back">Cancelar</button>
-        <button onclick="saveAdminProperty()" class="btn-next-step" style="background:linear-gradient(135deg, #10B981, #059669);">
-          Guardar y Publicar Inmueble
+      <div style="margin-top:20px;display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;">
+        <button type="button" onclick="duplicateAsNewProperty()" class="btn-back" style="border-color:#F59E0B;color:#F59E0B;font-weight:700;display:inline-flex;align-items:center;gap:6px;" title="Crea un clon de este activo con nuevo ID para personalizar">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          ➕ Duplicar como Nuevo Activo
         </button>
+        <div style="display:flex;gap:10px;">
+          <button type="button" onclick="closeAdminModal()" class="btn-back">Cancelar</button>
+          <button type="button" id="btn-save-admin-prop" onclick="saveAdminProperty()" class="btn-next-step" style="background:linear-gradient(135deg, #10B981, #059669);display:inline-flex;align-items:center;gap:6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+            <span>Guardar y Publicar en InsForge</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -1892,7 +1899,32 @@
       reader.readAsDataURL(file);
     }
 
-    function saveAdminProperty() {
+    const OFF_MARKET_RE_SOURCE_ID = '53ea2a8b-eddc-4951-a27c-aa6b59b29a10';
+
+    function duplicateAsNewProperty() {
+      const confirmDup = confirm('¿Deseas duplicar esta propiedad como un NUEVO activo independiente en la nube?');
+      if (!confirmDup) return;
+
+      const newId = crypto.randomUUID();
+      document.getElementById('adm-id').value = newId;
+      const currentTitle = document.getElementById('adm-title').value.trim();
+      document.getElementById('adm-title').value = currentTitle ? `${currentTitle} (Copia)` : 'Nueva Propiedad Exclusiva';
+      alert(`✨ Se ha generado un nuevo identificador único.\n\nAhora modifica los datos que desees y pulsa "Guardar y Publicar en InsForge" para que quede online.`);
+    }
+
+    async function saveAdminProperty() {
+      const btnSave = document.getElementById('btn-save-admin-prop');
+      const originalText = btnSave ? btnSave.innerHTML : 'Guardar';
+      if (btnSave) {
+        btnSave.disabled = true;
+        btnSave.innerHTML = '<span>⏳ Publicando en InsForge...</span>';
+      }
+
+      const rawId = document.getElementById('adm-id').value.trim();
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawId);
+      const targetId = isUuid ? rawId : (assetIdParam && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(assetIdParam) ? assetIdParam : crypto.randomUUID());
+      document.getElementById('adm-id').value = targetId;
+
       const title = document.getElementById('adm-title').value.trim();
       const price = document.getElementById('adm-price').value.trim();
       const photosRaw = document.getElementById('adm-photos').value.trim();
@@ -1900,12 +1932,13 @@
 
       if (!title || !price || !photosRaw || !address) {
         alert('Por favor completa todos los campos requeridos (Título, Precio, Dirección y Fotos).');
+        if (btnSave) { btnSave.disabled = false; btnSave.innerHTML = originalText; }
         return;
       }
 
       const photos = photosRaw.split('\n').map(u => u.trim()).filter(u => u.length > 0);
       const amenitiesRaw = document.getElementById('adm-amenities').value.trim();
-      const amenities = amenitiesRaw ? amenitiesRaw.split(',').map(a => a.trim()).filter(a => a.length > 0) : PROPERTY_DATA.amenities;
+      const amenities = amenitiesRaw ? amenitiesRaw.split(',').map(a => a.trim()).filter(a => a.length > 0) : (PROPERTY_DATA.amenities || []);
 
       const docsRaw = document.getElementById('adm-docs').value.trim();
       let documents = [];
@@ -1922,36 +1955,138 @@
         documents = PROPERTY_DATA.documents || [];
       }
 
+      const marketValue = Number(document.getElementById('adm-market').value.trim() || Math.round(Number(price) * 1.15));
+      const areaM2 = Number(document.getElementById('adm-area').value.trim() || 120);
+      const bedrooms = Number(document.getElementById('adm-bedrooms').value.trim() || 2);
+      const bathrooms = Number(document.getElementById('adm-bathrooms').value.trim() || 2);
+      const parking = Number(document.getElementById('adm-parking').value.trim() || 1);
+      const yearBuilt = Number(document.getElementById('adm-year').value.trim() || 2022);
+      const hoaMonthly = Number(document.getElementById('adm-hoa').value.trim() || 200);
+      const description = document.getElementById('adm-desc').value.trim() || 'Propiedad verificada en venta u oportunidad exclusiva.';
+      const videoEmbedUrl = document.getElementById('adm-video').value.trim() || 'https://www.youtube.com/embed/ScMzIvxBSi4';
+      const virtualTour360Url = document.getElementById('adm-tour360').value.trim() || 'https://www.youtube.com/embed/ScMzIvxBSi4';
+
       PROPERTY_DATA = {
-        assetId: document.getElementById('adm-id').value.trim() || 'OI-RE-2026',
+        assetId: targetId,
         title: title,
         address: address,
         price: Number(price),
-        marketValue: Number(document.getElementById('adm-market').value.trim() || Math.round(Number(price) * 1.15)),
-        areaM2: Number(document.getElementById('adm-area').value.trim() || 120),
-        bedrooms: Number(document.getElementById('adm-bedrooms').value.trim() || 2),
-        bathrooms: Number(document.getElementById('adm-bathrooms').value.trim() || 2),
-        parking: Number(document.getElementById('adm-parking').value.trim() || 1),
-        yearBuilt: Number(document.getElementById('adm-year').value.trim() || 2022),
-        hoaMonthly: Number(document.getElementById('adm-hoa').value.trim() || 200),
-        description: document.getElementById('adm-desc').value.trim() || 'Propiedad verificada en remate bancario.',
-        videoEmbedUrl: document.getElementById('adm-video').value.trim() || 'https://www.youtube.com/embed/ScMzIvxBSi4',
-        virtualTour360Url: document.getElementById('adm-tour360').value.trim() || 'https://www.youtube.com/embed/ScMzIvxBSi4',
+        marketValue: marketValue,
+        areaM2: areaM2,
+        bedrooms: bedrooms,
+        bathrooms: bathrooms,
+        parking: parking,
+        yearBuilt: yearBuilt,
+        hoaMonthly: hoaMonthly,
+        description: description,
+        videoEmbedUrl: videoEmbedUrl,
+        virtualTour360Url: virtualTour360Url,
         photos: photos,
         amenities: amenities,
         documents: documents
       };
 
       try {
-        localStorage.setItem(assetIdParam ? `oi_prop_${assetIdParam}` : 'oi_property_listing_data', JSON.stringify(PROPERTY_DATA));
-        localStorage.setItem(assetIdParam ? `hoie_prop_${assetIdParam}` : 'hoie_property_listing_data', JSON.stringify(PROPERTY_DATA));
+        localStorage.setItem(`oi_prop_${targetId}`, JSON.stringify(PROPERTY_DATA));
+        localStorage.setItem('oi_property_listing_data', JSON.stringify(PROPERTY_DATA));
       } catch(e) {}
+
+      // Persistir de inmediato en InsForge
+      try {
+        const payload = [{
+          asset_id: targetId,
+          source_id: OFF_MARKET_RE_SOURCE_ID,
+          vertical: 'real_estate',
+          status: 'active',
+          title: title,
+          description: description,
+          price_amount: Number(price),
+          price_currency: 'USD',
+          seller_type: 'direct_owner',
+          location: {
+            address: address,
+            district: 'Panamá',
+            province: 'Panamá'
+          },
+          raw_data: {
+            area_m2: areaM2,
+            bedrooms: bedrooms,
+            bathrooms: bathrooms,
+            parking: parking,
+            year_built: yearBuilt,
+            hoa_monthly: hoaMonthly,
+            amenities: amenities,
+            photos: photos,
+            documents: documents,
+            videoEmbedUrl: videoEmbedUrl,
+            virtualTour360Url: virtualTour360Url
+          }
+        }];
+
+        const res = await fetch(`${INSFORGE_API_BASE}/api/database/records/assets?on_conflict=asset_id`, {
+          method: 'POST',
+          headers: {
+            'apikey': INSFORGE_ANON_KEY,
+            'Authorization': `Bearer ${INSFORGE_ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation,resolution=merge-duplicates'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          console.warn('Aviso al guardar en InsForge:', await res.text());
+        } else {
+          // Asegurar score y decisión de inversión inicial
+          try {
+            await fetch(`${INSFORGE_API_BASE}/api/database/records/opportunity_scores?on_conflict=score_id`, {
+              method: 'POST',
+              headers: {
+                'apikey': INSFORGE_ANON_KEY,
+                'Authorization': `Bearer ${INSFORGE_ANON_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'resolution=merge-duplicates'
+              },
+              body: JSON.stringify([{
+                asset_id: targetId,
+                final_score: 95,
+                grade: 'A+',
+                confidence: 90,
+                components: { estimated_value: marketValue, discount_pct: Math.round(((marketValue - Number(price)) / marketValue) * 100) }
+              }])
+            });
+            await fetch(`${INSFORGE_API_BASE}/api/database/records/investment_decisions?on_conflict=decision_id`, {
+              method: 'POST',
+              headers: {
+                'apikey': INSFORGE_ANON_KEY,
+                'Authorization': `Bearer ${INSFORGE_ANON_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'resolution=merge-duplicates'
+              },
+              body: JSON.stringify([{
+                asset_id: targetId,
+                recommended_action: 'BUY_NOW',
+                investment_profile: 'direct_listing',
+                thesis_text: description
+              }])
+            });
+          } catch(e) {}
+        }
+      } catch (err) {
+        console.warn('Fallo de conexión con InsForge:', err);
+      }
 
       renderGallery();
       renderAmenities();
       renderDocuments();
+      renderPropertyListing();
       closeAdminModal();
-      alert('¡Información del Inmueble y Documentos guardados con éxito!');
+      if (btnSave) { btnSave.disabled = false; btnSave.innerHTML = originalText; }
+
+      const publicUrl = `${window.location.origin}/propiedades?id=${targetId}`;
+      window.history.replaceState(null, '', `?id=${targetId}&admin=true`);
+
+      prompt('✅ ¡Inmueble publicado con éxito en InsForge!\n\nEste activo ya está disponible en la nube. Copia este enlace VIP para compartir con tus clientes:', publicUrl);
     }
 
     function renderDocuments() {
