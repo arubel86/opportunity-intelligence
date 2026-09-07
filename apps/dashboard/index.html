@@ -840,10 +840,23 @@
       flex-shrink: 0;
     }
 
+    @keyframes logoFloatingCompact {
+      0%, 100% {
+        transform: translateY(0);
+        box-shadow: 0 0 14px rgba(59, 130, 246, 0.25);
+        border-color: rgba(59, 130, 246, 0.75);
+      }
+      50% {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 18px rgba(59, 130, 246, 0.4), 0 0 22px rgba(133, 205, 255, 0.4);
+        border-color: #60A5FA;
+      }
+    }
+
     .brand-oi-icon {
       width: 36px;
       height: 36px;
-      background: var(--surface-elevated);
+      background: linear-gradient(145deg, #1E2536 0%, #111520 100%);
       border: 1.5px solid var(--border-focus);
       border-radius: 9px;
       display: flex;
@@ -856,13 +869,14 @@
       font-size: 15px;
       letter-spacing: -0.02em;
       flex-shrink: 0;
-      transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+      animation: logoFloatingCompact 4s ease-in-out infinite;
+      transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .brand-section:hover .brand-oi-icon {
-      border-color: #60A5FA;
-      box-shadow: 0 0 22px rgba(59, 130, 246, 0.45);
-      transform: translateY(-1px);
+      border-color: #93C5FD;
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.5), 0 0 28px rgba(133, 205, 255, 0.6);
+      transform: translateY(-4px) scale(1.06);
     }
 
     /* KPIs Globales */
