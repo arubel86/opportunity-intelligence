@@ -314,6 +314,133 @@
       font-size: 20px;
       cursor: pointer;
     }
+
+    /* Selector de Escenas / Habitaciones */
+    .scene-selector-bar {
+      position: absolute;
+      bottom: 88px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 15;
+      display: flex;
+      gap: 8px;
+      background: rgba(18, 22, 32, 0.88);
+      backdrop-filter: blur(12px);
+      padding: 6px 10px;
+      border-radius: 30px;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+      max-width: 90%;
+      overflow-x: auto;
+    }
+
+    .scene-chip {
+      background: transparent;
+      color: var(--fg-muted);
+      border: 1px solid transparent;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .scene-chip:hover {
+      color: var(--fg);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .scene-chip.active {
+      background: var(--color-prioridad);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+    }
+
+    /* Hotspots y Beacons */
+    .hotspot-wrapper {
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .hotspot-beacon {
+      width: 34px;
+      height: 34px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .beacon-pulse {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: rgba(59, 130, 246, 0.45);
+      animation: beaconPulse 2s infinite ease-out;
+    }
+
+    .beacon-core {
+      position: relative;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #3B82F6;
+      border: 2px solid #fff;
+      box-shadow: 0 0 12px #3B82F6;
+    }
+
+    @keyframes beaconPulse {
+      0% { transform: scale(0.6); opacity: 0.9; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+
+    .hotspot-card {
+      position: absolute;
+      bottom: 42px;
+      left: 50%;
+      transform: translateX(-50%) scale(0.9);
+      opacity: 0;
+      pointer-events: none;
+      background: rgba(18, 22, 32, 0.95);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border);
+      padding: 12px 16px;
+      border-radius: 12px;
+      width: 220px;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.6);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 50;
+    }
+
+    .hotspot-wrapper:hover .hotspot-card,
+    .hotspot-wrapper.active .hotspot-card {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+      pointer-events: auto;
+    }
+
+    .hotspot-card-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #F8FAFC;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hotspot-card-text {
+      font-size: 11px;
+      color: var(--fg-muted);
+      line-height: 1.4;
+    }
   </style>
 </head>
 <body>
@@ -325,6 +452,9 @@
       <div class="brand-title" id="asset-name">Cargando experiencia...</div>
     </div>
     <div class="corner-actions">
+      <button class="btn-icon" id="btn-toggle-gyro" title="Giroscopio Móvil 1:1" style="display:none;">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16.24 7.76l-2.12 6.36-6.36 2.12 2.12-6.36z"/></svg>
+      </button>
       <button class="btn-icon" id="btn-open-qr" title="Compartir y Código QR">
         <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3h6v6H3zM15 3h6v6h-6zM3 15h6v6H3zM15 15h2v2h-2zM19 15h2v2h-2zM15 19h2v2h-2zM19 19h2v2h-2z"/></svg>
       </button>
@@ -339,10 +469,13 @@
     <canvas id="viewer-canvas"></canvas>
   </div>
 
+  <!-- Barra de Selector de Escenas (Habitaciones) -->
+  <div id="scene-selector-bar" class="scene-selector-bar" style="display: none;"></div>
+
   <!-- Indicador sutil de interacción -->
   <div class="hint-drag">
     <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 7h8M8 12h8M8 17h8"/></svg>
-    Arrastra para girar 360°
+    Arrastra para girar 360° • Toca los puntos para ver detalles
   </div>
 
   <!-- Barra Inferior de Acciones -->
@@ -417,13 +550,55 @@
           const container = document.getElementById('viewer-container');
           container.innerHTML = '';
           const sphereViewer = new SphereTourViewer(container);
-          const panoUrl = (data.images && data.images.length > 0) ? data.images[0] : '/sample-san-francisco-360.jpg';
-          await sphereViewer.loadPanorama(panoUrl);
+
+          if (data.scenes && data.scenes.length > 0) {
+            sphereViewer.loadScenes(data.scenes);
+            renderSceneSelector(data.scenes, sphereViewer);
+          } else {
+            const panoUrl = (data.images && data.images.length > 0) ? data.images[0] : '/sample-san-francisco-360.jpg';
+            await sphereViewer.loadPanorama(panoUrl);
+          }
+
+          // Activar botón de giroscopio si es propiedad
+          const gyroBtn = document.getElementById('btn-toggle-gyro');
+          if (gyroBtn) {
+            gyroBtn.style.display = 'flex';
+            gyroBtn.addEventListener('click', async () => {
+              const active = await sphereViewer.toggleGyro();
+              if (active) {
+                gyroBtn.style.color = '#3B82F6';
+                gyroBtn.style.borderColor = '#3B82F6';
+                gyroBtn.style.background = 'rgba(59, 130, 246, 0.15)';
+              } else {
+                gyroBtn.style.color = '';
+                gyroBtn.style.borderColor = '';
+                gyroBtn.style.background = '';
+              }
+            });
+          }
         }
 
       } catch (err) {
         console.error('Error cargando experiencia:', err);
       }
+    }
+
+    function renderSceneSelector(scenes, viewer) {
+      const bar = document.getElementById('scene-selector-bar');
+      bar.innerHTML = '';
+      bar.style.display = 'flex';
+
+      scenes.forEach((sc, idx) => {
+        const chip = document.createElement('button');
+        chip.className = `scene-chip ${idx === 0 ? 'active' : ''}`;
+        chip.textContent = sc.name;
+        chip.addEventListener('click', () => {
+          document.querySelectorAll('.scene-chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          viewer.switchScene(sc.id);
+        });
+        bar.appendChild(chip);
+      });
     }
 
     function generateQR(url) {

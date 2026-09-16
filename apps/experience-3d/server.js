@@ -59,7 +59,32 @@ app.get('/api/experiences/:slug', (req, res) => {
   const exp = list.find(e => e.slug === req.params.slug);
   if (!exp) {
     const isVehicle = req.params.slug.includes('auto') || req.params.slug.includes('toyota');
-    const defaultImages = isVehicle ? [] : ['/sample-san-francisco-360.jpg'];
+    
+    // Escenas con hotspots para propiedades inteligentes
+    const defaultScenes = [
+      {
+        id: 'sala',
+        name: '🛋️ Sala & Comedor',
+        image: '/sample-san-francisco-360.jpg',
+        hotspots: [
+          { yaw: 0.15, pitch: -0.05, title: 'Ventanales Piso a Techo', text: 'Vidrios con aislamiento térmico y vista panorámica a la bahía.' },
+          { yaw: 1.75, pitch: -0.12, title: 'Cocina Abierta de Lujo', text: 'Sobres de cuarzo blanco con desayunador y gabinetes cierre suave.' },
+          { yaw: -1.35, pitch: -0.02, title: 'Pisos de Mármol', text: 'Acabados importados de alto tráfico en toda el área social.' }
+        ]
+      },
+      {
+        id: 'balcon',
+        name: '🌅 Balcón & Terraza',
+        image: '/sample-balcon-360.jpg',
+        hotspots: [
+          { yaw: 0.0, pitch: -0.08, title: 'Vista al Mar', text: 'Orientación privilegiada con brisa marina constante y atardeceres.' },
+          { yaw: 2.1, pitch: 0.05, title: 'Área BBQ & Lounge', text: 'Espacio amplio para mobiliario exterior y parrilla.' }
+        ]
+      }
+    ];
+
+    const defaultImages = isVehicle ? [] : defaultScenes.map(s => s.image);
+
     return res.json({
       title: req.params.slug === 'propiedad-san-francisco-1' 
         ? 'Propiedad San Francisco — PH Vista del Mar' 
@@ -68,7 +93,8 @@ app.get('/api/experiences/:slug', (req, res) => {
       asset_type: isVehicle ? 'vehicle' : 'property',
       landing_url: 'https://opportunity.aizprua.com',
       whatsapp_phone: '50760000000',
-      images: defaultImages
+      images: defaultImages,
+      scenes: isVehicle ? [] : defaultScenes
     });
   }
   res.json(exp);
