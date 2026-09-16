@@ -127,6 +127,11 @@ app.get(['/', '/3d'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'creator.html'));
 });
 
+// Ruta de Autenticación: /login
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
 // Ruta del Visor Público: /3d/:slug o /:slug
 app.get(['/3d/:slug', '/:slug'], (req, res, next) => {
   // Ignorar archivos estáticos

@@ -12,6 +12,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 
+  <script>
+    // Guardián de sesión para proteger el Creador 3D
+    (function guardSession() {
+      const token = localStorage.getItem('oi_access_token') || sessionStorage.getItem('oi_access_token');
+      if (!token) {
+        window.location.href = '/login';
+      }
+    })();
+  </script>
+
   <style>
     :root {
       --bg: #0A0C10;
@@ -387,9 +397,14 @@
         <span>Experiencias & Tours</span>
       </div>
     </div>
-    <div class="status-badge" id="net-status">
-      <span class="status-dot"></span>
-      Online (InsForge)
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <div class="status-badge" id="net-status">
+        <span class="status-dot"></span>
+        Online (InsForge)
+      </div>
+      <button id="btn-logout" style="background: rgba(239, 68, 68, 0.12); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.25); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">
+        Cerrar Sesión
+      </button>
     </div>
   </header>
 
@@ -645,6 +660,18 @@
         document.getElementById('btn-publish-exp').textContent = 'Publicar Experiencia 3D';
       }
     });
+    // Evento Cerrar Sesión
+    const logoutBtn = document.getElementById('btn-logout');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('oi_access_token');
+        localStorage.removeItem('oi_user_email');
+        sessionStorage.removeItem('oi_access_token');
+        sessionStorage.removeItem('oi_user_email');
+        window.location.href = '/login';
+      });
+    }
+
   </script>
 </body>
 </html>
