@@ -413,11 +413,12 @@
           const viewer = new CarSpinViewer(canvas, { autoRotate: true });
           await viewer.loadImages(data.images);
         } else {
-          // Propiedades / Terrenos (Panorámica 360)
+          // Propiedades / Terrenos (Panorámica 360 con Marzipano)
           const container = document.getElementById('viewer-container');
           container.innerHTML = '';
           const sphereViewer = new SphereTourViewer(container);
-          await sphereViewer.loadPanorama(data.images[0]);
+          const panoUrl = (data.images && data.images.length > 0) ? data.images[0] : '/sample-san-francisco-360.jpg';
+          await sphereViewer.loadPanorama(panoUrl);
         }
 
       } catch (err) {
