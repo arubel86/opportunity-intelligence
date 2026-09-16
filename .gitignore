@@ -40,3 +40,6 @@ Thumbs.db
 
 # Generated pipeline reports
 reports/
+
+# Experience 3D App Data
+apps/experience-3d/data/

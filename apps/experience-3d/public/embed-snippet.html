@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Vista Previa del Snippet - Experience 3D</title>
+  <style>
+    /* Estilos base para simular la landing oscura al previsualizar este archivo solo */
+    body { background-color: #0A0C10; margin: 0; padding: 20px; font-family: sans-serif; }
+    :root {
+      --surface-glass: rgba(18, 22, 32, 0.92);
+      --border: #232D3F;
+      --fg: #F8FAFC;
+      --color-prioridad: #3B82F6;
+    }
+  </style>
+</head>
+<body>
+
+<!-- =============================================================================
+     COMPONENTE DE INTEGRACIÓN: VISOR 3D / TOUR VIRTUAL EMBEBIDO (HERMES)
+     Pega este bloque dentro de landing1.html donde desees mostrar la experiencia 3D.
+     ============================================================================= -->
+
+<section class="experience-3d-section" style="margin: 40px auto; max-width: 1100px; width: 100%; padding: 0 16px;">
+  <div style="background: var(--surface-glass, #121620); border: 1px solid var(--border, #232D3F); border-radius: 18px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+    
+    <!-- Encabezado del Visor -->
+    <div style="padding: 16px 20px; border-bottom: 1px solid var(--border, #232D3F); display: flex; justify-content: space-between; align-items: center; background: rgba(18, 22, 32, 0.95);">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="width: 28px; height: 28px; background: linear-gradient(135deg, #1e40af, #3b82f6); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; color: #fff;">OI</div>
+        <span style="font-weight: 700; font-size: 14px; color: var(--fg, #F8FAFC);">Recorrido Virtual & Experiencia 3D</span>
+      </div>
+      <a id="btn-open-external-3d" href="./viewer.html" target="_blank" style="font-size: 12px; color: var(--color-prioridad, #3B82F6); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+        Abrir en Pantalla Completa
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      </a>
+    </div>
+
+    <!-- Iframe Embebido -->
+    <div style="position: relative; width: 100%; height: 520px; background: #0A0C10;">
+      <!-- Apuntando a viewer.html localmente -->
+      <iframe 
+        id="iframe-experience-3d"
+        src="./viewer.html" 
+        style="width: 100%; height: 100%; border: none; display: block;" 
+        allow="accelerometer; gyroscope; fullscreen"
+        loading="lazy">
+      </iframe>
+    </div>
+
+  </div>
+</section>
+
+</body>
+</html>

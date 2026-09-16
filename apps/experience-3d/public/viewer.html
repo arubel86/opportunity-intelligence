@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title id="view-title">Experiencia 3D Interactiva — Opportunity Intelligence</title>
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23131722'/%3E%3Cstop offset='50%25' stop-color='%231e40af'/%3E%3Cstop offset='100%25' stop-color='%233b82f6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='25' fill='url(%23g)'/%3E%3Ctext x='50' y='56' font-family='Arial, sans-serif' font-weight='bold' font-size='56' fill='%23F1F5F9' text-anchor='middle' dominant-baseline='central'%3EOI%3C/text%3E%3C/svg%3E">
+
+  <!-- Tipografías de la marca Hermes / Opportunity Intelligence -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- Librería QR ligera -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #0A0C10;
+      --surface: #121620;
+      --surface-glass: rgba(18, 22, 32, 0.75);
+      --border: #232D3F;
+      --border-glow: rgba(59, 130, 246, 0.3);
+      --fg: #F8FAFC;
+      --fg-muted: #94A3B8;
+      
+      --color-comprar: #10B981;
+      --color-prioridad: #3B82F6;
+      --accent-celeste: #85CDFF;
+      --color-whatsapp: #25D366;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      font-family: 'Inter', sans-serif;
+      color: var(--fg);
+    }
+
+    /* Contenedor Principal del Visor */
+    #viewer-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at center, #161C28 0%, #0A0C10 100%);
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Barra Superior Minimalista */
+    .top-bar {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      z-index: 10;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .brand-pill {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 8px 14px;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+
+    .brand-icon {
+      width: 26px;
+      height: 26px;
+      background: linear-gradient(135deg, #1e40af, #3b82f6);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .brand-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--fg);
+      letter-spacing: 0.2px;
+      max-width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .corner-actions {
+      pointer-events: auto;
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--surface-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    }
+
+    .btn-icon:hover {
+      border-color: var(--color-prioridad);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px var(--border-glow);
+    }
+
+    /* Barra Inferior con CTAs (Solo WhatsApp y Redirección a Landing) */
+    .bottom-bar {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex;
+      gap: 12px;
+      width: calc(100% - 32px);
+      max-width: 500px;
+    }
+
+    .btn-cta {
+      flex: 1;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 6px 25px rgba(0,0,0,0.5);
+    }
+
+    .btn-landing {
+      background: linear-gradient(135deg, #2563EB, #1D4ED8);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .btn-landing:hover {
+      background: linear-gradient(135deg, #3B82F6, #2563EB);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-whatsapp {
+      background: #128C7E;
+      color: #fff;
+      max-width: 130px;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .btn-whatsapp:hover {
+      background: var(--color-whatsapp);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(37, 211, 102, 0.35);
+    }
+
+    /* Indicador sutil de interacción */
+    .hint-drag {
+      position: absolute;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 5;
+      background: rgba(10, 12, 16, 0.6);
+      backdrop-filter: blur(8px);
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 12px;
+      color: var(--fg-muted);
+      pointer-events: none;
+      animation: pulseHint 3s infinite ease-in-out;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    @keyframes pulseHint {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Modal de Código QR y Enlace */
+    .qr-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(5, 6, 9, 0.85);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .qr-modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+    }
+
+    .qr-modal h3 {
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+
+    .qr-modal p {
+      font-size: 13px;
+      color: var(--fg-muted);
+      margin-bottom: 20px;
+    }
+
+    #qr-canvas-holder {
+      background: #fff;
+      padding: 16px;
+      border-radius: 12px;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+
+    .qr-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-secondary {
+      background: var(--surface-glass);
+      color: var(--fg);
+      border: 1px solid var(--border);
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--color-prioridad);
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: none;
+      border: none;
+      color: var(--fg-muted);
+      font-size: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra Superior -->
+  <div class="top-bar">
+    <div class="brand-pill">
+      <div class="brand-icon">OI</div>
+      <div class="brand-title" id="asset-name">Cargando experiencia...</div>
+    </div>
+    <div class="corner-actions">
+      <button class="btn-icon" id="btn-open-qr" title="Compartir y Código QR">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3h6v6H3zM15 3h6v6h-6zM3 15h6v6H3zM15 15h2v2h-2zM19 15h2v2h-2zM15 19h2v2h-2zM19 19h2v2h-2z"/></svg>
+      </button>
+      <button class="btn-icon" id="btn-fullscreen" title="Pantalla Completa">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenedor del Visor Interactivo -->
+  <div id="viewer-container">
+    <canvas id="viewer-canvas"></canvas>
+  </div>
+
+  <!-- Indicador sutil de interacción -->
+  <div class="hint-drag">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 7h8M8 12h8M8 17h8"/></svg>
+    Arrastra para girar 360°
+  </div>
+
+  <!-- Barra Inferior de Acciones -->
+  <div class="bottom-bar">
+    <a href="#" id="cta-landing" class="btn-cta btn-landing" target="_blank">
+      <span>Ver Oportunidad Completa</span>
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+    </a>
+    <a href="#" id="cta-whatsapp" class="btn-cta btn-whatsapp" target="_blank">
+      <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.073-2.029-.479-1.579-.652-2.583-2.278-2.661-2.383-.079-.105-.644-.86-.644-1.637 0-.777.407-1.161.551-1.32.144-.159.314-.199.419-.199.105 0 .21.001.302.006.098.005.228-.037.356.27.132.316.452 1.106.491 1.186.04.08.066.173.013.279-.053.106-.079.172-.158.265-.079.093-.166.208-.237.279-.079.079-.161.165-.069.324.092.158.409.675.877 1.092.604.538 1.112.705 1.27.784.158.079.251.066.345-.04.093-.105.397-.463.503-.622.106-.159.211-.132.355-.079.144.053.916.432 1.074.511.158.079.264.119.303.185.039.066.039.384-.105.789z"/></svg>
+      <span>WhatsApp</span>
+    </a>
+  </div>
+
+  <!-- Modal QR -->
+  <div class="qr-modal-overlay" id="qr-modal">
+    <div class="qr-modal">
+      <button class="modal-close" id="btn-close-qr">&times;</button>
+      <h3>Código QR Oficial</h3>
+      <p>Escanea con cualquier celular para abrir la experiencia interactiva</p>
+      
+      <div id="qr-canvas-holder"></div>
+
+      <div class="qr-actions">
+        <button class="btn-secondary" id="btn-copy-url">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          <span id="copy-text">Copiar Enlace</span>
+        </button>
+        <button class="btn-secondary" id="btn-download-qr">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Descargar QR (PNG)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { CarSpinViewer } from './car-spin-viewer.js';
+    import { SphereTourViewer } from './sphere-tour-viewer.js';
+
+    // Obtener slug de la URL actual
+    const pathParts = window.location.pathname.split('/').filter(Boolean);
+    const slug = pathParts[pathParts.length - 1] || 'demo';
+
+    async function loadExperience() {
+      try {
+        const res = await fetch(`/api/experiences/${slug}`);
+        const data = await res.json();
+        
+        document.getElementById('asset-name').textContent = data.title || 'Experiencia 3D';
+        document.getElementById('view-title').textContent = `${data.title} — Opportunity Intelligence`;
+
+        // Configurar CTAs
+        const landingBtn = document.getElementById('cta-landing');
+        landingBtn.href = data.landing_url || 'https://opportunity.aizprua.com';
+
+        const waBtn = document.getElementById('cta-whatsapp');
+        const waNumber = data.whatsapp_phone || '50760000000';
+        const waMsg = encodeURIComponent(`Hola, estoy interesado en ver más información sobre: ${data.title} (Ref: ${slug})`);
+        waBtn.href = `https://wa.me/${waNumber}?text=${waMsg}`;
+
+        // Generar QR en modal
+        generateQR(window.location.href);
+
+        // Inicializar visor correspondiente
+        const canvas = document.getElementById('viewer-canvas');
+        if (data.asset_type === 'vehicle') {
+          const viewer = new CarSpinViewer(canvas, { autoRotate: true });
+          await viewer.loadImages(data.images);
+        } else {
+          // Propiedades / Terrenos (Panorámica 360)
+          const container = document.getElementById('viewer-container');
+          container.innerHTML = '';
+          const sphereViewer = new SphereTourViewer(container);
+          await sphereViewer.loadPanorama(data.images[0]);
+        }
+
+      } catch (err) {
+        console.error('Error cargando experiencia:', err);
+      }
+    }
+
+    function generateQR(url) {
+      const qr = qrcode(0, 'M');
+      qr.addData(url);
+      qr.make();
+      const qrHolder = document.getElementById('qr-canvas-holder');
+      qrHolder.innerHTML = qr.createImgTag(5, 8);
+    }
+
+    // Eventos UI
+    document.getElementById('btn-open-qr').addEventListener('click', () => {
+      document.getElementById('qr-modal').style.display = 'flex';
+    });
+
+    document.getElementById('btn-close-qr').addEventListener('click', () => {
+      document.getElementById('qr-modal').style.display = 'none';
+    });
+
+    document.getElementById('btn-copy-url').addEventListener('click', async () => {
+      await navigator.clipboard.writeText(window.location.href);
+      const textSpan = document.getElementById('copy-text');
+      textSpan.textContent = '¡Enlace Copiado!';
+      setTimeout(() => textSpan.textContent = 'Copiar Enlace', 2500);
+    });
+
+    document.getElementById('btn-download-qr').addEventListener('click', () => {
+      const img = document.querySelector('#qr-canvas-holder img');
+      if (!img) return;
+      const a = document.createElement('a');
+      a.href = img.src;
+      a.download = `QR-${slug}.png`;
+      a.click();
+    });
+
+    document.getElementById('btn-fullscreen').addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    });
+
+    loadExperience();
+  </script>
+</body>
+</html>
