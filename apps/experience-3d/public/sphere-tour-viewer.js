@@ -1,31 +1,69 @@
 /**
  * SphereTourViewer - Motor esférico panorámico 360° para propiedades
- * Utiliza WebGL / Canvas con controles orbitales táctiles e inercia.
+ * Utiliza Marzipano (WebGL) como motor principal con fallback en Canvas 2D.
  */
 export class SphereTourViewer {
   constructor(containerElement, options = {}) {
     this.container = containerElement;
     this.options = options;
-    this.canvas = document.createElement('canvas');
-    this.canvas.style.width = '100%';
-    this.canvas.style.height = '100%';
-    this.canvas.style.display = 'block';
-    this.canvas.style.cursor = 'grab';
-    this.container.appendChild(this.canvas);
+    this.useMarzipano = typeof window.Marzipano !== 'undefined';
 
-    this.ctx = this.canvas.getContext('2d');
-    this.currentImage = null;
-    this.yaw = 0; // Rotación horizontal
-    this.pitch = 0; // Rotación vertical
-    this.fov = 75; // Campo de visión en grados
-    this.isDragging = false;
-    this.lastX = 0;
-    this.lastY = 0;
+    if (this.useMarzipano) {
+      // Motor Marzipano WebGL de alta fidelidad
+      this.viewer = new window.Marzipano.Viewer(this.container, {
+        controls: {
+          mouseViewMode: 'drag',
+          scrollZoom: true
+        },
+        stage: {
+          progressive: true
+        }
+      });
+    } else {
+      // Fallback en Canvas 2D optimizado
+      this.canvas = document.createElement('canvas');
+      this.canvas.style.width = '100%';
+      this.canvas.style.height = '100%';
+      this.canvas.style.display = 'block';
+      this.canvas.style.cursor = 'grab';
+      this.container.appendChild(this.canvas);
 
-    this.initEvents();
+      this.ctx = this.canvas.getContext('2d');
+      this.currentImage = null;
+      this.yaw = 0;
+      this.pitch = 0;
+      this.fov = 75;
+      this.isDragging = false;
+      this.lastX = 0;
+      this.lastY = 0;
+
+      this.initEvents();
+    }
   }
 
   loadPanorama(imageUrl) {
+    if (this.useMarzipano) {
+      return new Promise((resolve) => {
+        const source = window.Marzipano.ImageUrlSource.fromString(imageUrl);
+        const geometry = new window.Marzipano.EquirectGeometry([{ width: 4000 }]);
+        const limiter = window.Marzipano.RectilinearView.limit.traditional(1024, 100 * Math.PI / 180);
+        const view = new window.Marzipano.RectilinearView({ yaw: 0, pitch: 0, fov: Math.PI / 3 }, limiter);
+
+        this.scene = this.viewer.createScene({
+          source: source,
+          geometry: geometry,
+          view: view,
+          pinFirstLevel: true
+        });
+
+        this.scene.switchTo({
+          transitionDuration: 800
+        });
+
+        resolve();
+      });
+    }
+
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.crossOrigin = 'anonymous';
@@ -40,7 +78,7 @@ export class SphereTourViewer {
   }
 
   draw() {
-    if (!this.currentImage) return;
+    if (!this.currentImage || this.useMarzipano) return;
 
     const dpr = window.devicePixelRatio || 1;
     const rect = this.canvas.getBoundingClientRect();
@@ -56,13 +94,11 @@ export class SphereTourViewer {
 
     this.ctx.clearRect(0, 0, w, h);
 
-    // Mapeo panorámico cilíndrico / equirrectangular simplificado con aceleración Canvas
     const sourceX = ((this.yaw % 360) + 360) % 360 / 360 * imgW;
     const viewWidth = (this.fov / 360) * imgW;
     const sourceY = Math.max(0, Math.min(imgH * 0.7, (imgH / 2) + (this.pitch * 5) - (imgH * 0.25)));
     const viewHeight = imgH * 0.5;
 
-    // Dibujar envoltura panorámica suave
     this.ctx.drawImage(
       this.currentImage,
       sourceX, sourceY, Math.min(viewWidth, imgW - sourceX), viewHeight,
@@ -81,6 +117,8 @@ export class SphereTourViewer {
   }
 
   initEvents() {
+    if (this.useMarzipano) return;
+
     const onStart = (clientX, clientY) => {
       this.isDragging = true;
       this.lastX = clientX;
@@ -107,12 +145,10 @@ export class SphereTourViewer {
       this.canvas.style.cursor = 'grab';
     };
 
-    // Mouse
     this.canvas.addEventListener('mousedown', (e) => onStart(e.clientX, e.clientY));
     window.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY));
     window.addEventListener('mouseup', onEnd);
 
-    // Touch
     this.canvas.addEventListener('touchstart', (e) => {
       if (e.touches.length === 1) onStart(e.touches[0].clientX, e.touches[0].clientY);
     }, { passive: true });
@@ -122,7 +158,6 @@ export class SphereTourViewer {
     }, { passive: true });
 
     window.addEventListener('touchend', onEnd);
-
     window.addEventListener('resize', () => this.draw());
   }
 }
