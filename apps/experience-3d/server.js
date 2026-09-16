@@ -57,6 +57,7 @@ function saveExperience(exp) {
 app.get('/api/experiences/:slug', (req, res) => {
   const list = getExperiences();
   const exp = list.find(e => e.slug === req.params.slug);
+  if (!exp) {
     const isVehicle = req.params.slug.includes('auto') || req.params.slug.includes('toyota');
     const defaultImages = isVehicle ? [] : ['/sample-san-francisco-360.jpg'];
     return res.json({
