@@ -94,6 +94,12 @@
       color: var(--accent-celeste);
     }
 
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
     .status-badge {
       display: flex;
       align-items: center;
@@ -104,6 +110,7 @@
       background: rgba(16, 185, 129, 0.1);
       color: var(--color-comprar);
       border: 1px solid rgba(16, 185, 129, 0.2);
+      white-space: nowrap;
     }
 
     .status-dot {
@@ -111,6 +118,69 @@
       height: 8px;
       border-radius: 50%;
       background: var(--color-comprar);
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+    }
+
+    .btn-logout {
+      background: rgba(239, 68, 68, 0.1);
+      color: #F87171;
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .btn-logout:hover {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.45);
+      color: #EF4444;
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 520px) {
+      header {
+        padding: 10px 14px;
+      }
+      .brand {
+        gap: 8px;
+      }
+      .brand-logo {
+        width: 28px;
+        height: 28px;
+        font-size: 13px;
+        border-radius: 6px;
+      }
+      .brand-text {
+        font-size: 13px;
+        line-height: 1.15;
+      }
+      .brand-text span {
+        font-size: 10px;
+      }
+      .header-actions {
+        gap: 6px;
+      }
+      .status-badge {
+        padding: 4px 8px;
+        font-size: 11px;
+      }
+      .status-badge .badge-subtext {
+        display: none;
+      }
+      .btn-logout {
+        padding: 6px 9px;
+        font-size: 11px;
+      }
+      .btn-logout .logout-text {
+        display: none;
+      }
     }
 
     /* Contenedor Principal */
@@ -397,13 +467,14 @@
         <span>Experiencias & Tours</span>
       </div>
     </div>
-    <div style="display: flex; align-items: center; gap: 10px;">
-      <div class="status-badge" id="net-status">
+    <div class="header-actions">
+      <div class="status-badge" id="net-status" title="Conectado a InsForge BaaS">
         <span class="status-dot"></span>
-        Online (InsForge)
+        <span>Online</span><span class="badge-subtext"> (InsForge)</span>
       </div>
-      <button id="btn-logout" style="background: rgba(239, 68, 68, 0.12); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.25); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">
-        Cerrar Sesión
+      <button id="btn-logout" class="btn-logout" title="Cerrar Sesión">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        <span class="logout-text">Salir</span>
       </button>
     </div>
   </header>
