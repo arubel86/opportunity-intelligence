@@ -144,43 +144,75 @@
       transform: translateY(-1px);
     }
 
-    @media (max-width: 520px) {
+    @media (max-width: 540px) {
       header {
-        padding: 10px 14px;
+        padding: 16px 18px;
+        min-height: 68px;
+        background: rgba(18, 22, 32, 0.92);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       }
       .brand {
-        gap: 8px;
+        gap: 12px;
       }
       .brand-logo {
-        width: 28px;
-        height: 28px;
-        font-size: 13px;
-        border-radius: 6px;
+        width: 36px;
+        height: 36px;
+        font-size: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 14px rgba(30, 64, 175, 0.35);
       }
       .brand-text {
-        font-size: 13px;
-        line-height: 1.15;
+        font-size: 15px;
+        font-weight: 700;
+        line-height: 1.25;
+        letter-spacing: 0.2px;
       }
       .brand-text span {
-        font-size: 10px;
+        font-size: 11px;
+        margin-top: 2px;
       }
       .header-actions {
-        gap: 6px;
+        gap: 12px;
       }
+      /* Convertir el status en un punto verde sutil pulsante */
       .status-badge {
-        padding: 4px 8px;
-        font-size: 11px;
+        background: transparent;
+        border: none;
+        padding: 0;
+        margin: 0;
+        box-shadow: none;
       }
-      .status-badge .badge-subtext {
+      .status-badge span:not(.status-dot) {
         display: none;
+      }
+      .status-dot {
+        width: 9px;
+        height: 9px;
+        box-shadow: 0 0 10px #10B981, 0 0 18px rgba(16, 185, 129, 0.6);
+        animation: pulseGreen 2.2s infinite ease-in-out;
       }
       .btn-logout {
-        padding: 6px 9px;
-        font-size: 11px;
+        padding: 8px 14px;
+        font-size: 12px;
+        border-radius: 10px;
+        background: rgba(239, 68, 68, 0.12);
+        border: 1px solid rgba(239, 68, 68, 0.28);
+        gap: 6px;
+      }
+      .btn-logout:active {
+        background: rgba(239, 68, 68, 0.25);
+        transform: scale(0.97);
       }
       .btn-logout .logout-text {
-        display: none;
+        display: inline;
       }
+    }
+
+    @keyframes pulseGreen {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.25); opacity: 0.7; }
     }
 
     /* Contenedor Principal */
