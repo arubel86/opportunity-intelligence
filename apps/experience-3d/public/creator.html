@@ -17,7 +17,7 @@
     (function guardSession() {
       const token = localStorage.getItem('oi_access_token') || sessionStorage.getItem('oi_access_token');
       if (!token) {
-        window.location.href = '/login';
+        window.location.href = '/login?returnUrl=' + encodeURIComponent(window.location.pathname + window.location.search);
       }
     })();
   </script>

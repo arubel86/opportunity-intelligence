@@ -910,11 +910,14 @@ const toggleBtn     = $('toggle-pass-btn');
 const toggleIcon    = $('toggle-pass-icon');
 const rememberCheck = $('remember-check');
 
+const urlParams = new URLSearchParams(window.location.search);
+const targetUrl = urlParams.get('returnUrl') || '/';
+
 // ── Check active session on load ──
 (function checkExistingSession() {
   const token = localStorage.getItem('oi_access_token') || sessionStorage.getItem('oi_access_token');
   if (token) {
-    window.location.href = '/';
+    window.location.href = targetUrl;
   }
 })();
 
@@ -1030,10 +1033,10 @@ authForm.addEventListener('submit', async (e) => {
       sessionStorage.setItem('oi_user_email', email);
     }
 
-    showAlert('Sesión iniciada correctamente. Accediendo al creador...', 'success');
+    showAlert('Sesión iniciada correctamente. Redirigiendo...', 'success');
 
     setTimeout(() => {
-      window.location.href = '/';
+      window.location.href = targetUrl;
     }, 400);
 
   } catch (err) {
