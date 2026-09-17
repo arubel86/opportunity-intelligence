@@ -83,12 +83,28 @@ app.get('/api/experiences/:slug', (req, res) => {
       }
     ];
 
-    const defaultImages = isVehicle ? [] : defaultScenes.map(s => s.image);
+    const defaultVehicleFrames = [
+      '/prado-360/frame-1.jpg',
+      '/prado-360/frame-2.jpg',
+      '/prado-360/frame-3.jpg',
+      '/prado-360/frame-4.jpg',
+      '/prado-360/frame-5.jpg',
+      '/prado-360/frame-6.jpg',
+      '/prado-360/frame-7.jpg',
+      '/prado-360/frame-8.jpg'
+    ];
+
+    const defaultImages = isVehicle ? defaultVehicleFrames : defaultScenes.map(s => s.image);
+
+    let defaultTitle = req.params.slug.replace(/-/g, ' ').toUpperCase();
+    if (req.params.slug === 'propiedad-san-francisco-1') {
+      defaultTitle = 'Propiedad San Francisco — PH Vista del Mar';
+    } else if (isVehicle) {
+      defaultTitle = 'Toyota Land Cruiser Prado TXL 2024 — Showroom 360°';
+    }
 
     return res.json({
-      title: req.params.slug === 'propiedad-san-francisco-1' 
-        ? 'Propiedad San Francisco — PH Vista del Mar' 
-        : req.params.slug.replace(/-/g, ' ').toUpperCase(),
+      title: defaultTitle,
       slug: req.params.slug,
       asset_type: isVehicle ? 'vehicle' : 'property',
       landing_url: 'https://opportunity.aizprua.com',

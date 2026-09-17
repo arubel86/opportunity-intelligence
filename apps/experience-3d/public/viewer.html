@@ -543,7 +543,11 @@
         // Inicializar visor correspondiente
         const canvas = document.getElementById('viewer-canvas');
         if (data.asset_type === 'vehicle') {
-          const viewer = new CarSpinViewer(canvas, { autoRotate: true });
+          const hint = document.querySelector('.hint-drag');
+          if (hint) {
+            hint.innerHTML = '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 7h8M8 12h8M8 17h8"/></svg> Arrastra para girar 360° el auto';
+          }
+          const viewer = new CarSpinViewer(canvas, { autoRotate: true, autoRotateSpeed: 300 });
           await viewer.loadImages(data.images);
         } else {
           // Propiedades / Terrenos (Panorámica 360 con Marzipano)
