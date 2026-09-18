@@ -271,6 +271,101 @@ app.delete('/api/experiences/:slug', (req, res) => {
   });
 });
 
+// Eliminar una fotografía específica de una experiencia y liberar espacio
+app.post('/api/experiences/:slug/delete-photo', (req, res) => {
+  const { photoUrl } = req.body;
+  if (!photoUrl) {
+    return res.status(400).json({ error: 'URL de fotografía no proporcionada' });
+  }
+
+  let list = getExperiences();
+  let exp = list.find(e => e.slug === req.params.slug);
+
+  if (!exp) {
+    if (req.params.slug === 'auto-toyota-prado-txl') {
+      exp = {
+        title: 'Toyota Land Cruiser Prado TXL 2024 — Showroom 360°',
+        slug: 'auto-toyota-prado-txl',
+        asset_type: 'vehicle',
+        status: 'available',
+        views: 184,
+        images: [
+          '/prado-360/frame-1.jpg', '/prado-360/frame-2.jpg', '/prado-360/frame-3.jpg', '/prado-360/frame-4.jpg',
+          '/prado-360/frame-5.jpg', '/prado-360/frame-6.jpg', '/prado-360/frame-7.jpg', '/prado-360/frame-8.jpg'
+        ],
+        interior_image: '/prado-360/interior.jpg',
+        inspection: {
+          engine: '/prado-360/engine.jpg',
+          trunk: '/prado-360/trunk.jpg',
+          odometer: '/prado-360/odometer.jpg',
+          wheel: '/prado-360/wheel.jpg'
+        }
+      };
+      list.push(exp);
+    } else if (req.params.slug === 'propiedad-san-francisco-1') {
+      exp = {
+        title: 'Propiedad San Francisco — PH Vista del Mar 360°',
+        slug: 'propiedad-san-francisco-1',
+        asset_type: 'property',
+        status: 'available',
+        views: 92,
+        images: ['/sample-san-francisco-360.jpg', '/sample-balcon-360.jpg'],
+        scenes: [
+          { id: 'sala', name: '🛋️ Sala & Comedor', image: '/sample-san-francisco-360.jpg' },
+          { id: 'balcon', name: '🌅 Balcón & Terraza', image: '/sample-balcon-360.jpg' }
+        ]
+      };
+      list.push(exp);
+    } else {
+      return res.status(404).json({ error: 'Experiencia no encontrada' });
+    }
+  }
+
+  let freedBytes = 0;
+  if (photoUrl.startsWith('/uploads/')) {
+    const filePath = path.join(UPLOADS_DIR, photoUrl.replace('/uploads/', ''));
+    if (fs.existsSync(filePath)) {
+      try {
+        freedBytes = fs.statSync(filePath).size;
+        fs.unlinkSync(filePath);
+      } catch(e) {}
+    }
+  }
+
+  // Remover de exp.images
+  if (Array.isArray(exp.images)) {
+    exp.images = exp.images.filter(img => img !== photoUrl);
+  }
+
+  // Remover de exp.scenes
+  if (Array.isArray(exp.scenes)) {
+    exp.scenes = exp.scenes.filter(s => s.image !== photoUrl);
+  }
+
+  // Remover de interior_image
+  if (exp.interior_image === photoUrl) {
+    exp.interior_image = null;
+  }
+
+  // Remover de inspection
+  if (exp.inspection) {
+    Object.keys(exp.inspection).forEach(k => {
+      if (exp.inspection[k] === photoUrl) {
+        exp.inspection[k] = null;
+      }
+    });
+  }
+
+  fs.writeFileSync(DB_FILE, JSON.stringify(list, null, 2));
+
+  res.json({
+    success: true,
+    slug: req.params.slug,
+    photoUrl,
+    freed_mb: (freedBytes / (1024 * 1024)).toFixed(2)
+  });
+});
+
 // Purgar fotos de activos vendidos para liberar almacenamiento
 app.post('/api/storage/purge-sold', (req, res) => {
   let list = getExperiences();

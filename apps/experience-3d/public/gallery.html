@@ -640,34 +640,144 @@
 
     .gallery-preview-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 14px;
+      padding: 4px 0;
     }
 
     .gallery-item {
       position: relative;
-      height: 100px;
-      border-radius: 8px;
+      height: 135px;
+      border-radius: 10px;
       overflow: hidden;
       border: 1px solid var(--border);
+      background: #000;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .gallery-item:hover {
+      transform: translateY(-2px);
+      border-color: var(--color-prioridad);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
     }
 
     .gallery-item img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      cursor: pointer;
+      transition: transform 0.3s ease;
     }
 
-    .gallery-item-download {
+    .gallery-item:hover img {
+      transform: scale(1.05);
+    }
+
+    .gallery-item-bar {
       position: absolute;
-      bottom: 4px;
-      right: 4px;
-      background: rgba(0,0,0,0.7);
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(0deg, rgba(10, 12, 16, 0.95) 0%, rgba(10, 12, 16, 0.75) 75%, transparent 100%);
+      padding: 6px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      z-index: 2;
+    }
+
+    .gallery-btn-action {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       color: #fff;
-      padding: 3px 6px;
-      border-radius: 4px;
-      font-size: 10px;
+      padding: 4px 8px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 500;
       text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .gallery-btn-action:hover {
+      background: rgba(59, 130, 246, 0.45);
+      border-color: #60A5FA;
+      color: #fff;
+    }
+
+    .gallery-btn-action.delete {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #FCA5A5;
+    }
+
+    .gallery-btn-action.delete:hover {
+      background: #EF4444;
+      color: #fff;
+      border-color: #EF4444;
+    }
+
+    /* Lightbox Modal */
+    .lightbox-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(5, 7, 12, 0.95);
+      backdrop-filter: blur(14px);
+      z-index: 150;
+      display: none;
+      flex-direction: column;
+      animation: modalIn 0.2s ease-out;
+    }
+
+    .lightbox-header {
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .lightbox-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--fg);
+    }
+
+    .lightbox-body {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .lightbox-img {
+      max-height: 80vh;
+      max-width: 90vw;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      transition: transform 0.2s ease;
+    }
+
+    .lightbox-footer {
+      padding: 14px 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: center;
+      gap: 12px;
     }
 
     .embed-box {
@@ -856,6 +966,30 @@
           Copiar Código al Portapapeles
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- Modal Lightbox (Visualizador en Pantalla Completa) -->
+  <div class="lightbox-overlay" id="lightbox-modal">
+    <div class="lightbox-header">
+      <div class="lightbox-title" id="lightbox-title">Fotografía en Alta Resolución</div>
+      <button class="btn-modal-close" onclick="closeLightbox()">&times;</button>
+    </div>
+    <div class="lightbox-body" onclick="closeLightbox(event)">
+      <img id="lightbox-img" class="lightbox-img" src="" alt="Vista previa">
+    </div>
+    <div class="lightbox-footer">
+      <a id="lightbox-btn-download" href="#" download="foto_3d.jpg" target="_blank" class="card-btn primary">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        Descargar en Alta Definición
+      </a>
+      <button id="lightbox-btn-delete" class="card-btn danger" style="grid-column:auto;">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+        Eliminar Fotografía
+      </button>
+      <button class="card-btn" onclick="closeLightbox()">
+        Cerrar
+      </button>
     </div>
   </div>
 
@@ -1080,34 +1214,141 @@
       });
     }
 
-    // 7. Modal Galería de Fotos
+    // 7. Modal Galería de Fotos del Activo con Lightbox y Eliminación Individual
+    let currentGallerySlug = null;
+    let currentLightboxPhoto = null;
+    let currentLightboxSlug = null;
+
     function openGalleryModal(slug) {
+      currentGallerySlug = slug;
       const exp = allExperiences.find(e => e.slug === slug);
       if (!exp) return;
 
       document.getElementById('gallery-modal-title').textContent = `Fotografías de: ${exp.title}`;
+      renderModalPhotos(exp);
+      document.getElementById('gallery-modal').style.display = 'flex';
+    }
+
+    function renderModalPhotos(exp) {
       const grid = document.getElementById('gallery-modal-grid');
       grid.innerHTML = '';
 
       const photos = exp.all_photos || exp.images || [];
       if (photos.length === 0) {
-        grid.innerHTML = '<div style="color:var(--fg-muted); font-size:13px; grid-column:1/-1;">No hay imágenes cargadas para este activo.</div>';
-      } else {
-        photos.forEach((photoUrl, idx) => {
-          const item = document.createElement('div');
-          item.className = 'gallery-item';
-          item.innerHTML = `
-            <img src="${photoUrl}" alt="Foto ${idx + 1}" loading="lazy">
-            <a href="${photoUrl}" download="foto_${idx + 1}.jpg" target="_blank" class="gallery-item-download" title="Descargar foto">
-              📥 Guardar
-            </a>
-          `;
-          grid.appendChild(item);
-        });
+        grid.innerHTML = '<div style="color:var(--fg-muted); font-size:13px; grid-column:1/-1; padding:20px; text-align:center;">No hay fotografías guardadas para este activo.</div>';
+        return;
       }
 
-      document.getElementById('gallery-modal').style.display = 'flex';
+      photos.forEach((photoUrl, idx) => {
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+        item.id = `photo-item-${idx}`;
+
+        const safeTitle = (exp.title || 'Foto').replace(/'/g, "\\'");
+        
+        item.innerHTML = `
+          <img src="${photoUrl}" alt="Foto ${idx + 1}" loading="lazy" onclick="openLightbox('${photoUrl}', 'Foto ${idx + 1} • ${safeTitle}', '${exp.slug}')">
+          <div class="gallery-item-bar">
+            <button class="gallery-btn-action" onclick="openLightbox('${photoUrl}', 'Foto ${idx + 1} • ${safeTitle}', '${exp.slug}')" title="Visualizar en pantalla completa">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              Ver
+            </button>
+            <a href="${photoUrl}" download="foto_${idx + 1}.jpg" target="_blank" class="gallery-btn-action" title="Descargar foto">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              Guardar
+            </a>
+            <button class="gallery-btn-action delete" onclick="deleteIndividualPhoto('${exp.slug}', '${photoUrl}', 'photo-item-${idx}')" title="Eliminar foto del servidor">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              Eliminar
+            </button>
+          </div>
+        `;
+        grid.appendChild(item);
+      });
     }
+
+    // Lightbox a Pantalla Completa
+    function openLightbox(photoUrl, title, slug) {
+      currentLightboxPhoto = photoUrl;
+      currentLightboxSlug = slug;
+      document.getElementById('lightbox-title').textContent = title || 'Fotografía en Alta Resolución';
+      document.getElementById('lightbox-img').src = photoUrl;
+      document.getElementById('lightbox-btn-download').href = photoUrl;
+      document.getElementById('lightbox-btn-delete').onclick = () => {
+        deleteIndividualPhoto(slug, photoUrl, null);
+      };
+      document.getElementById('lightbox-modal').style.display = 'flex';
+    }
+
+    function closeLightbox(e) {
+      if (e && e.target && e.target.tagName === 'IMG') return;
+      document.getElementById('lightbox-modal').style.display = 'none';
+      currentLightboxPhoto = null;
+      currentLightboxSlug = null;
+    }
+
+    // Eliminar Fotografía Individual
+    async function deleteIndividualPhoto(slug, photoUrl, elementId) {
+      const confirmed = confirm('¿Deseas eliminar permanentemente esta fotografía del servidor?\n\nEsta acción liberará espacio en disco de inmediato.');
+      if (!confirmed) return;
+
+      try {
+        const res = await fetch(`/api/experiences/${slug}/delete-photo`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ photoUrl })
+        });
+        const data = await res.json();
+        if (data.success) {
+          if (elementId) {
+            const el = document.getElementById(elementId);
+            if (el) {
+              el.style.transition = 'all 0.25s ease';
+              el.style.transform = 'scale(0.8)';
+              el.style.opacity = '0';
+              setTimeout(() => el.remove(), 250);
+            }
+          }
+
+          if (currentLightboxPhoto === photoUrl) {
+            closeLightbox();
+          }
+
+          showToast(`✓ Foto eliminada. Se liberaron ${data.freed_mb || '0'} MB`);
+
+          // Actualizar estado en memoria
+          const exp = allExperiences.find(e => e.slug === slug);
+          if (exp) {
+            if (exp.all_photos) exp.all_photos = exp.all_photos.filter(p => p !== photoUrl);
+            if (exp.images) exp.images = exp.images.filter(p => p !== photoUrl);
+            if (exp.scenes) exp.scenes = exp.scenes.filter(s => s.image !== photoUrl);
+            exp.photo_count = (exp.all_photos || exp.images || []).length;
+            
+            // Si el modal está abierto para este slug, refrescar lista
+            if (currentGallerySlug === slug) {
+              renderModalPhotos(exp);
+            }
+          }
+
+          loadExperiences();
+          loadStorageStats();
+        } else {
+          alert('Error al eliminar: ' + (data.error || 'Desconocido'));
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error de conexión al servidor.');
+      }
+    }
+
+    // Tecla Escape para cerrar modales o lightbox
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeLightbox();
+        closeModal('gallery-modal');
+        closeModal('embed-modal');
+      }
+    });
 
     // 8. Modal Embed
     function openEmbedModal(slug) {
