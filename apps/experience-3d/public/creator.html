@@ -839,15 +839,6 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label">Estado de la Oportunidad</label>
-        <select id="project-status" class="form-input">
-          <option value="available" selected>🟢 Disponible (En Venta)</option>
-          <option value="reserved">🟡 Reservado</option>
-          <option value="sold">🔴 Vendido / Rematado</option>
-        </select>
-      </div>
-
-      <div class="form-group">
         <label class="form-label">URL de tu Landing Page</label>
         <input type="url" id="project-landing" class="form-input" value="https://opportunity.aizprua.com">
       </div>
@@ -1308,7 +1299,7 @@
     document.getElementById('btn-publish-exp').addEventListener('click', async () => {
       const title = document.getElementById('project-title').value.trim();
       const slug = document.getElementById('project-slug').value.trim();
-      const status = document.getElementById('project-status').value;
+      const status = 'available';
       const landing = document.getElementById('project-landing').value.trim();
       const whatsapp = document.getElementById('project-whatsapp').value.trim();
 
