@@ -653,11 +653,18 @@
           statusTag.textContent = 'DISPONIBLE';
         }
 
-        // Vistas
+        // Vistas en vivo
         document.getElementById('views-num').textContent = data.views || 1;
 
-        // Registrar incremento de visita en backend
-        fetch(`/api/experiences/${slug}/view`, { method: 'POST' }).catch(() => {});
+        // Registrar incremento de visita en backend y reflejarlo en tiempo real
+        fetch(`/api/experiences/${slug}/view`, { method: 'POST' })
+          .then(r => r.json())
+          .then(resData => {
+            if (resData && resData.views) {
+              document.getElementById('views-num').textContent = resData.views;
+            }
+          })
+          .catch(() => {});
 
         // Configurar CTAs
         const landingBtn = document.getElementById('cta-landing');
