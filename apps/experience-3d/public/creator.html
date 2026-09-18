@@ -43,14 +43,13 @@
     body {
       background-color: var(--bg);
       color: var(--fg);
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', -apple-system, sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      line-height: 1.5;
     }
 
-    /* Header Táctico */
+    /* Header */
     header {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
@@ -144,6 +143,7 @@
       transform: translateY(-1px);
     }
 
+    /* Versión móvil espaciosa (Opción A) */
     @media (max-width: 540px) {
       header {
         padding: 16px 18px;
@@ -176,7 +176,6 @@
       .header-actions {
         gap: 12px;
       }
-      /* Convertir el status en un punto verde sutil pulsante */
       .status-badge {
         background: transparent;
         border: none;
@@ -201,10 +200,6 @@
         border: 1px solid rgba(239, 68, 68, 0.28);
         gap: 6px;
       }
-      .btn-logout:active {
-        background: rgba(239, 68, 68, 0.25);
-        transform: scale(0.97);
-      }
       .btn-logout .logout-text {
         display: inline;
       }
@@ -218,7 +213,7 @@
     /* Contenedor Principal */
     main {
       flex: 1;
-      max-width: 600px;
+      max-width: 640px;
       width: 100%;
       margin: 0 auto;
       padding: 24px 16px 80px;
@@ -232,6 +227,7 @@
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     }
 
     .step-title {
@@ -294,6 +290,41 @@
       height: 28px;
     }
 
+    /* Selector modular de Propiedades */
+    .property-options {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sub-chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .sub-chip {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      color: var(--fg-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sub-chip.selected {
+      border-color: var(--color-prioridad);
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--fg);
+    }
+
     /* Campos de Entrada */
     .form-group {
       margin-bottom: 16px;
@@ -348,6 +379,7 @@
     .btn-camera {
       background: linear-gradient(135deg, #2563EB, #1D4ED8);
       color: #fff;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
     }
 
     .btn-upload {
@@ -356,7 +388,7 @@
       border: 1px solid var(--border);
     }
 
-    /* Visor de Cámara en Vivo */
+    /* Visor de Cámara en Vivo con Guía */
     #camera-modal {
       position: fixed;
       top: 0;
@@ -384,7 +416,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 24px 16px;
+      padding: 20px 16px 28px;
       pointer-events: none;
     }
 
@@ -393,15 +425,205 @@
       justify-content: space-between;
       align-items: center;
       pointer-events: auto;
+      gap: 8px;
     }
 
-    .camera-guide-badge {
-      background: rgba(0,0,0,0.65);
-      backdrop-filter: blur(8px);
+    .sector-badge {
+      background: rgba(18, 22, 32, 0.85);
+      backdrop-filter: blur(12px);
       padding: 6px 14px;
       border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.12);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .sector-title {
       font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .sector-sub {
+      font-size: 11px;
+      color: var(--accent-celeste);
+    }
+
+    .camera-tools {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-cam-tool {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .btn-cam-tool.active {
+      background: #F59E0B;
+      border-color: #F59E0B;
+      color: #000;
+    }
+
+    /* Nivel de Burbuja Digital */
+    .bubble-level-bar {
+      position: absolute;
+      top: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--fg-muted);
+      pointer-events: none;
+    }
+
+    .level-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #F59E0B;
+      transition: all 0.2s;
+    }
+
+    .level-indicator.leveled {
+      background: #10B981;
+      box-shadow: 0 0 10px #10B981;
+    }
+
+    /* Silueta Guía de Auto / Casa */
+    .ghost-guide {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 75%;
+      height: 45%;
+      border: 2px dashed rgba(255,255,255,0.25);
+      border-radius: 24px;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ghost-guide span {
+      background: rgba(0,0,0,0.5);
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+    }
+
+    /* Notificación de sector completado */
+    .sector-toast {
+      position: absolute;
+      top: 140px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(16, 185, 129, 0.95);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      display: none;
+      animation: toastPop 0.3s ease-out;
+      z-index: 50;
+      white-space: nowrap;
+    }
+
+    @keyframes toastPop {
+      from { transform: translateX(-50%) scale(0.8); opacity: 0; }
+      to { transform: translateX(-50%) scale(1); opacity: 1; }
+    }
+
+    /* Alerta de Calidad / Foto Movida */
+    .blur-modal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 12, 16, 0.85);
+      backdrop-filter: blur(12px);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 100;
+      pointer-events: auto;
+    }
+
+    .blur-card {
+      background: var(--surface);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: 20px;
+      padding: 24px;
+      max-width: 320px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+    }
+
+    .blur-card h4 {
+      font-size: 16px;
+      color: #F59E0B;
+      margin-bottom: 8px;
+    }
+
+    .blur-card p {
+      font-size: 12px;
+      color: var(--fg-muted);
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    .blur-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-retake {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      background: #F59E0B;
+      color: #000;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .btn-keep {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      background: var(--surface-elevated);
+      color: var(--fg);
+      border: 1px solid var(--border);
       font-weight: 600;
+      cursor: pointer;
+      font-size: 13px;
     }
 
     .camera-bottom {
@@ -422,11 +644,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: transform 0.1s;
     }
 
     .btn-shutter:active {
       transform: scale(0.92);
-      background: #fff;
     }
 
     .shutter-inner {
@@ -436,21 +658,20 @@
       background: #fff;
     }
 
-    /* Grid de Fotos Tomadas */
+    /* Galería de Miniaturas */
     .photo-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-top: 14px;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
     }
 
     .photo-thumb {
+      position: relative;
       aspect-ratio: 1;
       border-radius: 8px;
       overflow: hidden;
-      background: var(--surface-elevated);
       border: 1px solid var(--border);
-      position: relative;
     }
 
     .photo-thumb img {
@@ -459,14 +680,32 @@
       object-fit: cover;
     }
 
-    .photo-thumb .badge-idx {
+    .photo-thumb .badge-tag {
       position: absolute;
       top: 4px;
       left: 4px;
-      background: rgba(0,0,0,0.7);
-      font-size: 10px;
-      padding: 2px 6px;
+      background: rgba(0,0,0,0.75);
+      font-size: 9px;
+      padding: 2px 5px;
       border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .photo-thumb .btn-del-photo {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: rgba(239, 68, 68, 0.85);
+      color: #fff;
+      border: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      font-size: 11px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     /* Botón Publicar */
@@ -485,6 +724,12 @@
       justify-content: center;
       gap: 10px;
       box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+      transition: all 0.2s;
+    }
+
+    .btn-publish:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(16, 185, 129, 0.45);
     }
   </style>
 </head>
@@ -522,14 +767,30 @@
       <div class="step-subtitle">Cada activo utiliza una guía de captura especializada</div>
       
       <div class="asset-types">
-        <button class="asset-btn active" id="btn-type-property" data-type="property">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-          Propiedad / Terreno
-        </button>
-        <button class="asset-btn" id="btn-type-vehicle" data-type="vehicle">
+        <button class="asset-btn active" id="btn-type-vehicle" data-type="vehicle">
           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path d="M5 17h-2v-6l2-5h9l4 5h1a2 2 0 012 2v4h-2m-4 0h-6"/></svg>
           Vehículo / Auto
         </button>
+        <button class="asset-btn" id="btn-type-property" data-type="property">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          Propiedad / Inmueble
+        </button>
+      </div>
+
+      <!-- Opciones modulares para propiedades -->
+      <div class="property-options" id="property-options">
+        <div class="form-label">Tipo de Propiedad:</div>
+        <div class="sub-chips-row">
+          <button class="sub-chip selected" data-ptype="apartment">Apartamento</button>
+          <button class="sub-chip" data-ptype="house1">Casa 1 Nivel</button>
+          <button class="sub-chip" data-ptype="house2">Casa 2 Niveles</button>
+        </div>
+        <div class="form-label" style="margin-top:6px;">Áreas Extra a Incluir:</div>
+        <div class="sub-chips-row">
+          <button class="sub-chip selected" data-extra="balcony">+ Balcón / Terraza</button>
+          <button class="sub-chip" data-extra="patio">+ Patio / Jardín</button>
+          <button class="sub-chip selected" data-extra="facade">+ Fachada & Calle</button>
+        </div>
       </div>
     </section>
 
@@ -543,12 +804,21 @@
 
       <div class="form-group">
         <label class="form-label">Título del Proyecto</label>
-        <input type="text" id="project-title" class="form-input" placeholder="Ej: Apartamento San Francisco PH 1">
+        <input type="text" id="project-title" class="form-input" placeholder="Ej: Toyota Prado TXL 2024">
       </div>
 
       <div class="form-group">
         <label class="form-label">Identificador URL (Slug)</label>
-        <input type="text" id="project-slug" class="form-input" placeholder="propiedad-san-francisco-1">
+        <input type="text" id="project-slug" class="form-input" placeholder="auto-toyota-prado-2024">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Estado de la Oportunidad</label>
+        <select id="project-status" class="form-input">
+          <option value="available" selected>🟢 Disponible (En Venta)</option>
+          <option value="reserved">🟡 Reservado</option>
+          <option value="sold">🔴 Vendido / Rematado</option>
+        </select>
       </div>
 
       <div class="form-group">
@@ -562,29 +832,32 @@
       </div>
     </section>
 
-    <!-- Paso 3: Captura de Fotos -->
+    <!-- Paso 3: Captura de Fotos Guiada -->
     <section class="step-card">
       <div class="step-title">
         <div class="step-num">3</div>
         Captura de Fotografías
       </div>
-      <div class="step-subtitle" id="guide-text">Para vehículos: da la vuelta tomando de 16 a 24 fotos continuas. Para casas: toma fotos panorámicas de cada área.</div>
+      <div class="step-subtitle" id="guide-text">
+        Flujo guiado paso a paso con detector de nitidez y nivelador digital.
+      </div>
 
       <div class="capture-methods">
         <button class="btn-action btn-camera" id="btn-open-camera">
           <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-          Abrir Cámara
+          Abrir Cámara Guiada
         </button>
         <label class="btn-action btn-upload">
           <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-          Subir Fotos
+          Subir Archivos
           <input type="file" id="file-input" multiple accept="image/*" style="display: none;">
         </label>
       </div>
 
       <!-- Conteo y Miniaturas -->
-      <div style="font-size: 13px; color: var(--fg-muted); margin-bottom: 8px;">
-        Fotos registradas: <strong id="photo-count" style="color: var(--fg);">0</strong>
+      <div style="font-size: 13px; color: var(--fg-muted); margin-bottom: 8px; display:flex; justify-content:space-between;">
+        <span>Fotos capturadas: <strong id="photo-count" style="color: var(--fg);">0</strong></span>
+        <span id="storage-saved-hint" style="color: var(--color-comprar); font-size:11px;">Compresión WebP activa</span>
       </div>
       <div class="photo-grid" id="photo-grid"></div>
     </section>
@@ -596,14 +869,54 @@
     </button>
   </main>
 
-  <!-- Modal de Cámara en Vivo con Soporte de Resolución Máxima -->
+  <!-- Modal de Cámara Guiada en Vivo -->
   <div id="camera-modal">
     <video id="camera-video" autoplay playsinline></video>
+
+    <!-- Silueta Guía de Alineación -->
+    <div class="ghost-guide">
+      <span id="ghost-guide-label">Mantén la cámara a la altura del pecho</span>
+    </div>
+
+    <!-- Nivel de Burbuja Digital -->
+    <div class="bubble-level-bar" id="bubble-level-bar">
+      <div class="level-indicator" id="level-dot"></div>
+      <span id="level-text">Nivelando...</span>
+    </div>
+
+    <!-- Toast de Notificación de Sector -->
+    <div class="sector-toast" id="sector-toast">¡Sector completado!</div>
+
+    <!-- Alerta de Foto Borrosa (Anti-Blur) -->
+    <div class="blur-modal-overlay" id="blur-modal">
+      <div class="blur-card">
+        <h4>⚠️ Foto Posiblemente Borrosa</h4>
+        <p>Detectamos movimiento o falta de nitidez en esta captura. Para un giro 3D impecable, te recomendamos repetirla.</p>
+        <div class="blur-actions">
+          <button class="btn-retake" id="btn-blur-retake">🔄 Repetir Foto</button>
+          <button class="btn-keep" id="btn-blur-keep">✓ Conservar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controles y Overlay de Cámara -->
     <div class="camera-overlay">
       <div class="camera-top">
-        <div class="camera-guide-badge" id="camera-badge-counter">Foto #1</div>
-        <button id="btn-close-camera" style="background: none; border: none; color: #fff; font-size: 28px; cursor: pointer;">&times;</button>
+        <div class="sector-badge">
+          <span class="sector-title" id="cam-sector-title">Sector 1/4: Frente</span>
+          <span class="sector-sub" id="cam-sector-sub">Foto 1 de 4 (Faltan 3)</span>
+        </div>
+
+        <div class="camera-tools">
+          <button class="btn-cam-tool" id="btn-toggle-torch" title="Linterna para zonas oscuras">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </button>
+          <button class="btn-cam-tool" id="btn-close-camera" title="Cerrar Cámara">
+            &times;
+          </button>
+        </div>
       </div>
+
       <div class="camera-bottom">
         <div class="btn-shutter" id="btn-shutter">
           <div class="shutter-inner"></div>
@@ -613,29 +926,70 @@
   </div>
 
   <script type="module">
-    import { savePhotoOffline, getPendingPhotos } from './offline-storage.js';
+    import { savePhotoOffline } from './offline-storage.js';
 
-    let selectedAssetType = 'property';
-    const capturedBlobs = [];
+    let selectedAssetType = 'vehicle';
+    const capturedItems = []; // { blob, category, name }
     let mediaStream = null;
+    let videoTrack = null;
+    let torchActive = false;
+    let pendingBlob = null;
 
-    // Selector de activo
+    // Sectores Guiados para Autos
+    const vehicleStages = [
+      { id: 'ext_front', title: '🚗 Frente del Auto', target: 4, desc: 'Toma 4 fotos a 3m del frente moviéndote hacia la derecha' },
+      { id: 'ext_right', title: '🚗 Costado Derecho', target: 4, desc: 'Toma 4 fotos al lateral (rueda delantera, puertas, rueda trasera)' },
+      { id: 'ext_rear', title: '🚗 Parte Trasera', target: 4, desc: 'Toma 4 fotos al maletero, luces y esquina trasera' },
+      { id: 'ext_left', title: '🚗 Costado Izquierdo', target: 4, desc: 'Toma 4 fotos cerrando la vuelta 360°' },
+      { id: 'int_cabin_front', title: '💺 Cabina (Hacia Adelante)', target: 1, desc: 'Siéntate en el asiento trasero central y captura el tablero y timón' },
+      { id: 'int_cabin_rear', title: '💺 Cabina (Hacia Atrás)', target: 1, desc: 'Gira la cámara y captura los asientos traseros y techo' },
+      { id: 'insp_engine', title: '⚙️ Motor (Capó Abierto)', target: 1, desc: 'Abre el capó y toma una foto nítida de todo el compartimento' },
+      { id: 'insp_trunk', title: '📦 Maletero (Baúl Abierto)', target: 1, desc: 'Abre el maletero mostrando alfombra y espacio de carga' },
+      { id: 'insp_odometer', title: '📊 Odómetro / Kilometraje', target: 1, desc: 'Foto de cerca al tablero encendido mostrando los kilómetros' },
+      { id: 'insp_wheel', title: '🔘 Rines & Llantas', target: 1, desc: 'Foto de cerca al dibujo del neumático y rin' }
+    ];
+
+    // Sectores Guiados para Casas
+    let propertyStages = [
+      { id: 'prop_facade', title: '🏠 Fachada & Calle', target: 1, desc: 'Párate a 5 metros frente a la propiedad mostrando acceso y calle' },
+      { id: 'prop_living', title: '🛋️ Sala & Comedor', target: 1, desc: 'Párate en el centro de la sala y toma la panorámica 360°' },
+      { id: 'prop_kitchen', title: '🍳 Cocina de Lujo', target: 1, desc: 'Párate en el área de cocina mostrando sobres y gabinetes' },
+      { id: 'prop_balcony', title: '🌅 Balcón / Terraza', target: 1, desc: 'Captura la vista hacia el exterior y área social' },
+      { id: 'prop_master', title: '🛏️ Recámara Principal', target: 1, desc: 'Centro de la habitación mostrando amplitud y luz natural' },
+      { id: 'prop_bathroom', title: '🚿 Baño Principal', target: 1, desc: 'Muestra grifería, azulejos y ducha' }
+    ];
+
+    let currentStageIndex = 0;
+    let currentStagePhotos = 0;
+
+    // Selector de Activo
     const btnProp = document.getElementById('btn-type-property');
     const btnVeh = document.getElementById('btn-type-vehicle');
-    const guideText = document.getElementById('guide-text');
+    const propOptions = document.getElementById('property-options');
 
     btnProp.addEventListener('click', () => {
       selectedAssetType = 'property';
       btnProp.classList.add('active');
       btnVeh.classList.remove('active');
-      guideText.textContent = 'Para casas: toma fotos panorámicas nítidas de cada estancia (sala, comedor, habitaciones).';
+      propOptions.style.display = 'flex';
+      currentStageIndex = 0;
+      currentStagePhotos = 0;
     });
 
     btnVeh.addEventListener('click', () => {
       selectedAssetType = 'vehicle';
       btnVeh.classList.add('active');
       btnProp.classList.remove('active');
-      guideText.textContent = 'Para vehículos: da una vuelta continua al auto tomando de 16 a 24 fotos a la misma altura.';
+      propOptions.style.display = 'none';
+      currentStageIndex = 0;
+      currentStagePhotos = 0;
+    });
+
+    // Subchips de propiedad
+    document.querySelectorAll('.sub-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        chip.classList.toggle('selected');
+      });
     });
 
     // Auto-generar slug
@@ -647,17 +1001,7 @@
       document.getElementById('project-slug').value = slug;
     });
 
-    // Subida desde Galería / Archivos
-    document.getElementById('file-input').addEventListener('change', (e) => {
-      const files = Array.from(e.target.files);
-      files.forEach(file => {
-        capturedBlobs.push(file);
-        addPhotoThumb(file, capturedBlobs.length);
-      });
-      document.getElementById('photo-count').textContent = capturedBlobs.length;
-    });
-
-    // Cámara Web Móvil (Nativa a resolución completa)
+    // Cámara Web Guiada
     const cameraModal = document.getElementById('camera-modal');
     const video = document.getElementById('camera-video');
 
@@ -672,20 +1016,80 @@
           audio: false
         });
         video.srcObject = mediaStream;
+        videoTrack = mediaStream.getVideoTracks()[0];
         cameraModal.style.display = 'flex';
-        updateCameraCounter();
+        initSensors();
+        updateStageUI();
       } catch (err) {
         alert('No se pudo acceder a la cámara trasera. Asegúrate de otorgar permisos.');
       }
     });
 
     document.getElementById('btn-close-camera').addEventListener('click', () => {
+      stopCamera();
+    });
+
+    function stopCamera() {
       if (mediaStream) {
         mediaStream.getTracks().forEach(track => track.stop());
       }
       cameraModal.style.display = 'none';
+    }
+
+    // Linterna / Flash
+    document.getElementById('btn-toggle-torch').addEventListener('click', async () => {
+      if (!videoTrack) return;
+      try {
+        torchActive = !torchActive;
+        await videoTrack.applyConstraints({
+          advanced: [{ torch: torchActive }]
+        });
+        document.getElementById('btn-toggle-torch').classList.toggle('active', torchActive);
+      } catch(e) {
+        console.warn('Linterna no soportada en este dispositivo');
+      }
     });
 
+    // Nivel de Burbuja Digital
+    function initSensors() {
+      if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientation', handleOrientation, true);
+      }
+    }
+
+    function handleOrientation(e) {
+      const gamma = e.gamma || 0; // Inclinación lateral
+      const levelDot = document.getElementById('level-dot');
+      const levelText = document.getElementById('level-text');
+      
+      const isLeveled = Math.abs(gamma) <= 3;
+      if (isLeveled) {
+        levelDot.classList.add('leveled');
+        levelText.textContent = '✓ Nivelado';
+        levelText.style.color = '#10B981';
+      } else {
+        levelDot.classList.remove('leveled');
+        levelText.textContent = `${Math.round(gamma)}° inclinación`;
+        levelText.style.color = 'var(--fg-muted)';
+      }
+    }
+
+    function getCurrentStage() {
+      const stages = selectedAssetType === 'vehicle' ? vehicleStages : propertyStages;
+      return stages[currentStageIndex] || stages[stages.length - 1];
+    }
+
+    function updateStageUI() {
+      const stage = getCurrentStage();
+      const stages = selectedAssetType === 'vehicle' ? vehicleStages : propertyStages;
+      
+      document.getElementById('cam-sector-title').textContent = `${stage.title} (${currentStageIndex + 1}/${stages.length})`;
+      const remaining = stage.target - currentStagePhotos;
+      document.getElementById('cam-sector-sub').textContent = remaining > 0 ? `Foto ${currentStagePhotos + 1} de ${stage.target} (Faltan ${remaining})` : '¡Sector completado!';
+      document.getElementById('ghost-guide-label').textContent = stage.desc;
+    }
+
+    // Disparador de Captura
     document.getElementById('btn-shutter').addEventListener('click', () => {
       const canvas = document.createElement('canvas');
       canvas.width = video.videoWidth;
@@ -693,21 +1097,100 @@
       const ctx = canvas.getContext('2d');
       ctx.drawImage(video, 0, 0);
 
+      // 1. Análisis de Nitidez / Anti-Blur (Varianza Laplaciana simplificada)
+      const isSharp = checkSharpness(ctx, canvas.width, canvas.height);
+
+      // 2. Estampar Marca de Agua Protectora
+      ctx.save();
+      ctx.font = 'bold 22px Inter, sans-serif';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.textAlign = 'right';
+      ctx.fillText('Opportunity Intelligence • 3d.aizprua.com', canvas.width - 24, canvas.height - 24);
+      ctx.restore();
+
+      // 3. Comprimir a WebP
       canvas.toBlob((blob) => {
-        capturedBlobs.push(blob);
-        addPhotoThumb(blob, capturedBlobs.length);
-        document.getElementById('photo-count').textContent = capturedBlobs.length;
-        updateCameraCounter();
-        // Guardar respaldo en IndexedDB por seguridad
-        savePhotoOffline('draft', selectedAssetType, 'capture', blob);
-      }, 'image/jpeg', 0.98);
+        pendingBlob = blob;
+        if (!isSharp) {
+          // Mostrar alerta de foto borrosa
+          document.getElementById('blur-modal').style.display = 'flex';
+        } else {
+          acceptPendingPhoto();
+        }
+      }, 'image/webp', 0.88);
     });
 
-    function updateCameraCounter() {
-      document.getElementById('camera-badge-counter').textContent = `Foto #${capturedBlobs.length + 1}`;
+    document.getElementById('btn-blur-retake').addEventListener('click', () => {
+      document.getElementById('blur-modal').style.display = 'none';
+      pendingBlob = null;
+    });
+
+    document.getElementById('btn-blur-keep').addEventListener('click', () => {
+      document.getElementById('blur-modal').style.display = 'none';
+      acceptPendingPhoto();
+    });
+
+    function acceptPendingPhoto() {
+      if (!pendingBlob) return;
+      const stage = getCurrentStage();
+      
+      const item = {
+        blob: pendingBlob,
+        category: stage.id,
+        name: stage.title
+      };
+
+      capturedItems.push(item);
+      addPhotoThumb(item.blob, capturedItems.length, stage.title);
+      document.getElementById('photo-count').textContent = capturedItems.length;
+      
+      // Guardar respaldo offline
+      savePhotoOffline('draft', selectedAssetType, stage.id, pendingBlob);
+
+      currentStagePhotos++;
+      if (currentStagePhotos >= stage.target) {
+        showToast(`🎉 ¡${stage.title} completado!`);
+        currentStagePhotos = 0;
+        const stages = selectedAssetType === 'vehicle' ? vehicleStages : propertyStages;
+        if (currentStageIndex < stages.length - 1) {
+          currentStageIndex++;
+        }
+      }
+
+      updateStageUI();
+      pendingBlob = null;
     }
 
-    function addPhotoThumb(blobOrFile, idx) {
+    function showToast(msg) {
+      const toast = document.getElementById('sector-toast');
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 2400);
+    }
+
+    function checkSharpness(ctx, width, height) {
+      try {
+        // Muestra de píxeles para calcular gradiente rápido
+        const sampleW = Math.min(width, 400);
+        const sampleH = Math.min(height, 300);
+        const imgData = ctx.getImageData((width - sampleW) / 2, (height - sampleH) / 2, sampleW, sampleH).data;
+        
+        let sumGradient = 0;
+        for (let i = 0; i < imgData.length - 8; i += 8) {
+          const lum1 = 0.299 * imgData[i] + 0.587 * imgData[i+1] + 0.114 * imgData[i+2];
+          const lum2 = 0.299 * imgData[i+4] + 0.587 * imgData[i+5] + 0.114 * imgData[i+6];
+          sumGradient += Math.abs(lum1 - lum2);
+        }
+        const avgGradient = sumGradient / (imgData.length / 8);
+        return avgGradient > 6.5; // Umbral de nitidez calibrado
+      } catch (e) {
+        return true;
+      }
+    }
+
+    function addPhotoThumb(blobOrFile, idx, tag) {
       const grid = document.getElementById('photo-grid');
       const thumb = document.createElement('div');
       thumb.className = 'photo-thumb';
@@ -716,54 +1199,113 @@
       img.src = URL.createObjectURL(blobOrFile);
       
       const badge = document.createElement('div');
-      badge.className = 'badge-idx';
-      badge.textContent = `#${idx}`;
+      badge.className = 'badge-tag';
+      badge.textContent = tag || `#${idx}`;
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'btn-del-photo';
+      delBtn.innerHTML = '&times;';
+      delBtn.onclick = (e) => {
+        e.stopPropagation();
+        thumb.remove();
+        const foundIdx = capturedItems.findIndex(ci => ci.blob === blobOrFile);
+        if (foundIdx >= 0) capturedItems.splice(foundIdx, 1);
+        document.getElementById('photo-count').textContent = capturedItems.length;
+      };
 
       thumb.appendChild(img);
       thumb.appendChild(badge);
+      thumb.appendChild(delBtn);
       grid.appendChild(thumb);
     }
+
+    // Subida de archivos externos
+    document.getElementById('file-input').addEventListener('change', (e) => {
+      const files = Array.from(e.target.files);
+      files.forEach(file => {
+        capturedItems.push({ blob: file, category: 'upload', name: 'Archivo' });
+        addPhotoThumb(file, capturedItems.length, 'Subida');
+      });
+      document.getElementById('photo-count').textContent = capturedItems.length;
+    });
 
     // Publicación
     document.getElementById('btn-publish-exp').addEventListener('click', async () => {
       const title = document.getElementById('project-title').value.trim();
       const slug = document.getElementById('project-slug').value.trim();
-      const landingUrl = document.getElementById('project-landing').value.trim();
-      const wa = document.getElementById('project-whatsapp').value.trim();
+      const status = document.getElementById('project-status').value;
+      const landing = document.getElementById('project-landing').value.trim();
+      const whatsapp = document.getElementById('project-whatsapp').value.trim();
 
-      if (!title || !slug) return alert('Por favor ingresa un título y slug para el proyecto');
-      if (capturedBlobs.length === 0) return alert('Por favor toma o sube al menos una fotografía');
+      if (!title || !slug) {
+        alert('Por favor ingresa un título y slug para la experiencia.');
+        return;
+      }
 
-      const formData = new FormData();
-      formData.append('title', title);
-      formData.append('slug', slug);
-      formData.append('asset_type', selectedAssetType);
-      formData.append('landing_url', landingUrl);
-      formData.append('whatsapp_phone', wa);
+      if (capturedItems.length === 0) {
+        alert('Debes capturar o subir al menos una foto para crear la experiencia 3D.');
+        return;
+      }
 
-      capturedBlobs.forEach((b, i) => {
-        formData.append('photos', b, `frame_${i}.jpg`);
-      });
+      const publishBtn = document.getElementById('btn-publish-exp');
+      publishBtn.disabled = true;
+      publishBtn.innerHTML = 'Subiendo y Publicando en 3D...';
 
       try {
-        document.getElementById('btn-publish-exp').textContent = 'Publicando en Servidor...';
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('slug', slug);
+        formData.append('asset_type', selectedAssetType);
+        formData.append('status', status);
+        formData.append('landing_url', landing);
+        formData.append('whatsapp_phone', whatsapp);
+
+        // Mapear fotos categorizadas
+        const exteriorIndices = [];
+        const indices = {};
+
+        capturedItems.forEach((item, idx) => {
+          formData.append('photos', item.blob, `capture_${idx}.webp`);
+          if (item.category.startsWith('ext_')) {
+            exteriorIndices.push(idx);
+          } else if (item.category === 'int_cabin_front') {
+            indices.interior = idx;
+          } else if (item.category === 'insp_engine') {
+            indices.engine = idx;
+          } else if (item.category === 'insp_trunk') {
+            indices.trunk = idx;
+          } else if (item.category === 'insp_odometer') {
+            indices.odometer = idx;
+          } else if (item.category === 'insp_wheel') {
+            indices.wheel = idx;
+          }
+        });
+
+        indices.exterior = exteriorIndices.length > 0 ? exteriorIndices : capturedItems.map((_, i) => i);
+        formData.append('inspection_indices', JSON.stringify(indices));
+
         const res = await fetch('/api/experiences', {
           method: 'POST',
           body: formData
         });
 
-        if (res.ok) {
-          window.location.href = `/3d/${slug}`;
+        const data = await res.json();
+        if (data.success) {
+          alert(`¡Experiencia 3D publicada con éxito!\nURL Pública: https://3d.aizprua.com/${slug}`);
+          window.location.href = `/${slug}`;
         } else {
-          alert('Error al publicar la experiencia.');
-          document.getElementById('btn-publish-exp').textContent = 'Publicar Experiencia 3D';
+          alert('Hubo un inconveniente al guardar: ' + (data.error || 'Error desconocido'));
         }
-      } catch (err) {
-        alert('Error de conexión. Se guardó el borrador offline.');
-        document.getElementById('btn-publish-exp').textContent = 'Publicar Experiencia 3D';
+      } catch(e) {
+        console.error('Error al publicar:', e);
+        alert('Error de conexión al servidor.');
+      } finally {
+        publishBtn.disabled = false;
+        publishBtn.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> Publicar Experiencia 3D';
       }
     });
-    // Evento Cerrar Sesión
+
+    // Cerrar Sesión
     const logoutBtn = document.getElementById('btn-logout');
     if (logoutBtn) {
       logoutBtn.addEventListener('click', () => {
@@ -774,7 +1316,6 @@
         window.location.href = '/login';
       });
     }
-
   </script>
 </body>
 </html>

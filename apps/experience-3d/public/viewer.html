@@ -7,6 +7,8 @@
   
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23131722'/%3E%3Cstop offset='50%25' stop-color='%231e40af'/%3E%3Cstop offset='100%25' stop-color='%233b82f6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='25' fill='url(%23g)'/%3E%3Ctext x='50' y='56' font-family='Arial, sans-serif' font-weight='bold' font-size='56' fill='%23F1F5F9' text-anchor='middle' dominant-baseline='central'%3EOI%3C/text%3E%3C/svg%3E">
 
+  <!-- OPENGRAPH_TAGS -->
+
   <!-- Tipografías de la marca Hermes / Opportunity Intelligence -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,7 +24,7 @@
     :root {
       --bg: #0A0C10;
       --surface: #121620;
-      --surface-glass: rgba(18, 22, 32, 0.75);
+      --surface-glass: rgba(18, 22, 32, 0.85);
       --border: #232D3F;
       --border-glow: rgba(59, 130, 246, 0.3);
       --fg: #F8FAFC;
@@ -45,8 +47,8 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: var(--bg);
-      font-family: 'Inter', sans-serif;
+      background-color: var(--bg);
+      font-family: 'Inter', -apple-system, sans-serif;
       color: var(--fg);
     }
 
@@ -70,13 +72,99 @@
       display: block;
     }
 
+    /* Vista de Imagen Estática HD (Motor, Baúl, Odómetro) */
+    .static-inspect-view {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: #080A0E;
+      z-index: 2;
+    }
+
+    .static-inspect-view img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    /* Vista dividida de Odómetro y Llantas */
+    .split-inspect-view {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      flex-direction: row;
+      background: #080A0E;
+      z-index: 2;
+      padding: 70px 16px 90px;
+      gap: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .split-inspect-view {
+        flex-direction: column;
+        overflow-y: auto;
+      }
+    }
+
+    .split-card {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .split-card-header {
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.02);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .split-card-img {
+      flex: 1;
+      position: relative;
+      background: #05070A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+    }
+
+    .split-card-img img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: cover;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
     /* Barra Superior Minimalista */
     .top-bar {
       position: absolute;
       top: 16px;
       left: 16px;
       right: 16px;
-      z-index: 10;
+      z-index: 20;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -89,19 +177,19 @@
       align-items: center;
       gap: 10px;
       background: var(--surface-glass);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       padding: 8px 14px;
       border-radius: 9999px;
       border: 1px solid var(--border);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
     }
 
     .brand-icon {
-      width: 26px;
-      height: 26px;
+      width: 28px;
+      height: 28px;
       background: linear-gradient(135deg, #1e40af, #3b82f6);
-      border-radius: 6px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -115,10 +203,35 @@
       font-weight: 600;
       color: var(--fg);
       letter-spacing: 0.2px;
-      max-width: 200px;
+      max-width: 220px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    .status-badge-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #10B981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .views-pill {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--fg-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 4px;
     }
 
     .corner-actions {
@@ -141,7 +254,7 @@
       justify-content: center;
       cursor: pointer;
       transition: all 0.2s ease;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
     }
 
     .btn-icon:hover {
@@ -150,17 +263,66 @@
       box-shadow: 0 6px 20px var(--border-glow);
     }
 
-    /* Barra Inferior con CTAs (Solo WhatsApp y Redirección a Landing) */
+    /* Barra de Navegación de Modos para Vehículos / Estancias */
+    .mode-nav-bar {
+      position: absolute;
+      top: 74px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 15;
+      display: flex;
+      gap: 8px;
+      background: rgba(18, 22, 32, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 6px;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      max-width: calc(100% - 32px);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .mode-nav-bar::-webkit-scrollbar { display: none; }
+
+    .mode-chip {
+      background: transparent;
+      border: none;
+      color: var(--fg-muted);
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .mode-chip:hover {
+      color: var(--fg);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .mode-chip.active {
+      background: var(--color-prioridad);
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(59, 130, 246, 0.4);
+    }
+
+    /* Barra Inferior con CTAs */
     .bottom-bar {
       position: absolute;
       bottom: 24px;
       left: 50%;
       transform: translateX(-50%);
-      z-index: 10;
+      z-index: 20;
       display: flex;
       gap: 12px;
       width: calc(100% - 32px);
-      max-width: 500px;
+      max-width: 520px;
     }
 
     .btn-cta {
@@ -181,9 +343,9 @@
     }
 
     .btn-landing {
-      background: linear-gradient(135deg, #2563EB, #1D4ED8);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.15);
+      background: linear-gradient(135deg, #1E293B, #0F172A);
+      color: var(--fg);
+      border: 1px solid var(--border);
     }
 
     .btn-landing:hover {
@@ -195,7 +357,7 @@
     .btn-whatsapp {
       background: #128C7E;
       color: #fff;
-      max-width: 130px;
+      max-width: 140px;
       border: 1px solid rgba(255,255,255,0.15);
     }
 
@@ -212,8 +374,8 @@
       left: 50%;
       transform: translateX(-50%);
       z-index: 5;
-      background: rgba(10, 12, 16, 0.6);
-      backdrop-filter: blur(8px);
+      background: rgba(10, 12, 16, 0.7);
+      backdrop-filter: blur(10px);
       padding: 6px 14px;
       border-radius: 20px;
       border: 1px solid rgba(255,255,255,0.08);
@@ -224,11 +386,39 @@
       display: flex;
       align-items: center;
       gap: 6px;
+      white-space: nowrap;
     }
 
     @keyframes pulseHint {
-      0%, 100% { opacity: 0.8; }
-      50% { opacity: 0.3; }
+      0%, 100% { opacity: 0.9; }
+      50% { opacity: 0.4; }
+    }
+
+    /* Marca de Agua Protectora Anti-Piratería */
+    .watermark-badge {
+      position: absolute;
+      bottom: 24px;
+      left: 20px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(10, 12, 16, 0.6);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      font-family: 'JetBrains Mono', monospace;
+      pointer-events: none;
+      letter-spacing: 0.3px;
+    }
+
+    @media (max-width: 600px) {
+      .watermark-badge {
+        display: none; /* Ocultar en móviles para no chocar con la barra de botones */
+      }
     }
 
     /* Modal de Código QR y Enlace */
@@ -314,133 +504,6 @@
       font-size: 20px;
       cursor: pointer;
     }
-
-    /* Selector de Escenas / Habitaciones */
-    .scene-selector-bar {
-      position: absolute;
-      bottom: 88px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 15;
-      display: flex;
-      gap: 8px;
-      background: rgba(18, 22, 32, 0.88);
-      backdrop-filter: blur(12px);
-      padding: 6px 10px;
-      border-radius: 30px;
-      border: 1px solid var(--border);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-      max-width: 90%;
-      overflow-x: auto;
-    }
-
-    .scene-chip {
-      background: transparent;
-      color: var(--fg-muted);
-      border: 1px solid transparent;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .scene-chip:hover {
-      color: var(--fg);
-      background: rgba(255,255,255,0.06);
-    }
-
-    .scene-chip.active {
-      background: var(--color-prioridad);
-      color: #fff;
-      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-    }
-
-    /* Hotspots y Beacons */
-    .hotspot-wrapper {
-      position: relative;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .hotspot-beacon {
-      width: 34px;
-      height: 34px;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .beacon-pulse {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background: rgba(59, 130, 246, 0.45);
-      animation: beaconPulse 2s infinite ease-out;
-    }
-
-    .beacon-core {
-      position: relative;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: #3B82F6;
-      border: 2px solid #fff;
-      box-shadow: 0 0 12px #3B82F6;
-    }
-
-    @keyframes beaconPulse {
-      0% { transform: scale(0.6); opacity: 0.9; }
-      100% { transform: scale(2.2); opacity: 0; }
-    }
-
-    .hotspot-card {
-      position: absolute;
-      bottom: 42px;
-      left: 50%;
-      transform: translateX(-50%) scale(0.9);
-      opacity: 0;
-      pointer-events: none;
-      background: rgba(18, 22, 32, 0.95);
-      backdrop-filter: blur(14px);
-      border: 1px solid var(--border);
-      padding: 12px 16px;
-      border-radius: 12px;
-      width: 220px;
-      box-shadow: 0 12px 35px rgba(0,0,0,0.6);
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 50;
-    }
-
-    .hotspot-wrapper:hover .hotspot-card,
-    .hotspot-wrapper.active .hotspot-card {
-      opacity: 1;
-      transform: translateX(-50%) scale(1);
-      pointer-events: auto;
-    }
-
-    .hotspot-card-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: #F8FAFC;
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .hotspot-card-text {
-      font-size: 11px;
-      color: var(--fg-muted);
-      line-height: 1.4;
-    }
   </style>
 </head>
 <body>
@@ -450,7 +513,10 @@
     <div class="brand-pill">
       <div class="brand-icon">OI</div>
       <div class="brand-title" id="asset-name">Cargando experiencia...</div>
+      <span class="status-badge-live" id="status-tag">DISPONIBLE</span>
+      <span class="views-pill" id="views-tag">👁️ <span id="views-num">--</span></span>
     </div>
+
     <div class="corner-actions">
       <button class="btn-icon" id="btn-toggle-gyro" title="Giroscopio Móvil 1:1" style="display:none;">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16.24 7.76l-2.12 6.36-6.36 2.12 2.12-6.36z"/></svg>
@@ -464,18 +530,56 @@
     </div>
   </div>
 
-  <!-- Contenedor del Visor Interactivo -->
+  <!-- Barra de Modos de Navegación (Vehículos / Propiedades) -->
+  <div id="mode-nav-bar" class="mode-nav-bar"></div>
+
+  <!-- Contenedor del Visor Interactivo (Canvas Exterior / Marzipano 360) -->
   <div id="viewer-container">
     <canvas id="viewer-canvas"></canvas>
   </div>
 
-  <!-- Barra de Selector de Escenas (Habitaciones) -->
-  <div id="scene-selector-bar" class="scene-selector-bar" style="display: none;"></div>
+  <!-- Vista Estática de Motor -->
+  <div id="inspect-engine" class="static-inspect-view">
+    <img id="img-engine" src="" alt="Motor del Vehículo">
+  </div>
+
+  <!-- Vista Estática de Maletero -->
+  <div id="inspect-trunk" class="static-inspect-view">
+    <img id="img-trunk" src="" alt="Maletero del Vehículo">
+  </div>
+
+  <!-- Vista Dividida de Odómetro y Llantas -->
+  <div id="inspect-details" class="split-inspect-view">
+    <div class="split-card">
+      <div class="split-card-header">
+        <span>📊 Odómetro & Kilometraje Verificado</span>
+        <span style="color: var(--color-comprar);" id="spec-odometer">28,450 km</span>
+      </div>
+      <div class="split-card-img">
+        <img id="img-odometer" src="" alt="Odómetro">
+      </div>
+    </div>
+    <div class="split-card">
+      <div class="split-card-header">
+        <span>🔘 Inspección de Neumáticos & Rines</span>
+        <span style="color: var(--accent-celeste);">Huella Óptima</span>
+      </div>
+      <div class="split-card-img">
+        <img id="img-wheel" src="" alt="Neumático y Rin">
+      </div>
+    </div>
+  </div>
+
+  <!-- Marca de Agua Protectora Anti-Piratería -->
+  <div class="watermark-badge">
+    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Opportunity Intelligence • 3d.aizprua.com
+  </div>
 
   <!-- Indicador sutil de interacción -->
-  <div class="hint-drag">
+  <div class="hint-drag" id="hint-drag">
     <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 7h8M8 12h8M8 17h8"/></svg>
-    Arrastra para girar 360° • Toca los puntos para ver detalles
+    <span>Arrastra para girar 360°</span>
   </div>
 
   <!-- Barra Inferior de Acciones -->
@@ -520,13 +624,40 @@
     const pathParts = window.location.pathname.split('/').filter(Boolean);
     const slug = pathParts[pathParts.length - 1] || 'demo';
 
+    let sphereViewer = null;
+    let carViewer = null;
+    let currentExperience = null;
+
     async function loadExperience() {
       try {
         const res = await fetch(`/api/experiences/${slug}`);
         const data = await res.json();
+        currentExperience = data;
         
         document.getElementById('asset-name').textContent = data.title || 'Experiencia 3D';
         document.getElementById('view-title').textContent = `${data.title} — Opportunity Intelligence`;
+
+        // Estado
+        const statusTag = document.getElementById('status-tag');
+        if (data.status === 'sold') {
+          statusTag.textContent = 'VENDIDO';
+          statusTag.style.background = 'rgba(239, 68, 68, 0.15)';
+          statusTag.style.color = '#EF4444';
+          statusTag.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+        } else if (data.status === 'reserved') {
+          statusTag.textContent = 'RESERVADO';
+          statusTag.style.background = 'rgba(245, 158, 11, 0.15)';
+          statusTag.style.color = '#F59E0B';
+          statusTag.style.borderColor = 'rgba(245, 158, 11, 0.3)';
+        } else {
+          statusTag.textContent = 'DISPONIBLE';
+        }
+
+        // Vistas
+        document.getElementById('views-num').textContent = data.views || 1;
+
+        // Registrar incremento de visita en backend
+        fetch(`/api/experiences/${slug}/view`, { method: 'POST' }).catch(() => {});
 
         // Configurar CTAs
         const landingBtn = document.getElementById('cta-landing');
@@ -540,46 +671,11 @@
         // Generar QR en modal
         generateQR(window.location.href);
 
-        // Inicializar visor correspondiente
-        const canvas = document.getElementById('viewer-canvas');
+        // Configurar Navegación según activo
         if (data.asset_type === 'vehicle') {
-          const hint = document.querySelector('.hint-drag');
-          if (hint) {
-            hint.innerHTML = '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 7h8M8 12h8M8 17h8"/></svg> Arrastra para girar 360° el auto';
-          }
-          const viewer = new CarSpinViewer(canvas, { autoRotate: true, autoRotateSpeed: 300 });
-          await viewer.loadImages(data.images);
+          setupVehicleExperience(data);
         } else {
-          // Propiedades / Terrenos (Panorámica 360 con Marzipano)
-          const container = document.getElementById('viewer-container');
-          container.innerHTML = '';
-          const sphereViewer = new SphereTourViewer(container);
-
-          if (data.scenes && data.scenes.length > 0) {
-            sphereViewer.loadScenes(data.scenes);
-            renderSceneSelector(data.scenes, sphereViewer);
-          } else {
-            const panoUrl = (data.images && data.images.length > 0) ? data.images[0] : '/sample-san-francisco-360.jpg';
-            await sphereViewer.loadPanorama(panoUrl);
-          }
-
-          // Activar botón de giroscopio si es propiedad
-          const gyroBtn = document.getElementById('btn-toggle-gyro');
-          if (gyroBtn) {
-            gyroBtn.style.display = 'flex';
-            gyroBtn.addEventListener('click', async () => {
-              const active = await sphereViewer.toggleGyro();
-              if (active) {
-                gyroBtn.style.color = '#3B82F6';
-                gyroBtn.style.borderColor = '#3B82F6';
-                gyroBtn.style.background = 'rgba(59, 130, 246, 0.15)';
-              } else {
-                gyroBtn.style.color = '';
-                gyroBtn.style.borderColor = '';
-                gyroBtn.style.background = '';
-              }
-            });
-          }
+          setupPropertyExperience(data);
         }
 
       } catch (err) {
@@ -587,22 +683,150 @@
       }
     }
 
-    function renderSceneSelector(scenes, viewer) {
-      const bar = document.getElementById('scene-selector-bar');
-      bar.innerHTML = '';
-      bar.style.display = 'flex';
+    function setupVehicleExperience(data) {
+      const navBar = document.getElementById('mode-nav-bar');
+      navBar.innerHTML = '';
+      navBar.style.display = 'flex';
 
-      scenes.forEach((sc, idx) => {
-        const chip = document.createElement('button');
-        chip.className = `scene-chip ${idx === 0 ? 'active' : ''}`;
-        chip.textContent = sc.name;
-        chip.addEventListener('click', () => {
-          document.querySelectorAll('.scene-chip').forEach(c => c.classList.remove('active'));
-          chip.classList.add('active');
-          viewer.switchScene(sc.id);
+      const modes = [
+        { id: 'exterior', label: '🚗 Exterior 360°' },
+        { id: 'interior', label: '💺 Cabina 360°' },
+        { id: 'engine', label: '⚙️ Motor' },
+        { id: 'trunk', label: '📦 Maletero' },
+        { id: 'details', label: '📊 Odómetro & Rines' }
+      ];
+
+      modes.forEach((m, idx) => {
+        const btn = document.createElement('button');
+        btn.className = `mode-chip ${idx === 0 ? 'active' : ''}`;
+        btn.textContent = m.label;
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.mode-chip').forEach(c => c.classList.remove('active'));
+          btn.classList.add('active');
+          switchVehicleMode(m.id, data);
         });
-        bar.appendChild(chip);
+        navBar.appendChild(btn);
       });
+
+      // Cargar modo por defecto: Exterior
+      switchVehicleMode('exterior', data);
+    }
+
+    async function switchVehicleMode(mode, data) {
+      const container = document.getElementById('viewer-container');
+      const inspectEngine = document.getElementById('inspect-engine');
+      const inspectTrunk = document.getElementById('inspect-trunk');
+      const inspectDetails = document.getElementById('inspect-details');
+      const hint = document.getElementById('hint-drag');
+      const gyroBtn = document.getElementById('btn-toggle-gyro');
+
+      // Ocultar vistas estáticas
+      inspectEngine.style.display = 'none';
+      inspectTrunk.style.display = 'none';
+      inspectDetails.style.display = 'none';
+      if (gyroBtn) gyroBtn.style.display = 'none';
+
+      if (mode === 'exterior') {
+        container.style.display = 'flex';
+        hint.style.display = 'flex';
+        hint.querySelector('span').textContent = 'Arrastra para girar 360° el auto';
+        
+        container.innerHTML = '<canvas id="viewer-canvas"></canvas>';
+        const canvas = document.getElementById('viewer-canvas');
+        carViewer = new CarSpinViewer(canvas, { autoRotate: true, autoRotateSpeed: 300 });
+        await carViewer.loadImages(data.images || []);
+
+      } else if (mode === 'interior') {
+        container.style.display = 'flex';
+        hint.style.display = 'flex';
+        hint.querySelector('span').textContent = 'Gira en 360° dentro de la cabina';
+        
+        container.innerHTML = '';
+        sphereViewer = new SphereTourViewer(container);
+        const interiorUrl = data.interior_image || '/prado-360/interior.jpg';
+        await sphereViewer.loadPanorama(interiorUrl);
+
+        if (gyroBtn) {
+          gyroBtn.style.display = 'flex';
+          gyroBtn.onclick = async () => {
+            const active = await sphereViewer.toggleGyro();
+            gyroBtn.style.color = active ? '#3B82F6' : '';
+            gyroBtn.style.borderColor = active ? '#3B82F6' : '';
+          };
+        }
+
+      } else if (mode === 'engine') {
+        container.style.display = 'none';
+        hint.style.display = 'none';
+        inspectEngine.style.display = 'flex';
+        const engineImg = (data.inspection && data.inspection.engine) ? data.inspection.engine : '/prado-360/engine.jpg';
+        document.getElementById('img-engine').src = engineImg;
+
+      } else if (mode === 'trunk') {
+        container.style.display = 'none';
+        hint.style.display = 'none';
+        inspectTrunk.style.display = 'flex';
+        const trunkImg = (data.inspection && data.inspection.trunk) ? data.inspection.trunk : '/prado-360/trunk.jpg';
+        document.getElementById('img-trunk').src = trunkImg;
+
+      } else if (mode === 'details') {
+        container.style.display = 'none';
+        hint.style.display = 'none';
+        inspectDetails.style.display = 'flex';
+        
+        const odoImg = (data.inspection && data.inspection.odometer) ? data.inspection.odometer : '/prado-360/odometer.jpg';
+        const wheelImg = (data.inspection && data.inspection.wheel) ? data.inspection.wheel : '/prado-360/wheel.jpg';
+        
+        document.getElementById('img-odometer').src = odoImg;
+        document.getElementById('img-wheel').src = wheelImg;
+        
+        if (data.specs && data.specs.mileage) {
+          document.getElementById('spec-odometer').textContent = data.specs.mileage;
+        }
+      }
+    }
+
+    function setupPropertyExperience(data) {
+      const navBar = document.getElementById('mode-nav-bar');
+      navBar.innerHTML = '';
+      
+      const container = document.getElementById('viewer-container');
+      container.innerHTML = '';
+      sphereViewer = new SphereTourViewer(container);
+
+      const hint = document.getElementById('hint-drag');
+      hint.style.display = 'flex';
+      hint.querySelector('span').textContent = 'Arrastra para recorrer la estancia en 360°';
+
+      const gyroBtn = document.getElementById('btn-toggle-gyro');
+      if (gyroBtn) {
+        gyroBtn.style.display = 'flex';
+        gyroBtn.onclick = async () => {
+          const active = await sphereViewer.toggleGyro();
+          gyroBtn.style.color = active ? '#3B82F6' : '';
+          gyroBtn.style.borderColor = active ? '#3B82F6' : '';
+        };
+      }
+
+      if (data.scenes && data.scenes.length > 0) {
+        sphereViewer.loadScenes(data.scenes);
+        navBar.style.display = 'flex';
+
+        data.scenes.forEach((sc, idx) => {
+          const chip = document.createElement('button');
+          chip.className = `mode-chip ${idx === 0 ? 'active' : ''}`;
+          chip.textContent = sc.name;
+          chip.addEventListener('click', () => {
+            document.querySelectorAll('.mode-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            sphereViewer.switchScene(sc.id);
+          });
+          navBar.appendChild(chip);
+        });
+      } else {
+        const panoUrl = (data.images && data.images.length > 0) ? data.images[0] : '/sample-san-francisco-360.jpg';
+        sphereViewer.loadPanorama(panoUrl);
+      }
     }
 
     function generateQR(url) {
@@ -622,20 +846,11 @@
       document.getElementById('qr-modal').style.display = 'none';
     });
 
-    document.getElementById('btn-copy-url').addEventListener('click', async () => {
-      await navigator.clipboard.writeText(window.location.href);
-      const textSpan = document.getElementById('copy-text');
-      textSpan.textContent = '¡Enlace Copiado!';
-      setTimeout(() => textSpan.textContent = 'Copiar Enlace', 2500);
-    });
-
-    document.getElementById('btn-download-qr').addEventListener('click', () => {
-      const img = document.querySelector('#qr-canvas-holder img');
-      if (!img) return;
-      const a = document.createElement('a');
-      a.href = img.src;
-      a.download = `QR-${slug}.png`;
-      a.click();
+    document.getElementById('btn-copy-url').addEventListener('click', () => {
+      navigator.clipboard.writeText(window.location.href);
+      const txt = document.getElementById('copy-text');
+      txt.textContent = '¡Enlace Copiado!';
+      setTimeout(() => txt.textContent = 'Copiar Enlace', 2000);
     });
 
     document.getElementById('btn-fullscreen').addEventListener('click', () => {
@@ -646,6 +861,7 @@
       }
     });
 
+    // Iniciar
     loadExperience();
   </script>
 </body>
