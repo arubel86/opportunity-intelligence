@@ -640,14 +640,14 @@
 
     .gallery-preview-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
       gap: 14px;
       padding: 4px 0;
     }
 
     .gallery-item {
       position: relative;
-      height: 135px;
+      height: 145px;
       border-radius: 10px;
       overflow: hidden;
       border: 1px solid var(--border);
@@ -660,7 +660,7 @@
     .gallery-item:hover {
       transform: translateY(-2px);
       border-color: var(--color-prioridad);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.6);
     }
 
     .gallery-item img {
@@ -672,7 +672,34 @@
     }
 
     .gallery-item:hover img {
-      transform: scale(1.05);
+      transform: scale(1.06);
+    }
+
+    .gallery-zoom-hint {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      color: #fff;
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      pointer-events: none;
+      opacity: 0.85;
+      transition: all 0.2s ease;
+      z-index: 2;
+    }
+
+    .gallery-item:hover .gallery-zoom-hint {
+      opacity: 1;
+      background: rgba(59, 130, 246, 0.8);
+      border-color: #93C5FD;
+      transform: scale(1.1);
     }
 
     .gallery-item-bar {
@@ -680,27 +707,29 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: linear-gradient(0deg, rgba(10, 12, 16, 0.95) 0%, rgba(10, 12, 16, 0.75) 75%, transparent 100%);
-      padding: 6px 8px;
+      background: linear-gradient(0deg, rgba(10, 12, 16, 0.96) 0%, rgba(10, 12, 16, 0.82) 75%, transparent 100%);
+      padding: 8px 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       z-index: 2;
     }
 
     .gallery-btn-action {
-      background: rgba(255, 255, 255, 0.14);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      flex: 1;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.22);
       color: #fff;
-      padding: 4px 8px;
-      border-radius: 5px;
-      font-size: 11px;
-      font-weight: 500;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
       text-decoration: none;
       display: flex;
       align-items: center;
-      gap: 3px;
+      gap: 6px;
       cursor: pointer;
       transition: all 0.15s;
     }
@@ -713,7 +742,7 @@
 
     .gallery-btn-action.delete {
       background: rgba(239, 68, 68, 0.2);
-      border-color: rgba(239, 68, 68, 0.4);
+      border-color: rgba(239, 68, 68, 0.45);
       color: #FCA5A5;
     }
 
@@ -942,7 +971,7 @@
       </div>
       <div class="modal-body">
         <div style="font-size:13px; color:var(--fg-muted);">
-          Puedes previsualizar cada captura en alta resolución o descargarlas a tu dispositivo antes de eliminar el activo del servidor.
+          Haz clic sobre cualquier fotografía para abrirla en pantalla completa. Puedes guardarla en tu equipo o eliminarla del servidor para liberar espacio.
         </div>
         <div class="gallery-preview-grid" id="gallery-modal-grid"></div>
       </div>
@@ -1247,18 +1276,17 @@
         const safeTitle = (exp.title || 'Foto').replace(/'/g, "\\'");
         
         item.innerHTML = `
-          <img src="${photoUrl}" alt="Foto ${idx + 1}" loading="lazy" onclick="openLightbox('${photoUrl}', 'Foto ${idx + 1} • ${safeTitle}', '${exp.slug}')">
+          <img src="${photoUrl}" alt="Foto ${idx + 1}" loading="lazy" onclick="openLightbox('${photoUrl}', 'Foto ${idx + 1} • ${safeTitle}', '${exp.slug}')" title="Haz clic en la imagen para abrir en pantalla completa">
+          <div class="gallery-zoom-hint" title="Clic para ampliar">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
+          </div>
           <div class="gallery-item-bar">
-            <button class="gallery-btn-action" onclick="openLightbox('${photoUrl}', 'Foto ${idx + 1} • ${safeTitle}', '${exp.slug}')" title="Visualizar en pantalla completa">
-              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-              Ver
-            </button>
-            <a href="${photoUrl}" download="foto_${idx + 1}.jpg" target="_blank" class="gallery-btn-action" title="Descargar foto">
-              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            <a href="${photoUrl}" download="foto_${idx + 1}.jpg" target="_blank" class="gallery-btn-action" title="Descargar foto en alta resolución">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
               Guardar
             </a>
             <button class="gallery-btn-action delete" onclick="deleteIndividualPhoto('${exp.slug}', '${photoUrl}', 'photo-item-${idx}')" title="Eliminar foto del servidor">
-              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
               Eliminar
             </button>
           </div>
