@@ -566,7 +566,7 @@
       <div class="split-card-header">
         <span style="display:inline-flex;align-items:center;gap:7px;">
           <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4.93 19.07A10 10 0 1 1 19.07 19.07"/><path d="M12 12l4-4"/><circle cx="12" cy="12" r="2"/><path d="M12 4v2M7 7l1.5 1.5M17 7l-1.5 1.5"/></svg>
-          Odómetro & Kilometraje Verificado
+          Kilometraje Verificado
         </span>
         <span style="color: var(--color-comprar);" id="spec-odometer">28,450 km</span>
       </div>
@@ -736,7 +736,7 @@
         },
         { 
           id: 'details', 
-          label: 'Odómetro & Rines', 
+          label: 'Kilometraje & Llantas', 
           svg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.93 19.07A10 10 0 1 1 19.07 19.07"/><path d="M12 12l4-4"/><circle cx="12" cy="12" r="2"/><path d="M12 4v2M7 7l1.5 1.5M17 7l-1.5 1.5"/></svg>'
         }
       ];
@@ -860,7 +860,28 @@
         data.scenes.forEach((sc, idx) => {
           const chip = document.createElement('button');
           chip.className = `mode-chip ${idx === 0 ? 'active' : ''}`;
-          chip.innerHTML = `<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg><span>${sc.name}</span>`;
+
+          // SVG arquitectónico relevante según la estancia y limpieza de emojis
+          const cleanId = (sc.id || '').toLowerCase();
+          const rawName = sc.name || '';
+          const cleanName = rawName.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '').trim();
+          const lowerName = cleanName.toLowerCase();
+
+          let svgIcon = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>'; // Default casa
+
+          if (cleanId.includes('sala') || lowerName.includes('sala') || lowerName.includes('living') || lowerName.includes('comedor')) {
+            svgIcon = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="9" rx="2"/><path d="M6 11V7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4"/><path d="M3 15h18"/></svg>'; // Sofá sala
+          } else if (cleanId.includes('balcon') || lowerName.includes('balcon') || lowerName.includes('terraza') || lowerName.includes('vista')) {
+            svgIcon = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="4"/><path d="M12 2v2M4.93 4.93l1.41 1.41M2 10h2M20 10h2M17.66 4.93l-1.41 1.41"/><path d="M3 18h18M5 18v4M12 18v4M19 18v4"/></svg>'; // Balcón y sol
+          } else if (cleanId.includes('cocina') || lowerName.includes('cocina') || lowerName.includes('kitchen')) {
+            svgIcon = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2v20M6 2v20M2 7h8M2 12h8M14 7h8M14 17h8"/></svg>'; // Cocina
+          } else if (cleanId.includes('recamara') || cleanId.includes('dormitorio') || lowerName.includes('recamara') || lowerName.includes('habitacion')) {
+            svgIcon = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"/></svg>'; // Cama
+          } else if (cleanId.includes('bano') || lowerName.includes('baño') || lowerName.includes('bath')) {
+            svgIcon = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16a1 1 0 0 1 1 1v3a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-3a1 1 0 0 1 1-1zM6 12V5a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v1"/></svg>'; // Baño
+          }
+
+          chip.innerHTML = `${svgIcon}<span>${cleanName}</span>`;
           chip.addEventListener('click', () => {
             document.querySelectorAll('.mode-chip').forEach(c => c.classList.remove('active'));
             chip.classList.add('active');

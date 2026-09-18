@@ -144,8 +144,8 @@ app.get('/api/experiences', (req, res) => {
       whatsapp_phone: '50760000000',
       images: ['/sample-san-francisco-360.jpg', '/sample-balcon-360.jpg'],
       scenes: [
-        { id: 'sala', name: '🛋️ Sala & Comedor', image: '/sample-san-francisco-360.jpg' },
-        { id: 'balcon', name: '🌅 Balcón & Terraza', image: '/sample-balcon-360.jpg' }
+        { id: 'sala', name: 'Sala & Comedor', image: '/sample-san-francisco-360.jpg' },
+        { id: 'balcon', name: 'Balcón & Terraza', image: '/sample-balcon-360.jpg' }
       ],
       created_at: new Date('2024-03-05').toISOString(),
       is_seed: true
@@ -311,8 +311,8 @@ app.post('/api/experiences/:slug/delete-photo', (req, res) => {
         views: 92,
         images: ['/sample-san-francisco-360.jpg', '/sample-balcon-360.jpg'],
         scenes: [
-          { id: 'sala', name: '🛋️ Sala & Comedor', image: '/sample-san-francisco-360.jpg' },
-          { id: 'balcon', name: '🌅 Balcón & Terraza', image: '/sample-balcon-360.jpg' }
+          { id: 'sala', name: 'Sala & Comedor', image: '/sample-san-francisco-360.jpg' },
+          { id: 'balcon', name: 'Balcón & Terraza', image: '/sample-balcon-360.jpg' }
         ]
       };
       list.push(exp);
@@ -422,7 +422,7 @@ app.get('/api/experiences/:slug', (req, res) => {
     const defaultScenes = [
       {
         id: 'sala',
-        name: '🛋️ Sala & Comedor',
+        name: 'Sala & Comedor',
         image: '/sample-san-francisco-360.jpg',
         hotspots: [
           { yaw: 0.15, pitch: -0.05, title: 'Ventanales Piso a Techo', text: 'Vidrios con aislamiento térmico y vista panorámica a la bahía.' },
@@ -432,7 +432,7 @@ app.get('/api/experiences/:slug', (req, res) => {
       },
       {
         id: 'balcon',
-        name: '🌅 Balcón & Terraza',
+        name: 'Balcón & Terraza',
         image: '/sample-balcon-360.jpg',
         hotspots: [
           { yaw: 0.0, pitch: -0.08, title: 'Vista al Mar', text: 'Orientación privilegiada con brisa marina constante y atardeceres.' },
