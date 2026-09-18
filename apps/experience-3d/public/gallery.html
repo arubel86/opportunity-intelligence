@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestor de Experiencias 3D & Almacenamiento — Opportunity Intelligence</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    // Guardián de sesión
+    (function guardSession() {
+      const token = localStorage.getItem('oi_access_token') || sessionStorage.getItem('oi_access_token');
+      if (!token) {
+        window.location.href = '/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+      }
+    })();
+  </script>
+
+  <style>
+    :root {
+      --bg: #0A0C10;
+      --surface: #121620;
+      --surface-elevated: #181E2C;
+      --surface-glass: rgba(18, 22, 32, 0.85);
+      --border: #232D3F;
+      --border-focus: #3B82F6;
+      --fg: #F8FAFC;
+      --fg-muted: #94A3B8;
+      
+      --color-comprar: #10B981;
+      --color-prioridad: #3B82F6;
+      --accent-celeste: #85CDFF;
+      --color-reserved: #F59E0B;
+      --color-sold: #EF4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--fg);
+      font-family: 'Inter', -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(12px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .brand-logo {
+      background: linear-gradient(135deg, #3B82F6, #10B981);
+      color: white;
+      font-weight: 800;
+      font-size: 16px;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .brand-text {
+      font-weight: 700;
+      font-size: 17px;
+      color: var(--fg);
+      letter-spacing: -0.02em;
+    }
+
+    .brand-text span {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--fg-muted);
+      letter-spacing: 0.04em;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-create-new {
+      background: linear-gradient(135deg, #2563EB, #1D4ED8);
+      color: white;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+
+    .btn-create-new:hover {
+      background: linear-gradient(135deg, #1D4ED8, #1E40AF);
+      transform: translateY(-1px);
+    }
+
+    .btn-logout {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--fg-muted);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-logout:hover {
+      color: #EF4444;
+      border-color: rgba(239, 68, 68, 0.4);
+      background: rgba(239, 68, 68, 0.05);
+    }
+
+    /* Main Container */
+    main {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 28px 20px 60px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Storage Health Section */
+    .storage-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .storage-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #3B82F6, #10B981);
+    }
+
+    .storage-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .storage-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .storage-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(59, 130, 246, 0.12);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      color: var(--color-prioridad);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .storage-title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .storage-subtitle {
+      font-size: 13px;
+      color: var(--fg-muted);
+    }
+
+    .storage-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-purge {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #F87171;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-purge:hover {
+      background: rgba(239, 68, 68, 0.25);
+      border-color: #EF4444;
+      color: #fff;
+    }
+
+    .storage-metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      padding-top: 6px;
+    }
+
+    .metric-box {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: var(--fg-muted);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .metric-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--fg);
+    }
+
+    .progress-wrap {
+      margin-top: 4px;
+    }
+
+    .progress-bar-bg {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      height: 8px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .progress-bar-fill {
+      background: linear-gradient(90deg, #10B981, #3B82F6);
+      height: 100%;
+      border-radius: 999px;
+      width: 2%;
+      transition: width 0.5s ease-out;
+    }
+
+    /* Controls Row */
+    .controls-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .filter-chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .chip-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--fg-muted);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .chip-btn:hover {
+      border-color: var(--fg-muted);
+      color: var(--fg);
+    }
+
+    .chip-btn.active {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: var(--color-prioridad);
+      color: #93C5FD;
+    }
+
+    .search-input-wrap {
+      position: relative;
+      min-width: 260px;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      padding: 8px 12px 8px 36px;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: var(--border-focus);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--fg-muted);
+      pointer-events: none;
+    }
+
+    /* Cards Grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 20px;
+    }
+
+    .asset-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      position: relative;
+    }
+
+    .asset-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4);
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+
+    .asset-cover {
+      width: 100%;
+      height: 190px;
+      background: #000;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .asset-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .asset-card:hover .asset-cover img {
+      transform: scale(1.04);
+    }
+
+    .badge-type {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(10, 12, 16, 0.85);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .badge-views {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(10, 12, 16, 0.85);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #93C5FD;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .asset-body {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .asset-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .status-select {
+      appearance: none;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--fg);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .status-select.status-available {
+      color: #34D399;
+      border-color: rgba(16, 185, 129, 0.4);
+      background: rgba(16, 185, 129, 0.08);
+    }
+
+    .status-select.status-reserved {
+      color: #FBBF24;
+      border-color: rgba(245, 158, 11, 0.4);
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .status-select.status-sold {
+      color: #F87171;
+      border-color: rgba(239, 68, 68, 0.4);
+      background: rgba(239, 68, 68, 0.08);
+    }
+
+    .asset-size-pill {
+      font-size: 11px;
+      color: var(--fg-muted);
+      background: rgba(255, 255, 255, 0.04);
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .asset-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--fg);
+      line-height: 1.35;
+    }
+
+    .asset-slug {
+      font-size: 12px;
+      color: var(--fg-muted);
+      font-family: monospace;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .asset-slug a {
+      color: #60A5FA;
+      text-decoration: none;
+    }
+
+    .asset-slug a:hover {
+      text-decoration: underline;
+    }
+
+    /* Actions buttons */
+    .asset-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: auto;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+
+    .card-btn {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      padding: 7px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .card-btn:hover {
+      border-color: var(--color-prioridad);
+      background: rgba(59, 130, 246, 0.1);
+      color: #93C5FD;
+    }
+
+    .card-btn.primary {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(16, 185, 129, 0.2));
+      border-color: rgba(59, 130, 246, 0.4);
+      color: #fff;
+    }
+
+    .card-btn.primary:hover {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.35), rgba(16, 185, 129, 0.35));
+    }
+
+    .card-btn.danger {
+      grid-column: span 2;
+      border-color: rgba(239, 68, 68, 0.2);
+      color: #F87171;
+    }
+
+    .card-btn.danger:hover {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: #EF4444;
+      color: #fff;
+    }
+
+    /* Modal Styling */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      max-width: 720px;
+      width: 100%;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      animation: modalIn 0.2s ease-out;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-header {
+      padding: 16px 22px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .btn-modal-close {
+      background: transparent;
+      border: none;
+      color: var(--fg-muted);
+      cursor: pointer;
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .btn-modal-close:hover {
+      color: var(--fg);
+    }
+
+    .modal-body {
+      padding: 20px 22px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .gallery-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+    }
+
+    .gallery-item {
+      position: relative;
+      height: 100px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .gallery-item-download {
+      position: absolute;
+      bottom: 4px;
+      right: 4px;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      text-decoration: none;
+    }
+
+    .embed-box {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      font-family: monospace;
+      font-size: 12px;
+      color: #93C5FD;
+      word-break: break-all;
+      user-select: all;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #1E293B;
+      border: 1px solid var(--border-focus);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 200;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--fg-muted);
+    }
+
+    .empty-state svg {
+      margin-bottom: 12px;
+      opacity: 0.4;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <a href="/galeria" class="brand">
+      <div class="brand-logo">OI</div>
+      <div class="brand-text">
+        Opportunity 3D
+        <span>Gestor de Activos & Almacenamiento</span>
+      </div>
+    </a>
+
+    <div class="header-actions">
+      <a href="/" class="btn-create-new">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
+        Capturar Nueva Experiencia
+      </a>
+      <button id="btn-logout" class="btn-logout" title="Cerrar Sesión">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        Salir
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main>
+    <!-- Storage Health Card -->
+    <section class="storage-card">
+      <div class="storage-header">
+        <div class="storage-title-wrap">
+          <div class="storage-icon">
+            <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 7v10c0 2 1.5 3 3.5 3h9c2 0 3.5-1 3.5-3V7c0-2-1.5-3-3.5-3h-9C5.5 4 4 5 4 7z"/><path d="M4 11h16"/><path d="M9 15h.01"/><path d="M13 15h.01"/></svg>
+          </div>
+          <div>
+            <div class="storage-title">Salud de Almacenamiento en Disco</div>
+            <div class="storage-subtitle">Monitoreo de fotos de alta resolución y optimización WebP</div>
+          </div>
+        </div>
+
+        <div class="storage-actions">
+          <button id="btn-purge-sold" class="btn-purge" title="Elimina las fotos pesadas de autos o casas vendidas">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            🧹 Purgar Fotos de Activos Vendidos
+          </button>
+        </div>
+      </div>
+
+      <div class="storage-metrics">
+        <div class="metric-box">
+          <div class="metric-label">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 00-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
+            Espacio Usado en Servidor
+          </div>
+          <div class="metric-value" id="stat-used-mb">Calculando...</div>
+          <div class="progress-wrap">
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" id="stat-progress-fill"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="metric-box">
+          <div class="metric-label">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            Total de Fotos Guardadas
+          </div>
+          <div class="metric-value" id="stat-total-photos">0</div>
+        </div>
+
+        <div class="metric-box">
+          <div class="metric-label">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            Experiencias 3D Activas
+          </div>
+          <div class="metric-value" id="stat-total-exps">0</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Controls Row -->
+    <div class="controls-row">
+      <div class="filter-chips">
+        <button class="chip-btn active" data-filter="all">Todos los Activos</button>
+        <button class="chip-btn" data-filter="vehicle">🚗 Vehículos</button>
+        <button class="chip-btn" data-filter="property">🏠 Inmuebles</button>
+        <button class="chip-btn" data-filter="available">🟢 Disponibles</button>
+        <button class="chip-btn" data-filter="reserved">🟡 Reservados</button>
+        <button class="chip-btn" data-filter="sold">🔴 Vendidos</button>
+      </div>
+
+      <div class="search-input-wrap">
+        <svg class="search-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input type="text" id="search-input" class="search-input" placeholder="Buscar por título o slug...">
+      </div>
+    </div>
+
+    <!-- Cards Grid -->
+    <div class="cards-grid" id="experiences-grid">
+      <!-- Inyectado dinámicamente -->
+    </div>
+  </main>
+
+  <!-- Modal Galería de Fotos del Activo -->
+  <div class="modal-overlay" id="gallery-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="gallery-modal-title">Fotografías del Activo</div>
+        <button class="btn-modal-close" onclick="closeModal('gallery-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="font-size:13px; color:var(--fg-muted);">
+          Puedes previsualizar cada captura en alta resolución o descargarlas a tu dispositivo antes de eliminar el activo del servidor.
+        </div>
+        <div class="gallery-preview-grid" id="gallery-modal-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Embed Snippet -->
+  <div class="modal-overlay" id="embed-modal">
+    <div class="modal-content" style="max-width: 580px;">
+      <div class="modal-header">
+        <div class="modal-title">Código Embed para tu Landing Page</div>
+        <button class="btn-modal-close" onclick="closeModal('embed-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:13px; color:var(--fg-muted);">
+          Copia y pega este código HTML en cualquier constructor web (WordPress, Webflow, Shopify o código personalizado):
+        </p>
+        <div class="embed-box" id="embed-code-box"></div>
+        <button class="card-btn primary" id="btn-copy-embed-code" style="padding: 10px;">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+          Copiar Código al Portapapeles
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <svg width="18" height="18" fill="none" stroke="#10B981" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+    <span id="toast-text">Acción completada con éxito</span>
+  </div>
+
+  <script>
+    let allExperiences = [];
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    // Cargar datos iniciales
+    document.addEventListener('DOMContentLoaded', () => {
+      loadStorageStats();
+      loadExperiences();
+      setupFilters();
+      setupSearch();
+      setupPurgeButton();
+      setupLogout();
+    });
+
+    // 1. Estadísticas de Almacenamiento
+    async function loadStorageStats() {
+      try {
+        const res = await fetch('/api/storage/stats');
+        const data = await res.json();
+        
+        document.getElementById('stat-used-mb').textContent = `${data.usedMB} MB / 5.0 GB`;
+        document.getElementById('stat-progress-fill').style.width = `${Math.max(2, data.percentage)}%`;
+        if (data.percentage > 75) {
+          document.getElementById('stat-progress-fill').style.background = '#EF4444';
+        }
+      } catch (err) {
+        console.error('Error al cargar stats:', err);
+      }
+    }
+
+    // 2. Cargar Experiencias 3D
+    async function loadExperiences() {
+      try {
+        const res = await fetch('/api/experiences');
+        allExperiences = await res.json();
+
+        // Calcular total de fotos
+        let totalPhotos = 0;
+        allExperiences.forEach(e => totalPhotos += (e.photo_count || 0));
+        document.getElementById('stat-total-photos').textContent = totalPhotos;
+        document.getElementById('stat-total-exps').textContent = allExperiences.length;
+
+        renderExperiences();
+      } catch (err) {
+        console.error('Error al cargar experiencias:', err);
+      }
+    }
+
+    // 3. Renderizar Tarjetas
+    function renderExperiences() {
+      const container = document.getElementById('experiences-grid');
+      container.innerHTML = '';
+
+      let filtered = allExperiences.filter(exp => {
+        // Filtro por categoría o estado
+        if (currentFilter === 'vehicle' && exp.asset_type !== 'vehicle') return false;
+        if (currentFilter === 'property' && exp.asset_type !== 'property') return false;
+        if (currentFilter === 'available' && exp.status !== 'available') return false;
+        if (currentFilter === 'reserved' && exp.status !== 'reserved') return false;
+        if (currentFilter === 'sold' && exp.status !== 'sold') return false;
+
+        // Búsqueda por texto
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase();
+          const matchTitle = (exp.title || '').toLowerCase().includes(q);
+          const matchSlug = (exp.slug || '').toLowerCase().includes(q);
+          return matchTitle || matchSlug;
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
+            <div style="font-size: 15px; font-weight: 600; margin-bottom: 4px;">No se encontraron activos 3D</div>
+            <div style="font-size: 13px;">Prueba con otros filtros o crea una nueva experiencia.</div>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(exp => {
+        const card = document.createElement('div');
+        card.className = 'asset-card';
+
+        const typeLabel = exp.asset_type === 'vehicle' ? '🚗 Vehículo' : '🏠 Propiedad';
+        const coverImg = exp.thumbnail || (exp.images && exp.images[0]) || '/sample-san-francisco-360.jpg';
+        const statusClass = `status-${exp.status || 'available'}`;
+
+        card.innerHTML = `
+          <div class="asset-cover">
+            <img src="${coverImg}" alt="${exp.title}" loading="lazy">
+            <div class="badge-type">${typeLabel}</div>
+            <div class="badge-views">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              ${exp.views || 0}
+            </div>
+          </div>
+
+          <div class="asset-body">
+            <div class="asset-meta-row">
+              <select class="status-select ${statusClass}" onchange="changeStatus('${exp.slug}', this.value, this)">
+                <option value="available" ${exp.status === 'available' ? 'selected' : ''}>🟢 Disponible</option>
+                <option value="reserved" ${exp.status === 'reserved' ? 'selected' : ''}>🟡 Reservado</option>
+                <option value="sold" ${exp.status === 'sold' ? 'selected' : ''}>🔴 Vendido</option>
+              </select>
+              <span class="asset-size-pill">${exp.photo_count || 0} fotos • ${exp.storage_mb || '0'} MB</span>
+            </div>
+
+            <div class="asset-title">${exp.title}</div>
+            <div class="asset-slug">
+              URL: <a href="/${exp.slug}" target="_blank">3d.aizprua.com/${exp.slug}</a>
+            </div>
+
+            <div class="asset-actions">
+              <a href="/${exp.slug}" target="_blank" class="card-btn primary">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                Ver 3D
+              </a>
+              <button class="card-btn" onclick="openEmbedModal('${exp.slug}')">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                Embed
+              </button>
+              <button class="card-btn" onclick="shareWhatsApp('${exp.title}', '${exp.slug}')">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                WhatsApp
+              </button>
+              <button class="card-btn" onclick="openGalleryModal('${exp.slug}')">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                Fotos (${exp.photo_count || 0})
+              </button>
+              <button class="card-btn danger" onclick="deleteExperience('${exp.slug}', '${exp.title}')">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                Eliminar Activo y Liberar Espacio
+              </button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // 4. Cambiar Estado en Vivo
+    async function changeStatus(slug, newStatus, selectEl) {
+      try {
+        selectEl.disabled = true;
+        const res = await fetch(`/api/experiences/${slug}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: newStatus })
+        });
+        const data = await res.json();
+        if (data.success) {
+          selectEl.className = `status-select status-${newStatus}`;
+          showToast(`Estado actualizado a ${newStatus === 'sold' ? 'Vendido' : newStatus === 'reserved' ? 'Reservado' : 'Disponible'}`);
+          const item = allExperiences.find(e => e.slug === slug);
+          if (item) item.status = newStatus;
+        } else {
+          alert('No se pudo actualizar el estado: ' + (data.error || 'Error'));
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        selectEl.disabled = false;
+      }
+    }
+
+    // 5. Eliminar Experiencia
+    async function deleteExperience(slug, title) {
+      const confirmed = confirm(`¿Estás seguro de eliminar permanentemente "${title}"?\n\nEsta acción borrará todas sus fotos del servidor y liberará espacio en disco.`);
+      if (!confirmed) return;
+
+      try {
+        const res = await fetch(`/api/experiences/${slug}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+          showToast(`Activo eliminado. Se liberaron ${data.freed_mb || '0'} MB`);
+          loadExperiences();
+          loadStorageStats();
+        } else {
+          alert('Hubo un error al eliminar: ' + (data.error || 'Error'));
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // 6. Purgar fotos de Activos Vendidos
+    function setupPurgeButton() {
+      document.getElementById('btn-purge-sold').addEventListener('click', async () => {
+        const soldCount = allExperiences.filter(e => e.status === 'sold').length;
+        if (soldCount === 0) {
+          alert('No hay activos con estado "🔴 Vendido" actualmente para purgar.\n\nPuedes marcar un auto o propiedad como Vendido usando el selector de estado en su tarjeta.');
+          return;
+        }
+
+        const confirmed = confirm(`Se encontraron ${soldCount} activo(s) marcado(s) como VENDIDO(S).\n\n¿Deseas purgar todas sus fotografías pesadas del servidor para vaciar espacio en disco?`);
+        if (!confirmed) return;
+
+        try {
+          const res = await fetch('/api/storage/purge-sold', { method: 'POST' });
+          const data = await res.json();
+          if (data.success) {
+            showToast(`¡Purga completada! Se limpiaron ${data.purgedCount} activos y se liberaron ${data.freedMB} MB`);
+            loadExperiences();
+            loadStorageStats();
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      });
+    }
+
+    // 7. Modal Galería de Fotos
+    function openGalleryModal(slug) {
+      const exp = allExperiences.find(e => e.slug === slug);
+      if (!exp) return;
+
+      document.getElementById('gallery-modal-title').textContent = `Fotografías de: ${exp.title}`;
+      const grid = document.getElementById('gallery-modal-grid');
+      grid.innerHTML = '';
+
+      const photos = exp.all_photos || exp.images || [];
+      if (photos.length === 0) {
+        grid.innerHTML = '<div style="color:var(--fg-muted); font-size:13px; grid-column:1/-1;">No hay imágenes cargadas para este activo.</div>';
+      } else {
+        photos.forEach((photoUrl, idx) => {
+          const item = document.createElement('div');
+          item.className = 'gallery-item';
+          item.innerHTML = `
+            <img src="${photoUrl}" alt="Foto ${idx + 1}" loading="lazy">
+            <a href="${photoUrl}" download="foto_${idx + 1}.jpg" target="_blank" class="gallery-item-download" title="Descargar foto">
+              📥 Guardar
+            </a>
+          `;
+          grid.appendChild(item);
+        });
+      }
+
+      document.getElementById('gallery-modal').style.display = 'flex';
+    }
+
+    // 8. Modal Embed
+    function openEmbedModal(slug) {
+      const snippet = `<iframe src="https://3d.aizprua.com/${slug}" width="100%" height="640" frameborder="0" allowfullscreen allow="accelerometer; gyroscope"></iframe>`;
+      document.getElementById('embed-code-box').textContent = snippet;
+      document.getElementById('embed-modal').style.display = 'flex';
+
+      document.getElementById('btn-copy-embed-code').onclick = () => {
+        navigator.clipboard.writeText(snippet).then(() => {
+          showToast('¡Código embed copiado al portapapeles!');
+          closeModal('embed-modal');
+        });
+      };
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+
+    // 9. Compartir en WhatsApp
+    function shareWhatsApp(title, slug) {
+      const url = `https://3d.aizprua.com/${slug}`;
+      const msg = `¡Hola! Te comparto la experiencia y recorrido 360° interactivo de: *${title}*.\n\nPuedes explorarlo aquí en alta resolución:\n${url}`;
+      window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    // 10. Filtros y Búsqueda
+    function setupFilters() {
+      document.querySelectorAll('.chip-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentFilter = btn.dataset.filter;
+          renderExperiences();
+        });
+      });
+    }
+
+    function setupSearch() {
+      document.getElementById('search-input').addEventListener('input', (e) => {
+        searchQuery = e.target.value.trim();
+        renderExperiences();
+      });
+    }
+
+    // Toast
+    function showToast(text) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-text').textContent = text;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+
+    // Logout
+    function setupLogout() {
+      const btn = document.getElementById('btn-logout');
+      if (btn) {
+        btn.addEventListener('click', () => {
+          localStorage.removeItem('oi_access_token');
+          sessionStorage.removeItem('oi_access_token');
+          window.location.href = '/login';
+        });
+      }
+    }
+  </script>
+</body>
+</html>

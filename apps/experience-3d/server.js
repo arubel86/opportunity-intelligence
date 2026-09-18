@@ -56,7 +56,264 @@ function saveExperience(exp) {
   fs.writeFileSync(DB_FILE, JSON.stringify(list, null, 2));
 }
 
-// ── Rutas API ──
+function getDirectorySize(dirPath) {
+  let size = 0;
+  let count = 0;
+  if (!fs.existsSync(dirPath)) return { size: 0, count: 0 };
+  try {
+    const files = fs.readdirSync(dirPath);
+    for (const file of files) {
+      const fullPath = path.join(dirPath, file);
+      try {
+        const stat = fs.statSync(fullPath);
+        if (stat.isFile()) {
+          size += stat.size;
+          count++;
+        }
+      } catch(e) {}
+    }
+  } catch(e) {}
+  return { size, count };
+}
+
+// ── Rutas API de Almacenamiento & Galería ──
+
+// Estadísticas de almacenamiento en disco
+app.get('/api/storage/stats', (req, res) => {
+  const uploads = getDirectorySize(UPLOADS_DIR);
+  const prado = getDirectorySize(path.join(__dirname, 'public', 'prado-360'));
+  const totalBytes = uploads.size + prado.size;
+  const totalFiles = uploads.count + prado.count;
+  const maxStorageBytes = 5 * 1024 * 1024 * 1024; // 5 GB
+  const usedMB = (totalBytes / (1024 * 1024)).toFixed(2);
+  const percentage = Math.min(100, ((totalBytes / maxStorageBytes) * 100)).toFixed(1);
+  
+  res.json({
+    totalBytes,
+    totalFiles,
+    usedMB,
+    maxMB: 5120,
+    percentage,
+    formatted: `${usedMB} MB / 5.0 GB`
+  });
+});
+
+// Obtener todas las experiencias para el Gestor y Galería
+app.get('/api/experiences', (req, res) => {
+  const list = getExperiences();
+  
+  // Si no están en DB, inyectar experiencias por defecto
+  const hasPrado = list.some(e => e.slug === 'auto-toyota-prado-txl');
+  const hasProp = list.some(e => e.slug === 'propiedad-san-francisco-1');
+
+  const defaultSeed = [];
+  if (!hasPrado) {
+    defaultSeed.push({
+      id: 'exp_seed_prado',
+      title: 'Toyota Land Cruiser Prado TXL 2024 — Showroom 360°',
+      slug: 'auto-toyota-prado-txl',
+      asset_type: 'vehicle',
+      status: 'available',
+      views: 184,
+      landing_url: 'https://opportunity.aizprua.com',
+      whatsapp_phone: '50760000000',
+      images: [
+        '/prado-360/frame-1.jpg', '/prado-360/frame-2.jpg', '/prado-360/frame-3.jpg', '/prado-360/frame-4.jpg',
+        '/prado-360/frame-5.jpg', '/prado-360/frame-6.jpg', '/prado-360/frame-7.jpg', '/prado-360/frame-8.jpg'
+      ],
+      interior_image: '/prado-360/interior.jpg',
+      inspection: {
+        engine: '/prado-360/engine.jpg',
+        trunk: '/prado-360/trunk.jpg',
+        odometer: '/prado-360/odometer.jpg',
+        wheel: '/prado-360/wheel.jpg'
+      },
+      created_at: new Date('2024-03-01').toISOString(),
+      is_seed: true
+    });
+  }
+  if (!hasProp) {
+    defaultSeed.push({
+      id: 'exp_seed_prop',
+      title: 'Propiedad San Francisco — PH Vista del Mar 360°',
+      slug: 'propiedad-san-francisco-1',
+      asset_type: 'property',
+      status: 'available',
+      views: 92,
+      landing_url: 'https://opportunity.aizprua.com',
+      whatsapp_phone: '50760000000',
+      images: ['/sample-san-francisco-360.jpg', '/sample-balcon-360.jpg'],
+      scenes: [
+        { id: 'sala', name: '🛋️ Sala & Comedor', image: '/sample-san-francisco-360.jpg' },
+        { id: 'balcon', name: '🌅 Balcón & Terraza', image: '/sample-balcon-360.jpg' }
+      ],
+      created_at: new Date('2024-03-05').toISOString(),
+      is_seed: true
+    });
+  }
+
+  const all = [...list, ...defaultSeed].map(exp => {
+    const allImages = [
+      ...(exp.images || []),
+      ...(exp.scenes ? exp.scenes.map(s => s.image) : []),
+      exp.interior_image,
+      ...(exp.inspection ? Object.values(exp.inspection).filter(Boolean) : [])
+    ].filter(Boolean);
+
+    const uniqueImages = Array.from(new Set(allImages));
+    let estimatedBytes = 0;
+
+    uniqueImages.forEach(img => {
+      try {
+        let filePath = '';
+        if (img.startsWith('/uploads/')) {
+          filePath = path.join(UPLOADS_DIR, img.replace('/uploads/', ''));
+        } else {
+          filePath = path.join(__dirname, 'public', img.replace(/^\//, ''));
+        }
+        if (fs.existsSync(filePath)) {
+          estimatedBytes += fs.statSync(filePath).size;
+        }
+      } catch(e) {}
+    });
+
+    const storageMB = estimatedBytes > 0 ? (estimatedBytes / (1024 * 1024)).toFixed(2) : (uniqueImages.length * 0.45).toFixed(2);
+
+    return {
+      ...exp,
+      status: exp.status || 'available',
+      views: exp.views || 0,
+      photo_count: uniqueImages.length,
+      storage_mb: storageMB,
+      thumbnail: uniqueImages[0] || '/sample-san-francisco-360.jpg',
+      all_photos: uniqueImages
+    };
+  });
+
+  res.json(all);
+});
+
+// Cambiar estado de una experiencia (Disponible, Reservado, Vendido)
+app.patch('/api/experiences/:slug/status', (req, res) => {
+  const { status } = req.body;
+  if (!['available', 'reserved', 'sold'].includes(status)) {
+    return res.status(400).json({ error: 'Estado no válido' });
+  }
+
+  let list = getExperiences();
+  let exp = list.find(e => e.slug === req.params.slug);
+
+  if (!exp) {
+    if (req.params.slug === 'auto-toyota-prado-txl') {
+      exp = {
+        title: 'Toyota Land Cruiser Prado TXL 2024 — Showroom 360°',
+        slug: 'auto-toyota-prado-txl',
+        asset_type: 'vehicle',
+        status,
+        views: 184
+      };
+      list.push(exp);
+    } else if (req.params.slug === 'propiedad-san-francisco-1') {
+      exp = {
+        title: 'Propiedad San Francisco — PH Vista del Mar 360°',
+        slug: 'propiedad-san-francisco-1',
+        asset_type: 'property',
+        status,
+        views: 92
+      };
+      list.push(exp);
+    } else {
+      return res.status(404).json({ error: 'Experiencia no encontrada' });
+    }
+  } else {
+    exp.status = status;
+  }
+
+  fs.writeFileSync(DB_FILE, JSON.stringify(list, null, 2));
+  res.json({ success: true, slug: req.params.slug, status });
+});
+
+// Eliminar experiencia y sus archivos asociados del disco
+app.delete('/api/experiences/:slug', (req, res) => {
+  let list = getExperiences();
+  const expIndex = list.findIndex(e => e.slug === req.params.slug);
+
+  let freedBytes = 0;
+  if (expIndex >= 0) {
+    const exp = list[expIndex];
+    const allImages = [
+      ...(exp.images || []),
+      ...(exp.scenes ? exp.scenes.map(s => s.image) : []),
+      exp.interior_image,
+      ...(exp.inspection ? Object.values(exp.inspection).filter(Boolean) : [])
+    ].filter(Boolean);
+
+    allImages.forEach(img => {
+      if (img.startsWith('/uploads/')) {
+        const filePath = path.join(UPLOADS_DIR, img.replace('/uploads/', ''));
+        if (fs.existsSync(filePath)) {
+          try {
+            freedBytes += fs.statSync(filePath).size;
+            fs.unlinkSync(filePath);
+          } catch(e) {}
+        }
+      }
+    });
+
+    list.splice(expIndex, 1);
+    fs.writeFileSync(DB_FILE, JSON.stringify(list, null, 2));
+  }
+
+  res.json({ 
+    success: true, 
+    slug: req.params.slug, 
+    freed_mb: (freedBytes / (1024 * 1024)).toFixed(2) 
+  });
+});
+
+// Purgar fotos de activos vendidos para liberar almacenamiento
+app.post('/api/storage/purge-sold', (req, res) => {
+  let list = getExperiences();
+  let freedBytes = 0;
+  let purgedCount = 0;
+
+  list.forEach(exp => {
+    if (exp.status === 'sold') {
+      const allImages = [
+        ...(exp.images || []),
+        ...(exp.scenes ? exp.scenes.map(s => s.image) : []),
+        exp.interior_image,
+        ...(exp.inspection ? Object.values(exp.inspection).filter(Boolean) : [])
+      ].filter(Boolean);
+
+      allImages.forEach(img => {
+        if (img.startsWith('/uploads/')) {
+          const filePath = path.join(UPLOADS_DIR, img.replace('/uploads/', ''));
+          if (fs.existsSync(filePath)) {
+            try {
+              freedBytes += fs.statSync(filePath).size;
+              fs.unlinkSync(filePath);
+            } catch(e) {}
+          }
+        }
+      });
+
+      exp.images = [];
+      exp.interior_image = null;
+      exp.inspection = null;
+      if (exp.scenes) exp.scenes = [];
+      exp.purged = true;
+      purgedCount++;
+    }
+  });
+
+  fs.writeFileSync(DB_FILE, JSON.stringify(list, null, 2));
+  res.json({
+    success: true,
+    purgedCount,
+    freedMB: (freedBytes / (1024 * 1024)).toFixed(2)
+  });
+});
 
 // Obtener experiencia por slug con soporte para Auto (Exterior, Cabina, Inspección) y Propiedades
 app.get('/api/experiences/:slug', (req, res) => {
@@ -244,6 +501,11 @@ app.get(['/', '/3d'], (req, res) => {
 // Ruta de Autenticación: /login
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
+// Ruta del Gestor de Experiencias 3D y Almacenamiento: /galeria o /gallery
+app.get(['/galeria', '/gallery'], (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'gallery.html'));
 });
 
 // Ruta del Visor Público con inyección dinámica de OpenGraph para WhatsApp / Telegram / iMessage
