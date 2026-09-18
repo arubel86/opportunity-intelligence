@@ -301,6 +301,15 @@
       transition: all 0.2s ease;
     }
 
+    .mode-chip svg {
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
+    }
+
+    .mode-chip:hover svg {
+      transform: scale(1.12);
+    }
+
     .mode-chip:hover {
       color: var(--fg);
       background: rgba(255,255,255,0.05);
@@ -514,7 +523,10 @@
       <div class="brand-icon">OI</div>
       <div class="brand-title" id="asset-name">Cargando experiencia...</div>
       <span class="status-badge-live" id="status-tag">DISPONIBLE</span>
-      <span class="views-pill" id="views-tag">👁️ <span id="views-num">--</span></span>
+      <span class="views-pill" id="views-tag">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        <span id="views-num">--</span>
+      </span>
     </div>
 
     <div class="corner-actions">
@@ -552,7 +564,10 @@
   <div id="inspect-details" class="split-inspect-view">
     <div class="split-card">
       <div class="split-card-header">
-        <span>📊 Odómetro & Kilometraje Verificado</span>
+        <span style="display:inline-flex;align-items:center;gap:7px;">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          Odómetro & Kilometraje Verificado
+        </span>
         <span style="color: var(--color-comprar);" id="spec-odometer">28,450 km</span>
       </div>
       <div class="split-card-img">
@@ -561,7 +576,10 @@
     </div>
     <div class="split-card">
       <div class="split-card-header">
-        <span>🔘 Inspección de Neumáticos & Rines</span>
+        <span style="display:inline-flex;align-items:center;gap:7px;">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M12 2v7m0 6v7M2 12h7m6 0h7"/></svg>
+          Inspección de Neumáticos & Rines
+        </span>
         <span style="color: var(--accent-celeste);">Huella Óptima</span>
       </div>
       <div class="split-card-img">
@@ -696,17 +714,37 @@
       navBar.style.display = 'flex';
 
       const modes = [
-        { id: 'exterior', label: '🚗 Exterior 360°' },
-        { id: 'interior', label: '💺 Cabina 360°' },
-        { id: 'engine', label: '⚙️ Motor' },
-        { id: 'trunk', label: '📦 Maletero' },
-        { id: 'details', label: '📊 Odómetro & Rines' }
+        { 
+          id: 'exterior', 
+          label: 'Exterior 360°', 
+          svg: '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9L2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>'
+        },
+        { 
+          id: 'interior', 
+          label: 'Cabina 360°', 
+          svg: '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>'
+        },
+        { 
+          id: 'engine', 
+          label: 'Motor', 
+          svg: '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>'
+        },
+        { 
+          id: 'trunk', 
+          label: 'Maletero', 
+          svg: '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/></svg>'
+        },
+        { 
+          id: 'details', 
+          label: 'Odómetro & Rines', 
+          svg: '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>'
+        }
       ];
 
       modes.forEach((m, idx) => {
         const btn = document.createElement('button');
         btn.className = `mode-chip ${idx === 0 ? 'active' : ''}`;
-        btn.textContent = m.label;
+        btn.innerHTML = `${m.svg}<span>${m.label}</span>`;
         btn.addEventListener('click', () => {
           document.querySelectorAll('.mode-chip').forEach(c => c.classList.remove('active'));
           btn.classList.add('active');
@@ -822,7 +860,7 @@
         data.scenes.forEach((sc, idx) => {
           const chip = document.createElement('button');
           chip.className = `mode-chip ${idx === 0 ? 'active' : ''}`;
-          chip.textContent = sc.name;
+          chip.innerHTML = `<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg><span>${sc.name}</span>`;
           chip.addEventListener('click', () => {
             document.querySelectorAll('.mode-chip').forEach(c => c.classList.remove('active'));
             chip.classList.add('active');
