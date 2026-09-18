@@ -203,6 +203,16 @@ app.post('/api/experiences', upload.array('photos', 60), (req, res) => {
     }
   }
 
+  let propertyScenes = [];
+  if (asset_type === 'property' && parsedIndices && Array.isArray(parsedIndices.scenes)) {
+    propertyScenes = parsedIndices.scenes.map(s => ({
+      id: s.id,
+      name: s.name,
+      image: imagePaths[s.photoIndex] || imagePaths[0],
+      hotspots: []
+    }));
+  }
+
   const newExp = {
     id: `exp_${Date.now()}`,
     title,
@@ -213,6 +223,7 @@ app.post('/api/experiences', upload.array('photos', 60), (req, res) => {
     landing_url: landing_url || 'https://opportunity.aizprua.com',
     whatsapp_phone: whatsapp_phone || '50760000000',
     images: exteriorFrames,
+    scenes: propertyScenes,
     interior_image: interiorImg,
     inspection: inspectionObj,
     specs: parsedSpecs,

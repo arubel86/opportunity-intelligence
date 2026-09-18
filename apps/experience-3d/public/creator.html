@@ -966,6 +966,51 @@
     const btnProp = document.getElementById('btn-type-property');
     const btnVeh = document.getElementById('btn-type-vehicle');
     const propOptions = document.getElementById('property-options');
+    const projectTitleInput = document.getElementById('project-title');
+    const projectSlugInput = document.getElementById('project-slug');
+    const guideText = document.getElementById('guide-text');
+
+    function updatePlaceholdersAndGuide() {
+      if (selectedAssetType === 'property') {
+        const selectedPType = document.querySelector('.sub-chip[data-ptype].selected')?.dataset.ptype || 'apartment';
+        if (selectedPType === 'apartment') {
+          projectTitleInput.placeholder = 'Ej: Apartamento PH Vista del Mar, San Francisco';
+          projectSlugInput.placeholder = 'propiedad-ph-vista-del-mar';
+        } else {
+          projectTitleInput.placeholder = 'Ej: Residencia Unifamiliar en Brisas del Golf';
+          projectSlugInput.placeholder = 'propiedad-residencia-brisas-del-golf';
+        }
+        guideText.textContent = 'Flujo de inspección guiada para inmuebles (Fachada, Sala, Cocina, Balcón, Recámaras) con detector de nitidez y nivelador digital.';
+      } else {
+        projectTitleInput.placeholder = 'Ej: Toyota Prado TXL 2024';
+        projectSlugInput.placeholder = 'auto-toyota-prado-2024';
+        guideText.textContent = 'Flujo guiado paso a paso para vehículos (Exterior 360°, Cabina, Motor, Baúl, Odómetro) con detector de nitidez y nivelador digital.';
+      }
+
+      // Si el título está vacío, limpiar el valor del slug para mostrar el nuevo placeholder correspondiente
+      if (!projectTitleInput.value.trim()) {
+        projectSlugInput.value = '';
+      } else {
+        syncSlugFromTitle();
+      }
+    }
+
+    function syncSlugFromTitle() {
+      const raw = projectTitleInput.value.toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
+      if (!raw) {
+        projectSlugInput.value = '';
+        return;
+      }
+
+      // Limpiar prefijo anterior si existía para adaptarlo al tipo activo actual
+      let clean = raw.replace(/^(auto-|propiedad-)/, '');
+      const prefix = selectedAssetType === 'property' ? 'propiedad-' : 'auto-';
+      projectSlugInput.value = `${prefix}${clean}`;
+    }
 
     btnProp.addEventListener('click', () => {
       selectedAssetType = 'property';
@@ -974,6 +1019,7 @@
       propOptions.style.display = 'flex';
       currentStageIndex = 0;
       currentStagePhotos = 0;
+      updatePlaceholdersAndGuide();
     });
 
     btnVeh.addEventListener('click', () => {
@@ -983,22 +1029,25 @@
       propOptions.style.display = 'none';
       currentStageIndex = 0;
       currentStagePhotos = 0;
+      updatePlaceholdersAndGuide();
     });
 
-    // Subchips de propiedad
+    // Subchips de propiedad (Tipos de inmueble exclusivos vs áreas adicionales acumulativas)
     document.querySelectorAll('.sub-chip').forEach(chip => {
       chip.addEventListener('click', () => {
-        chip.classList.toggle('selected');
+        if (chip.dataset.ptype) {
+          document.querySelectorAll('.sub-chip[data-ptype]').forEach(c => c.classList.remove('selected'));
+          chip.classList.add('selected');
+        } else {
+          chip.classList.toggle('selected');
+        }
+        updatePlaceholdersAndGuide();
       });
     });
 
-    // Auto-generar slug
-    document.getElementById('project-title').addEventListener('input', (e) => {
-      const slug = e.target.value.toLowerCase()
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-      document.getElementById('project-slug').value = slug;
+    // Auto-generar slug con prefijo inteligente según activo
+    projectTitleInput.addEventListener('input', () => {
+      syncSlugFromTitle();
     });
 
     // Cámara Web Guiada
@@ -1263,25 +1312,39 @@
         // Mapear fotos categorizadas
         const exteriorIndices = [];
         const indices = {};
+        const propertyScenes = [];
 
         capturedItems.forEach((item, idx) => {
           formData.append('photos', item.blob, `capture_${idx}.webp`);
-          if (item.category.startsWith('ext_')) {
-            exteriorIndices.push(idx);
-          } else if (item.category === 'int_cabin_front') {
-            indices.interior = idx;
-          } else if (item.category === 'insp_engine') {
-            indices.engine = idx;
-          } else if (item.category === 'insp_trunk') {
-            indices.trunk = idx;
-          } else if (item.category === 'insp_odometer') {
-            indices.odometer = idx;
-          } else if (item.category === 'insp_wheel') {
-            indices.wheel = idx;
+          if (selectedAssetType === 'property') {
+            const matchedStage = propertyStages.find(s => s.id === item.category);
+            propertyScenes.push({
+              id: item.category || `scene_${idx}`,
+              name: matchedStage ? matchedStage.title : (item.name || `Espacio ${idx + 1}`),
+              photoIndex: idx
+            });
+          } else {
+            if (item.category.startsWith('ext_')) {
+              exteriorIndices.push(idx);
+            } else if (item.category === 'int_cabin_front') {
+              indices.interior = idx;
+            } else if (item.category === 'insp_engine') {
+              indices.engine = idx;
+            } else if (item.category === 'insp_trunk') {
+              indices.trunk = idx;
+            } else if (item.category === 'insp_odometer') {
+              indices.odometer = idx;
+            } else if (item.category === 'insp_wheel') {
+              indices.wheel = idx;
+            }
           }
         });
 
-        indices.exterior = exteriorIndices.length > 0 ? exteriorIndices : capturedItems.map((_, i) => i);
+        if (selectedAssetType === 'property') {
+          indices.scenes = propertyScenes;
+        } else {
+          indices.exterior = exteriorIndices.length > 0 ? exteriorIndices : capturedItems.map((_, i) => i);
+        }
         formData.append('inspection_indices', JSON.stringify(indices));
 
         const res = await fetch('/api/experiences', {
