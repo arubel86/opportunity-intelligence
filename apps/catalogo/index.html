@@ -248,8 +248,8 @@
       margin-bottom: 14px;
     }
     .cat-icon-box svg {
-      width: 28px;
-      height: 28px;
+      width: 36px;
+      height: 36px;
       stroke: #60A5FA;
     }
     .cat-title {
@@ -1177,11 +1177,15 @@
       <div class="cat-btn" id="btn-cat-vehicles" onclick="setCategory('vehicles')">
         <div class="cat-icon-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="7" cy="17" r="2"/>
-            <circle cx="17" cy="17" r="2"/>
-            <path d="M5 17H3v-4a2 2 0 0 1 2-2h1l2.5-4.5a1 1 0 0 1 .86-.5h5.28a1 1 0 0 1 .86.5l2.5 4.5h1a2 2 0 0 1 2 2v4h-2"/>
-            <path d="M9 17h6"/>
-            <path d="M6.5 11l1.8-3.2h7.4l1.8 3.2"/>
+            <!-- Silueta exterior con retrovisores y ruedas -->
+            <path d="M7.5 4h9a2 2 0 0 1 1.9 1.4l1.3 4.1c.8.2 1.3.8 1.3 1.5v1c0 .6-.4 1.1-1 1.2v5.8a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5V19h-8v1.5A1.5 1.5 0 0 1 7.5 22h-1A1.5 1.5 0 0 1 5 20.5V14.7c-.6-.1-1-.6-1-1.2v-1c0-.7.5-1.3 1.3-1.5l1.3-4.1A2 2 0 0 1 7.5 4z"/>
+            <!-- Parabrisas -->
+            <path d="M7.2 9.5l1.1-3.5h7.4l1.1 3.5H7.2z"/>
+            <!-- Faros redondos -->
+            <circle cx="7.5" cy="14" r="1.5"/>
+            <circle cx="16.5" cy="14" r="1.5"/>
+            <!-- Placa / Parrilla -->
+            <rect x="10" y="13.5" width="4" height="2" rx="0.5"/>
           </svg>
         </div>
         <div class="cat-title">Vehículos & 4x4</div>
@@ -1460,7 +1464,7 @@
       Inmuebles
     </button>
     <button class="mobile-bottom-btn" id="mob-btn-vehicles" onclick="setCategory('vehicles')">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M5 17H3v-4a2 2 0 0 1 2-2h1l2.5-4.5a1 1 0 0 1 .86-.5h5.28a1 1 0 0 1 .86.5l2.5 4.5h1a2 2 0 0 1 2 2v4h-2"/><path d="M9 17h6"/><path d="M6.5 11l1.8-3.2h7.4l1.8 3.2"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 4h9a2 2 0 0 1 1.9 1.4l1.3 4.1c.8.2 1.3.8 1.3 1.5v1c0 .6-.4 1.1-1 1.2v5.8a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5V19h-8v1.5A1.5 1.5 0 0 1 7.5 22h-1A1.5 1.5 0 0 1 5 20.5V14.7c-.6-.1-1-.6-1-1.2v-1c0-.7.5-1.3 1.3-1.5l1.3-4.1A2 2 0 0 1 7.5 4z"/><path d="M7.2 9.5l1.1-3.5h7.4l1.1 3.5H7.2z"/><circle cx="7.5" cy="14" r="1.5"/><circle cx="16.5" cy="14" r="1.5"/><rect x="10" y="13.5" width="4" height="2" rx="0.5"/></svg>
       Vehículos
     </button>
     <a href="https://wa.me/50765461527?text=Hola,%20deseo%20consultar%20sobre%20el%20inventario%20disponible" target="_blank" class="mobile-bottom-btn wa">
