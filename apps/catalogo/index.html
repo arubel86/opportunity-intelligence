@@ -1120,6 +1120,11 @@
     </a>
 
     <div class="header-actions">
+      <span id="cloud-sync-status" class="hide-mobile-sm" style="font-size:11px; font-weight:600; color:#10B981; display:inline-flex; align-items:center; gap:5px; margin-right:4px;">
+        <span style="width:6px; height:6px; border-radius:50%; background:#10B981; display:inline-block;"></span>
+        Nube Conectada
+      </span>
+
       <button id="btn-admin-mode" class="btn-admin" onclick="toggleAdminMode()" title="Acceso de Administrador">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
         <span id="admin-mode-text">Acceso Admin</span>
@@ -1322,8 +1327,14 @@
         </div>
 
         <div class="form-group">
-          <label>URL de Imagen Principal *</label>
-          <input type="url" id="form-image" class="form-input" placeholder="https://images.unsplash.com/..." required>
+          <label>Foto Principal (Subir Archivo o Enlace URL) *</label>
+          <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 6px;">
+            <input type="file" id="form-image-file" accept="image/*" class="form-input" style="padding: 6px 10px; font-size: 12px; flex: 1;" onchange="handleImageFileUpload(event)">
+          </div>
+          <input type="text" id="form-image" class="form-input" placeholder="https://... o foto seleccionada" required oninput="updateImagePreview(this.value)">
+          <div id="image-preview-container" style="display:none; margin-top:8px; border-radius:8px; overflow:hidden; max-height:140px; border:1px solid var(--border);">
+            <img id="image-preview" src="" style="width:100%; height:140px; object-fit:cover; display:block;">
+          </div>
         </div>
 
         <div class="form-row">
@@ -1347,7 +1358,7 @@
 
         <div style="margin-top:20px;display:flex;justify-content:flex-end;gap:10px;">
           <button type="button" class="btn-admin" onclick="closeAdminModal()">Cancelar</button>
-          <button type="submit" class="btn-admin" style="background:#3B82F6;border-color:#3B82F6;color:#FFF;font-weight:700;">
+          <button type="submit" id="btn-save-asset" class="btn-admin" style="background:#3B82F6;border-color:#3B82F6;color:#FFF;font-weight:700;">
             Guardar en Catálogo
           </button>
         </div>
@@ -1544,6 +1555,59 @@
         landingUrl: '../landings/landing2.html?id=OI-AUTO-MINI'
       }
     ];
+
+    // ── INTEGRACIÓN CLOUD INSFORGE (BASE DE DATOS & SINCRONIZACIÓN GLOBAL) ──
+    const INSFORGE_CONFIG = {
+      baseUrl: 'https://insforge.aizprua.com',
+      apiKey: 'ik_2bed7411a0830c9985681c4a5ccf2dadc81df1c78a3f30b8e8710d64ecb2d13f',
+      endpoint: 'https://insforge.aizprua.com/api/database/records/catalog_assets'
+    };
+
+    async function fetchCatalogFromCloud() {
+      try {
+        const res = await fetch(INSFORGE_CONFIG.endpoint, {
+          headers: { 'x-api-key': INSFORGE_CONFIG.apiKey }
+        });
+        if (res.ok) {
+          const remoteData = await res.json();
+          if (Array.isArray(remoteData) && remoteData.length > 0) {
+            inventory = remoteData.map(item => ({
+              id: item.id,
+              category: item.category,
+              title: item.title,
+              price: Number(item.price),
+              marketPrice: item.market_price ? Number(item.market_price) : null,
+              location: item.location,
+              image: item.image,
+              badge: item.badge,
+              status: item.status || 'available',
+              landingUrl: item.landing_url,
+              specs: typeof item.specs === 'string' ? JSON.parse(item.specs) : (item.specs || [])
+            }));
+            localStorage.setItem('oi_catalog_inventory', JSON.stringify(inventory));
+            renderCatalog();
+            updateCloudStatus(true);
+            return;
+          }
+        }
+        updateCloudStatus(false);
+      } catch (err) {
+        console.warn('InsForge offline/fallback local:', err);
+        updateCloudStatus(false);
+      }
+    }
+
+    function updateCloudStatus(online) {
+      const el = document.getElementById('cloud-sync-status');
+      if (!el) return;
+      if (online) {
+        el.innerHTML = '<span style="width:6px;height:6px;border-radius:50%;background:#10B981;display:inline-block;"></span> Nube Conectada';
+        el.style.color = '#10B981';
+      } else {
+        el.innerHTML = '<span style="width:6px;height:6px;border-radius:50%;background:#F59E0B;display:inline-block;"></span> Cache Local';
+        el.style.color = '#F59E0B';
+      }
+    }
 
     // Cargar del localStorage o inicializar con los datos por defecto
     let inventory = JSON.parse(localStorage.getItem('oi_catalog_inventory') || 'null');
@@ -1968,27 +2032,100 @@
     }
     window.addEventListener('resize', updateAdminUI);
 
+    // ── GESTIÓN DE ARCHIVOS DE IMAGEN & PREVIEW ──
+    function handleImageFileUpload(e) {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const img = new Image();
+        img.onload = function() {
+          const maxDim = 1200;
+          let width = img.width;
+          let height = img.height;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.82);
+
+          const inputUrl = document.getElementById('form-image');
+          inputUrl.value = compressedDataUrl;
+          updateImagePreview(compressedDataUrl);
+        };
+        img.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function updateImagePreview(url) {
+      const container = document.getElementById('image-preview-container');
+      const preview = document.getElementById('image-preview');
+      if (url && (url.startsWith('http') || url.startsWith('data:image'))) {
+        preview.src = url;
+        container.style.display = 'block';
+      } else {
+        container.style.display = 'none';
+      }
+    }
+
     // Cambiar estado a Vendido / Disponible
-    function toggleItemSold(id) {
+    async function toggleItemSold(id) {
       const item = inventory.find(i => i.id === id);
       if (!item) return;
       item.status = item.status === 'sold' ? 'available' : 'sold';
       saveInventory();
       renderCatalog();
+
+      try {
+        await fetch(`${INSFORGE_CONFIG.endpoint}?id=eq.${id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': INSFORGE_CONFIG.apiKey
+          },
+          body: JSON.stringify({ status: item.status, updated_at: new Date().toISOString() })
+        });
+        updateCloudStatus(true);
+      } catch (err) {
+        console.warn('Error sincronizando estado en InsForge:', err);
+      }
     }
 
     // Eliminar activo
-    function deleteAsset(id) {
+    async function deleteAsset(id) {
       if (!confirm('¿Estás seguro de que deseas eliminar este activo del catálogo?')) return;
       inventory = inventory.filter(i => i.id !== id);
       saveInventory();
       renderCatalog();
+
+      try {
+        await fetch(`${INSFORGE_CONFIG.endpoint}?id=eq.${id}`, {
+          method: 'DELETE',
+          headers: { 'x-api-key': INSFORGE_CONFIG.apiKey }
+        });
+        updateCloudStatus(true);
+      } catch (err) {
+        console.warn('Error eliminando en InsForge:', err);
+      }
     }
 
     // ── MODAL AGREGAR / EDITAR ACTIVO ──
     function openNewAssetModal() {
       document.getElementById('form-asset-id').value = '';
       document.getElementById('asset-form').reset();
+      document.getElementById('image-preview-container').style.display = 'none';
       document.getElementById('modal-title-text').textContent = 'Publicar Nuevo Activo';
       document.getElementById('form-category').value = currentCategory;
       toggleFormFieldsByCategory(currentCategory);
@@ -2020,6 +2157,7 @@
       document.getElementById('form-status').value = item.status || 'available';
       document.getElementById('form-landing-url').value = item.landingUrl || '';
 
+      updateImagePreview(item.image);
       toggleFormFieldsByCategory(item.category);
 
       if (item.category === 'real_estate') {
@@ -2034,8 +2172,14 @@
       document.getElementById('admin-modal').classList.add('active');
     }
 
-    function handleSaveAsset(e) {
+    async function handleSaveAsset(e) {
       e.preventDefault();
+      const saveBtn = document.getElementById('btn-save-asset');
+      if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Guardando en Nube...';
+      }
+
       const id = document.getElementById('form-asset-id').value || `oi-${Date.now()}`;
       const cat = document.getElementById('form-category').value;
       const title = document.getElementById('form-title').value.trim();
@@ -2072,15 +2216,52 @@
       saveInventory();
       closeAdminModal();
       setCategory(cat);
+
+      // Sincronizar en la nube InsForge
+      try {
+        const payload = [{
+          id,
+          category: cat,
+          title,
+          price,
+          market_price: marketPrice,
+          location,
+          image,
+          badge,
+          status,
+          landing_url: landingUrl,
+          specs: JSON.stringify(specs),
+          updated_at: new Date().toISOString()
+        }];
+        await fetch(INSFORGE_CONFIG.endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': INSFORGE_CONFIG.apiKey,
+            'Prefer': 'resolution=merge-duplicates'
+          },
+          body: JSON.stringify(payload)
+        });
+        updateCloudStatus(true);
+      } catch (err) {
+        console.warn('Error sincronizando con InsForge:', err);
+      } finally {
+        if (saveBtn) {
+          saveBtn.disabled = false;
+          saveBtn.textContent = 'Guardar en Catálogo';
+        }
+      }
     }
 
     function saveInventory() {
       localStorage.setItem('oi_catalog_inventory', JSON.stringify(inventory));
     }
 
-    // Inicializar interfaz
+    // Inicializar interfaz y sincronizar desde la nube
     updateAdminUI();
     renderCatalog();
+    fetchCatalogFromCloud();
   </script>
 </body>
 </html>
+
