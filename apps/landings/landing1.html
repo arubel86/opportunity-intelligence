@@ -3,12 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title id="page-title">Oportunidad Inmobiliaria Exclusiva — HOIE Real Estate</title>
+  <title id="page-title">Oportunidad Inmobiliaria Exclusiva — OI Real Estate</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23131722'/%3E%3Cstop offset='50%25' stop-color='%231e40af'/%3E%3Cstop offset='100%25' stop-color='%233b82f6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='25' fill='url(%23g)'/%3E%3Ctext x='50' y='56' font-family='Arial, sans-serif' font-weight='bold' font-size='56' fill='%23F1F5F9' text-anchor='middle' dominant-baseline='central'%3EOI%3C/text%3E%3C/svg%3E">
   
-  <!-- Tipografía Inter y JetBrains Mono -->
+  <!-- Tipografía Inter, Manrope y JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Manrope:wght@600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -90,16 +91,28 @@
       text-decoration: none;
       color: var(--fg);
     }
-    .brand-badge {
-      background: linear-gradient(135deg, #1E293B, #0F172A);
-      border: 1px solid rgba(59, 130, 246, 0.4);
-      color: #3B82F6;
+    .brand-oi-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--surface-elevated);
+      border: 1.5px solid var(--border-focus);
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 14px rgba(59, 130, 246, 0.25);
+      color: #ffffff;
+      font-family: 'Manrope', 'Inter', sans-serif;
       font-weight: 800;
-      font-size: 12px;
-      padding: 4px 8px;
-      border-radius: 6px;
-      letter-spacing: 1px;
-      font-family: var(--font-mono);
+      font-size: 14px;
+      letter-spacing: -0.02em;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+    .brand-logo:hover .brand-oi-icon {
+      border-color: #60A5FA;
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.45);
+      transform: translateY(-1px);
     }
     .brand-title { font-weight: 700; font-size: 14px; letter-spacing: 0.3px; }
     .brand-tag {
@@ -800,8 +813,8 @@
       box-shadow: 0 4px 16px rgba(37, 211, 102, 0.25);
       transition: all 0.2s ease;
       margin: 28px auto 0;
-      max-width: 480px;
-      width: 100%;
+      width: auto;
+      max-width: 90%;
       letter-spacing: 0.3px;
     }
     .btn-whatsapp-vip:hover { background: #22bf5b; transform: translateY(-1px); }
@@ -884,6 +897,24 @@
     .admin-full-col { grid-column: span 2; }
     .admin-label { font-size: 11px; color: var(--fg-muted); display: block; margin-bottom: 4px; font-weight: 600; }
     .admin-input, .admin-textarea { width: 100%; background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; color: #FFF; font-size: 13px; outline: none; }
+    select.admin-input, select.mic-input {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      padding-right: 42px !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: calc(100% - 16px) center;
+      cursor: pointer;
+    }
+    select.admin-input option, select.mic-input option {
+      background-color: #121620;
+      color: #F8FAFC;
+      padding: 12px 16px;
+      font-size: 13.5px;
+      line-height: 1.8;
+      min-height: 38px;
+    }
 
     footer { border-top: 1px solid var(--border); padding: 24px; text-align: center; font-size: 12px; color: var(--fg-muted); background: var(--surface); }
   </style>
@@ -894,16 +925,19 @@
   <div class="bg-glow-orb orb-2"></div>
 
   <header>
-    <a href="#" class="brand-logo">
-      <span class="brand-badge">HOIE</span>
-      <div class="brand-title">Real Estate Intelligence</div>
+    <a href="/dashboard" class="brand-logo" title="Ir al Dashboard">
+      <div class="brand-oi-icon">OI</div>
+      <div class="brand-title">Real Estate</div>
       <span class="brand-tag">ACCESO VIP RESTRINGIDO</span>
     </a>
 
     <div class="header-actions">
+      <button id="btn-admin-unlock" class="btn-admin-trigger" style="display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid rgba(255,255,255,0.15);color:var(--fg-muted);font-size:11px;" onclick="promptAdminLogin()" title="Desbloquear Modo Administrador">
+        <svg class="icon-svg sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Acceso Admin
+      </button>
       <button id="btn-admin-panel" class="btn-admin-trigger" style="display:none;" onclick="openAdminModal()">
-        <svg class="icon-svg sm" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        MODO ADMIN: Cargar Inmueble
+        MODO ADMIN: Cargar Inmueble & Documentos
       </button>
     </div>
   </header>
@@ -998,7 +1032,7 @@
               </div>
               <div>
                 <span class="option-main-text">Pago al Contado (Fondos Disponibles)</span>
-                <span class="option-sub-text">Cierre y firma de escritura rápida en < 15 días</span>
+                <span class="option-sub-text">Cierre y firma de escritura rápida en &lt; 15 días</span>
               </div>
             </button>
             <button class="option-btn" onclick="micSelectOption('payment', 'preapproved', 90, 'Comprador Calificado')">
@@ -1022,7 +1056,7 @@
                 <svg class="icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
               </div>
               <div>
-                <span class="option-main-text">Inmediatamente (< 30 días)</span>
+                <span class="option-main-text">Inmediatamente (&lt; 30 días)</span>
                 <span class="option-sub-text">Listo para firmar promesa</span>
               </div>
             </button>
@@ -1113,7 +1147,7 @@
             <svg class="icon-svg sm" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             PROPIEDAD LIBRE DE GRAVAMEN — TRASPASO INMEDIATO
           </span>
-          <span class="asset-id-tag" id="display-asset-id">ID: HOIE-RE-2026</span>
+          <span class="asset-id-tag" id="display-asset-id">ID: OI-RE-2026</span>
         </div>
 
         <h1 class="asset-title" id="display-title">Condominio de Lujo en Bella Vista</h1>
@@ -1132,7 +1166,7 @@
             <span class="market-amount" id="display-market-value">$410,000</span>
           </div>
           <div class="savings-badge" id="display-savings">
-            📉 Ahorro de $6,500 USD (-15%)
+            <svg class="icon-svg sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;display:inline-block;vertical-align:-1px;margin-right:4px;"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>Ahorro de $6,500 USD (-15%)
           </div>
         </div>
 
@@ -1231,12 +1265,12 @@
       <div class="testimonials-section">
         <div class="section-head-title">
           <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          Experiencias Verificadas de Compradores HOIE
+          Experiencias Verificadas de Compradores OI
         </div>
         <div class="testimonial-cards-grid">
           <div class="testimonial-card">
             <div class="testimonial-quote">
-              "Al principio me daba temor comprar un inmueble de remate bancario por el tiempo de traspaso. HOIE auditó el Registro Público y en 14 días ya tenía las llaves y la propiedad a mi nombre sin sorpresas."
+              "Al principio me daba temor comprar un inmueble de remate bancario por el tiempo de traspaso. OI auditó el Registro Público y en 14 días ya tenía las llaves y la propiedad a mi nombre sin sorpresas."
             </div>
             <div class="testimonial-user">
               <div class="testimonial-avatar">CR</div>
@@ -1327,28 +1361,8 @@
           <svg class="icon-svg" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
           Documentación Oficial de Soporte Descargable
         </div>
-        <div class="docs-grid">
-          <a href="#" class="doc-card" onclick="trackDocClick('Certificado Registro Público');alert('Descargando Certificado de Registro Público...');return false;">
-            <div>
-              <div class="doc-name">Certificado Registro Público</div>
-              <div style="font-size:10px;color:var(--fg-muted);">PDF • Libre de Gravamen</div>
-            </div>
-            <div class="doc-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
-          </a>
-          <a href="#" class="doc-card" onclick="trackDocClick('Informe de Avalúo Oficial');alert('Descargando Informe de Avalúo Oficial...');return false;">
-            <div>
-              <div class="doc-name">Informe de Avalúo Oficial</div>
-              <div style="font-size:10px;color:var(--fg-muted);">PDF • Valor Comercial $410k</div>
-            </div>
-            <div class="doc-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
-          </a>
-          <a href="#" class="doc-card" onclick="trackDocClick('Plano de Distribución');alert('Descargando Plano Arquitectónico...');return false;">
-            <div>
-              <div class="doc-name">Plano de Distribución</div>
-              <div style="font-size:10px;color:var(--fg-muted);">PDF • 145 m² Escala</div>
-            </div>
-            <div class="doc-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
-          </a>
+        <div class="docs-grid" id="docs-grid-container">
+          <!-- Renderizado dinámicamente desde PROPERTY_DATA.documents -->
         </div>
       </div>
 
@@ -1444,7 +1458,7 @@
       <svg class="icon-svg sm" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/></svg>
     </div>
     <div class="ai-float-text">
-      <span class="ai-float-title">IA Asesora HOIE</span>
+      <span class="ai-float-title">IA Asesora OI</span>
       <span class="ai-float-sub"><span class="status-pulse"></span> En Línea</span>
     </div>
   </div>
@@ -1458,7 +1472,10 @@
   <div id="admin-modal" class="admin-modal-overlay">
     <div class="admin-modal-card">
       <div class="admin-modal-header">
-        <div class="admin-modal-title">⚙️ Cargar / Publicar Nuevo Inmueble (Modo Admin)</div>
+        <div class="admin-modal-title" style="display:flex;align-items:center;gap:8px;">
+          <svg class="icon-svg sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Cargar / Publicar Nuevo Inmueble (Modo Admin)
+        </div>
         <button onclick="closeAdminModal()" style="background:transparent;border:none;color:var(--fg-muted);font-size:18px;cursor:pointer;">✕</button>
       </div>
 
@@ -1469,7 +1486,7 @@
         </div>
         <div>
           <label class="admin-label">ID de Propiedad</label>
-          <input type="text" id="adm-id" class="admin-input" placeholder="ej. HOIE-RE-2026">
+          <input type="text" id="adm-id" class="admin-input" placeholder="ej. OI-RE-2026">
         </div>
         <div>
           <label class="admin-label">Precio de Venta ($ USD) *</label>
@@ -1527,12 +1544,33 @@
           <label class="admin-label">Descripción Detallada</label>
           <textarea id="adm-desc" class="admin-textarea" rows="3" placeholder="Descripción de la propiedad..."></textarea>
         </div>
+        <div class="admin-full-col" style="background:rgba(255,255,255,0.02);padding:14px;border-radius:8px;border:1px solid var(--border);margin-top:6px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:8px;">
+            <label class="admin-label" style="margin-bottom:0;color:#FBBF24;font-weight:700;font-size:12px;display:flex;align-items:center;gap:6px;">
+              <svg class="icon-svg sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Documentos Oficiales Descargables (PDFs, Avalúos, Registros)
+            </label>
+            <span style="font-size:10px;color:var(--fg-muted);">Formato: Nombre | Subtítulo | URL</span>
+          </div>
+          <p style="font-size:11px;color:var(--fg-muted);margin-bottom:8px;line-height:1.4;">
+            Ingresa un documento por línea: <code>Nombre del Documento | Subtítulo / Detalle | URL del Archivo</code>. O sube un PDF local directamente:
+          </p>
+          <textarea id="adm-docs" class="admin-textarea" rows="4" placeholder="Certificado Registro Público | PDF • Libre de Gravamen | https://...&#10;Informe de Avalúo Oficial | PDF • Valor Comercial $410k | https://...&#10;Plano de Distribución | PDF • 145 m² Escala | https://..."></textarea>
+          <div style="margin-top:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <label class="btn-back" style="cursor:pointer;font-size:11.5px;padding:6px 14px;display:inline-flex;align-items:center;gap:6px;background:rgba(59,130,246,0.15);border:1px solid var(--border-focus);color:#FFF;">
+              <svg class="icon-svg sm" viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+              Adjuntar Archivo PDF Local
+              <input type="file" id="adm-doc-file-input" accept=".pdf,application/pdf" style="display:none;" onchange="handleDocFileUpload(event)">
+            </label>
+            <span id="adm-file-upload-status" style="font-size:11px;color:var(--color-comprar);font-weight:600;"></span>
+          </div>
+        </div>
       </div>
 
       <div style="margin-top:20px;display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;">
         <button type="button" onclick="duplicateAsNewProperty()" class="btn-back" style="border-color:#F59E0B;color:#F59E0B;font-weight:700;display:inline-flex;align-items:center;gap:6px;" title="Crea un clon de este activo con nuevo ID para personalizar">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-          ➕ Duplicar como Nuevo Activo
+          Duplicar como Nuevo Activo
         </button>
         <div style="display:flex;gap:10px;">
           <button type="button" onclick="closeAdminModal()" class="btn-back">Cancelar</button>
@@ -1547,7 +1585,7 @@
 
   <footer>
     <div style="max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
-      <div>© 2026 HOIE Opportunity Intelligence — Plataforma Inmobiliaria Institucional</div>
+      <div>© 2026 Opportunity Intelligence — Plataforma Inmobiliaria Institucional</div>
       <div>Acceso Restringido & Motor MIC v3.5</div>
     </div>
   </footer>
@@ -1566,7 +1604,7 @@
     };
 
     let PROPERTY_DATA = {
-      assetId: "HOIE-RE-2026",
+      assetId: "OI-RE-2026",
       title: "Condominio de Lujo en Bella Vista",
       address: "Calle 44 Este con Avenida Balboa, Bella Vista, Ciudad de Panamá",
       price: 350000,
@@ -1593,33 +1631,52 @@
         "Planta Eléctrica Total",
         "Vista Panorámica al Mar",
         "2 Estacionamientos Bajo Techo"
+      ],
+      documents: [
+        { name: "Certificado Registro Público", sub: "PDF • Libre de Gravamen", url: "#" },
+        { name: "Informe de Avalúo Oficial", sub: "PDF • Valor Comercial $410k", url: "#" },
+        { name: "Plano de Distribución", sub: "PDF • 145 m² Escala", url: "#" }
       ]
     };
 
     const ADVISOR_PHONE = '+507 6890-1122';
 
     const urlParams = new URLSearchParams(window.location.search);
-    const assetIdParam = urlParams.get('id');
-    const isAdmin = urlParams.get('admin') === 'true';
+    const assetIdParam = urlParams.get('id') || urlParams.get('asset_id');
+    const slugParam = urlParams.get('slug');
+    const hasAdminSession = !!(localStorage.getItem('oi_access_token') || sessionStorage.getItem('oi_access_token') || localStorage.getItem('oi_admin_authorized') === 'true' || localStorage.getItem('hoie_admin_authorized') === 'true');
+    const isAdmin = urlParams.get('admin') === 'true' || hasAdminSession;
 
     try {
-      const savedData = localStorage.getItem(assetIdParam ? `hoie_prop_${assetIdParam}` : 'hoie_property_listing_data');
+      const savedData = localStorage.getItem(assetIdParam ? `oi_prop_${assetIdParam}` : 'oi_property_listing_data') || localStorage.getItem(assetIdParam ? `hoie_prop_${assetIdParam}` : 'hoie_property_listing_data');
       if (savedData) { PROPERTY_DATA = { ...PROPERTY_DATA, ...JSON.parse(savedData) }; }
     } catch(e) {}
 
-    if (isAdmin) {
+    function applyAdminUI() {
       const btnAdmin = document.getElementById('btn-admin-panel');
+      const btnUnlock = document.getElementById('btn-admin-unlock');
       if (btnAdmin) btnAdmin.style.display = 'inline-flex';
+      if (btnUnlock) btnUnlock.style.display = 'none';
       const unlockedView = document.getElementById('unlocked-asset-view');
       if (unlockedView) unlockedView.classList.add('show-unlocked');
       const aiFloatBtn = document.getElementById('ai-floating-widget');
       if (aiFloatBtn) aiFloatBtn.classList.add('show-float');
     }
 
+    if (isAdmin) {
+      applyAdminUI();
+    }
+
+    function promptAdminLogin() {
+      localStorage.setItem('oi_admin_authorized', 'true');
+      applyAdminUI();
+      openAdminModal();
+    }
+
     function renderPropertyListing() {
       const formatPrice = (n) => '$' + Number(n).toLocaleString('en-US');
       
-      document.getElementById('page-title').textContent = `${PROPERTY_DATA.title} — HOIE Real Estate`;
+      document.getElementById('page-title').textContent = `${PROPERTY_DATA.title} — OI Real Estate`;
       document.getElementById('display-asset-id').textContent = `ID: ${PROPERTY_DATA.assetId}`;
       document.getElementById('display-title').textContent = PROPERTY_DATA.title;
       document.getElementById('display-address').innerHTML = `<svg class="icon-svg sm" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> ${PROPERTY_DATA.address}`;
@@ -1633,7 +1690,7 @@
 
       const savings = PROPERTY_DATA.marketValue - PROPERTY_DATA.price;
       const savingsPct = Math.round((savings / PROPERTY_DATA.marketValue) * 100);
-      document.getElementById('display-savings').textContent = `📉 Ahorro de ${formatPrice(savings)} USD (-${savingsPct}%)`;
+      document.getElementById('display-savings').innerHTML = `<svg class="icon-svg sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;display:inline-block;vertical-align:-1px;margin-right:4px;"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>Ahorro de ${formatPrice(savings)} USD (-${savingsPct}%)`;
 
       document.getElementById('display-area').innerHTML = `<svg class="icon-svg sm" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg> ${PROPERTY_DATA.areaM2} m²`;
       document.getElementById('display-bedrooms').innerHTML = `<svg class="icon-svg sm" viewBox="0 0 24 24"><path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/><path d="M6 8v9"/></svg> ${PROPERTY_DATA.bedrooms} Rec.`;
@@ -1667,6 +1724,7 @@
       }
 
       calculateMortgage();
+      renderDocuments();
     }
 
     // CONMUTADOR DUAL DE MEDIOS (VIDEO HD vs TOUR 360°)
@@ -1806,10 +1864,39 @@
       document.getElementById('adm-amenities').value = PROPERTY_DATA.amenities.join(', ');
       document.getElementById('adm-desc').value = PROPERTY_DATA.description || '';
 
+      if (PROPERTY_DATA.documents && Array.isArray(PROPERTY_DATA.documents)) {
+        document.getElementById('adm-docs').value = PROPERTY_DATA.documents
+          .map(d => `${d.name} | ${d.sub || 'PDF Oficial'} | ${d.url || '#'}`)
+          .join('\n');
+      } else {
+        document.getElementById('adm-docs').value = "Certificado Registro Público | PDF • Libre de Gravamen | #\nInforme de Avalúo Oficial | PDF • Valor Comercial $410k | #\nPlano de Distribución | PDF • 145 m² Escala | #";
+      }
+
       document.getElementById('admin-modal').classList.add('active');
     }
 
     function closeAdminModal() { document.getElementById('admin-modal').classList.remove('active'); }
+
+    function handleDocFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const status = document.getElementById('adm-file-upload-status');
+      status.textContent = `Procesando "${file.name}"...`;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const dataUrl = evt.target.result;
+        const currentVal = document.getElementById('adm-docs').value.trim();
+        const cleanName = file.name.replace(/\.[^/.]+$/, "");
+        const docLine = `${cleanName} | PDF • ${(file.size / (1024 * 1024)).toFixed(2)} MB | ${dataUrl}`;
+        document.getElementById('adm-docs').value = currentVal ? `${currentVal}\n${docLine}` : docLine;
+        status.textContent = `✓ "${file.name}" adjuntado exitosamente.`;
+        setTimeout(() => { status.textContent = ''; }, 4000);
+      };
+      reader.onerror = function() {
+        status.textContent = 'Error al leer el archivo.';
+      };
+      reader.readAsDataURL(file);
+    }
 
     const OFF_MARKET_RE_SOURCE_ID = '53ea2a8b-eddc-4951-a27c-aa6b59b29a10';
 
@@ -1852,6 +1939,21 @@
       const amenitiesRaw = document.getElementById('adm-amenities').value.trim();
       const amenities = amenitiesRaw ? amenitiesRaw.split(',').map(a => a.trim()).filter(a => a.length > 0) : (PROPERTY_DATA.amenities || []);
 
+      const docsRaw = document.getElementById('adm-docs').value.trim();
+      let documents = [];
+      if (docsRaw) {
+        documents = docsRaw.split('\n').map(line => {
+          const parts = line.split('|').map(p => p.trim());
+          return {
+            name: parts[0] || 'Documento Oficial',
+            sub: parts[1] || 'PDF Oficial',
+            url: parts[2] || '#'
+          };
+        }).filter(d => d.name.length > 0);
+      } else {
+        documents = PROPERTY_DATA.documents || [];
+      }
+
       const marketValue = Number(document.getElementById('adm-market').value.trim() || Math.round(Number(price) * 1.15));
       const areaM2 = Number(document.getElementById('adm-area').value.trim() || 120);
       const bedrooms = Number(document.getElementById('adm-bedrooms').value.trim() || 2);
@@ -1879,7 +1981,8 @@
         videoEmbedUrl: videoEmbedUrl,
         virtualTour360Url: virtualTour360Url,
         photos: photos,
-        amenities: amenities
+        amenities: amenities,
+        documents: documents
       };
 
       try {
@@ -1887,7 +1990,7 @@
         localStorage.setItem('oi_property_listing_data', JSON.stringify(PROPERTY_DATA));
       } catch(e) {}
 
-      // Persistir en InsForge
+      // Persistir de inmediato en InsForge
       try {
         const payload = [{
           asset_id: targetId,
@@ -1913,6 +2016,7 @@
             hoa_monthly: hoaMonthly,
             amenities: amenities,
             photos: photos,
+            documents: documents,
             videoEmbedUrl: videoEmbedUrl,
             virtualTour360Url: virtualTour360Url
           }
@@ -1932,6 +2036,7 @@
         if (!res.ok) {
           console.warn('Aviso al guardar en InsForge:', await res.text());
         } else {
+          // Asegurar score y decisión de inversión inicial
           try {
             await fetch(`${INSFORGE_API_BASE}/api/database/records/opportunity_scores?on_conflict=score_id`, {
               method: 'POST',
@@ -1967,9 +2072,12 @@
           } catch(e) {}
         }
       } catch (err) {
-        console.warn('Fallo de red con InsForge:', err);
+        console.warn('Fallo de conexión con InsForge:', err);
       }
 
+      renderGallery();
+      renderAmenities();
+      renderDocuments();
       renderPropertyListing();
       closeAdminModal();
       if (btnSave) { btnSave.disabled = false; btnSave.innerHTML = originalText; }
@@ -1978,6 +2086,36 @@
       window.history.replaceState(null, '', `?id=${targetId}&admin=true`);
 
       prompt('✅ ¡Inmueble publicado con éxito en InsForge!\n\nEste activo ya está disponible en la nube. Copia este enlace VIP para compartir con tus clientes:', publicUrl);
+    }
+
+    function renderDocuments() {
+      const container = document.getElementById('docs-grid-container');
+      if (!container) return;
+      const docs = (PROPERTY_DATA.documents && PROPERTY_DATA.documents.length > 0)
+        ? PROPERTY_DATA.documents
+        : [
+            { name: "Certificado Registro Público", sub: "PDF • Libre de Gravamen", url: "#" },
+            { name: "Informe de Avalúo Oficial", sub: "PDF • Valor Comercial $410k", url: "#" },
+            { name: "Plano de Distribución", sub: "PDF • 145 m² Escala", url: "#" }
+          ];
+
+      container.innerHTML = docs.map((doc) => {
+        const isDownloadable = doc.url && doc.url !== '#';
+        const targetAttr = isDownloadable ? 'target="_blank" rel="noopener noreferrer"' : '';
+        const hrefAttr = isDownloadable ? `href="${doc.url}"` : 'href="#"';
+        const clickAction = isDownloadable
+          ? `trackDocClick('${doc.name}');`
+          : `trackDocClick('${doc.name}');alert('Abriendo documento: ${doc.name}...');return false;`;
+        return `
+          <a ${hrefAttr} ${targetAttr} class="doc-card" onclick="${clickAction}">
+            <div>
+              <div class="doc-name">${doc.name}</div>
+              <div style="font-size:10px;color:var(--fg-muted);">${doc.sub || 'Documento PDF Oficial'}</div>
+            </div>
+            <div class="doc-icon"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+          </a>
+        `;
+      }).join('');
     }
 
     let leadData = { step: 0, purpose: '', payment: '', time: '', name: '', phone: '', email: '', score: 95, profile: 'Inversionista' };
@@ -2016,6 +2154,28 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         }).catch(err => console.log('Webhook dispatched in background.'));
+      } catch(e) {}
+
+      // Registro directo en base de datos InsForge (tabla inquiries)
+      try {
+        fetch(`${INSFORGE_API_BASE}/api/database/records/inquiries`, {
+          method: 'POST',
+          headers: {
+            'apikey': INSFORGE_ANON_KEY,
+            'Authorization': `Bearer ${INSFORGE_ANON_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify([{
+            listing_type: 'property',
+            listing_id: payload.assetId || null,
+            listing_title: payload.assetTitle || PROPERTY_DATA.title,
+            name: payload.name || 'Prospecto Web',
+            email: payload.email || '',
+            phone: payload.phone || '',
+            message: `Token: ${payload.token || 'N/A'} | Score: ${payload.score || 'N/A'} | Perfil: ${payload.profile || 'N/A'} | Simulación: ${userTelemetry.calcSimulations.join(', ') || 'N/A'}`,
+            status: 'new'
+          }])
+        }).catch(err => console.log('Inquiry guardada en InsForge.'));
       } catch(e) {}
     }
 
@@ -2063,7 +2223,7 @@
       const calcSummary = userTelemetry.calcSimulations.length > 0 ? userTelemetry.calcSimulations[userTelemetry.calcSimulations.length - 1] : 'Por defecto';
 
       const emailTxt = leadData.email ? `\n*EMAIL:* ${leadData.email}` : '';
-      const msg = `Hola, mi nombre es ${leadData.name}. Me he calificado exitosamente en HOIE para el inmueble '${PROPERTY_DATA.title}' ($${Number(PROPERTY_DATA.price).toLocaleString('en-US')}).\n\n*TOKEN VIP:* ${token}\n*SCORE MIC:* ${finalScore}/100\n*PERFIL:* ${leadData.profile}${emailTxt}\n\n*DOSSIER INTELIGENTE DE CIERRE:* \n- Preguntas a la IA: ${aiSummary}\n- Documentos Vistos: ${docsSummary}\n- Simulación Hipotecaria: ${calcSummary}\n- FAQ Revisadas: ${faqSummary}\n- Tiempo en Página: ${userTelemetry.timeSpentSec}s (${userTelemetry.photosViewedCount} fotos vistas)\n\nEstoy listo para coordinar la visita privada este sábado.`;
+      const msg = `Hola, mi nombre es ${leadData.name}. Me he calificado exitosamente en OI para el inmueble '${PROPERTY_DATA.title}' ($${Number(PROPERTY_DATA.price).toLocaleString('en-US')}).\n\n*TOKEN VIP:* ${token}\n*SCORE MIC:* ${finalScore}/100\n*PERFIL:* ${leadData.profile}${emailTxt}\n\n*DOSSIER INTELIGENTE DE CIERRE:* \n- Preguntas a la IA: ${aiSummary}\n- Documentos Vistos: ${docsSummary}\n- Simulación Hipotecaria: ${calcSummary}\n- FAQ Revisadas: ${faqSummary}\n- Tiempo en Página: ${userTelemetry.timeSpentSec}s (${userTelemetry.photosViewedCount} fotos vistas)\n\nEstoy listo para coordinar la visita privada este sábado.`;
       
       const waLink = document.getElementById('whatsapp-vip-link');
       const waSticky = document.getElementById('whatsapp-sticky-link');
@@ -2097,54 +2257,68 @@
     const INSFORGE_ANON_KEY = window.INSFORGE_KEY || 'ik_2bed7411a0830c9985681c4a5ccf2dadc81df1c78a3f30b8e8710d64ecb2d13f';
 
     async function loadAssetFromInsForge() {
-      if (!assetIdParam) return;
+      if (!assetIdParam && !slugParam) return;
       try {
-        const endpoint = `${INSFORGE_API_BASE}/api/database/records/v_asset_pipeline?asset_id=eq.${encodeURIComponent(assetIdParam)}`;
-        const res = await fetch(endpoint, {
+        let endpoint = '';
+        if (slugParam) {
+          endpoint = `${INSFORGE_API_BASE}/api/database/records/properties?slug=eq.${encodeURIComponent(slugParam)}`;
+        } else {
+          endpoint = `${INSFORGE_API_BASE}/api/database/records/properties?id=eq.${encodeURIComponent(assetIdParam)}`;
+        }
+
+        let res = await fetch(endpoint, {
           headers: {
             'apikey': INSFORGE_ANON_KEY,
             'Authorization': `Bearer ${INSFORGE_ANON_KEY}`,
             'Accept': 'application/json'
           }
         });
-        if (!res.ok) return;
-        const records = await res.json();
+
+        let records = [];
+        if (res.ok) {
+          records = await res.json();
+        }
+
+        // Si no se encuentra en properties directas, consultar vista v_asset_pipeline
+        if ((!Array.isArray(records) || records.length === 0) && assetIdParam) {
+          const fallbackEndpoint = `${INSFORGE_API_BASE}/api/database/records/v_asset_pipeline?asset_id=eq.${encodeURIComponent(assetIdParam)}`;
+          const fallbackRes = await fetch(fallbackEndpoint, {
+            headers: {
+              'apikey': INSFORGE_ANON_KEY,
+              'Authorization': `Bearer ${INSFORGE_ANON_KEY}`,
+              'Accept': 'application/json'
+            }
+          });
+          if (fallbackRes.ok) {
+            records = await fallbackRes.json();
+          }
+        }
+
         if (!Array.isArray(records) || records.length === 0) return;
         const item = records[0];
-        const raw = item.raw_data || {};
-        const loc = item.location || {};
-        const comps = item.components || {};
 
-        PROPERTY_DATA.assetId = item.asset_id;
+        // Mapeo unificado para tabla properties o v_asset_pipeline
+        PROPERTY_DATA.assetId = item.id || item.asset_id || PROPERTY_DATA.assetId;
         if (item.title) PROPERTY_DATA.title = item.title;
-
-        const addrParts = [loc.corregimiento || loc.neighborhood, loc.district, loc.province].filter(Boolean);
-        if (addrParts.length > 0) PROPERTY_DATA.address = addrParts.join(', ') + ', Panamá';
-
-        if (item.price_amount) PROPERTY_DATA.price = Number(item.price_amount);
-        if (comps.estimated_value) {
-          PROPERTY_DATA.marketValue = Number(comps.estimated_value);
-        } else if (PROPERTY_DATA.price) {
-          PROPERTY_DATA.marketValue = Math.round(PROPERTY_DATA.price * 1.25);
+        if (item.address) PROPERTY_DATA.address = item.address;
+        if (item.price || item.price_amount) PROPERTY_DATA.price = Number(item.price || item.price_amount);
+        if (item.area_sqm || (item.raw_data && item.raw_data.area_m2)) {
+          PROPERTY_DATA.areaM2 = Number(item.area_sqm || item.raw_data.area_m2);
         }
-
-        if (raw.area_m2) PROPERTY_DATA.areaM2 = Number(raw.area_m2);
-        if (raw.bedrooms) PROPERTY_DATA.bedrooms = Number(raw.bedrooms);
-        if (raw.bathrooms) PROPERTY_DATA.bathrooms = Number(raw.bathrooms);
-        if (raw.parking) PROPERTY_DATA.parking = Number(raw.parking);
-        if (raw.year_built) PROPERTY_DATA.yearBuilt = Number(raw.year_built);
-        if (raw.hoa_monthly) PROPERTY_DATA.hoaMonthly = Number(raw.hoa_monthly);
-
-        if (item.description || item.thesis_text) {
-          PROPERTY_DATA.description = item.description || item.thesis_text;
+        if (item.bedrooms || (item.raw_data && item.raw_data.bedrooms)) {
+          PROPERTY_DATA.bedrooms = Number(item.bedrooms || item.raw_data.bedrooms);
         }
-
-        if (Array.isArray(raw.photos) && raw.photos.length > 0) {
-          PROPERTY_DATA.photos = raw.photos;
+        if (item.bathrooms || (item.raw_data && item.raw_data.bathrooms)) {
+          PROPERTY_DATA.bathrooms = Number(item.bathrooms || item.raw_data.bathrooms);
         }
+        if (item.parking_spots || (item.raw_data && item.raw_data.parking)) {
+          PROPERTY_DATA.parking = Number(item.parking_spots || item.raw_data.parking);
+        }
+        if (item.description) PROPERTY_DATA.description = item.description;
 
-        if (Array.isArray(raw.amenities) && raw.amenities.length > 0) {
-          PROPERTY_DATA.amenities = raw.amenities;
+        const imgs = item.images || (item.raw_data && item.raw_data.photos);
+        if (Array.isArray(imgs) && imgs.length > 0) {
+          PROPERTY_DATA.photos = imgs;
         }
 
         renderPropertyListing();

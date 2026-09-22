@@ -1,0 +1,1794 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Catálogo Institucional de Inversiones — Opportunity Intelligence</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23131722'/%3E%3Cstop offset='50%25' stop-color='%231e40af'/%3E%3Cstop offset='100%25' stop-color='%233b82f6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='25' fill='url(%23g)'/%3E%3Ctext x='50' y='56' font-family='Arial, sans-serif' font-weight='bold' font-size='56' fill='%23F1F5F9' text-anchor='middle' dominant-baseline='central'%3EOI%3C/text%3E%3C/svg%3E">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Manrope:wght@600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0C0D11;
+      --surface: #131722;
+      --surface-elevated: #1A1F2C;
+      --surface-glass: rgba(19, 23, 34, 0.9);
+      --border: #222938;
+      --border-focus: #3B82F6;
+      --fg: #F1F5F9;
+      --fg-muted: #94A3B8;
+      
+      --color-comprar: #10B981;
+      --color-prioridad: #3B82F6;
+      --color-negociar: #F59E0B;
+      --color-vendido: #EF4444;
+      --accent-cyan: #06B6D4;
+      --glow-blue: rgba(59, 130, 246, 0.2);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--fg);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    /* Ambient background glows */
+    .bg-glow-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(140px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.15;
+    }
+    .orb-1 { top: -100px; left: -100px; width: 600px; height: 600px; background: #3B82F6; }
+    .orb-2 { bottom: -100px; right: -100px; width: 600px; height: 600px; background: #10B981; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+      background: rgba(12, 13, 17, 0.85);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .brand-oi-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #1e40af, #3b82f6);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-family: 'Manrope', sans-serif;
+      font-size: 17px;
+      color: #FFF;
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+    }
+    .brand-title {
+      font-family: 'Manrope', sans-serif;
+      font-weight: 800;
+      font-size: 17px;
+      letter-spacing: -0.02em;
+    }
+    .brand-title-short {
+      display: none;
+    }
+    .brand-tag {
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(59, 130, 246, 0.15);
+      color: #60A5FA;
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      font-weight: 600;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-admin {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--fg-muted);
+      font-size: 11.5px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-admin:hover {
+      border-color: var(--border-focus);
+      color: var(--fg);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .btn-whatsapp-header {
+      background: #25D366;
+      color: #000;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 7px 14px;
+      border-radius: 6px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.2s;
+    }
+    .btn-whatsapp-header:hover { transform: translateY(-1px); }
+
+    /* Hero Section */
+    .hero-container {
+      position: relative;
+      z-index: 10;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 48px 20px 24px;
+      text-align: center;
+    }
+    .hero-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: var(--color-comprar);
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .hero-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    .hero-title span {
+      background: linear-gradient(135deg, #FFF 30%, #94A3B8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-desc {
+      color: var(--fg-muted);
+      max-width: 650px;
+      margin: 0 auto 36px;
+      font-size: 15px;
+    }
+
+    /* ── DUAL CATEGORY SELECTOR CARDS (ESTILO ENCUENTRA24) ── */
+    .category-selector-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 900px;
+      margin: 0 auto 48px;
+    }
+    .cat-btn {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .cat-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(59, 130, 246, 0.12), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .cat-btn:hover {
+      border-color: var(--border-focus);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(59, 130, 246, 0.2);
+    }
+    .cat-btn:hover::before { opacity: 1; }
+    .cat-btn.active {
+      border-color: #3B82F6;
+      background: linear-gradient(180deg, #1A2234 0%, #131722 100%);
+      box-shadow: 0 0 30px rgba(59, 130, 246, 0.25);
+    }
+    .cat-btn.active .cat-badge {
+      background: #3B82F6;
+      color: #FFF;
+    }
+
+    .cat-icon-box {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+    .cat-icon-box svg {
+      width: 28px;
+      height: 28px;
+      stroke: #60A5FA;
+    }
+    .cat-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: 19px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .cat-sub {
+      font-size: 13px;
+      color: var(--fg-muted);
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+    .cat-badge {
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--fg-muted);
+      font-weight: 600;
+    }
+
+    /* ── BANNER CONCIERGE DE FINANCIAMIENTO BANCARIO ── */
+    .financing-banner-wrap {
+      max-width: 1200px;
+      margin: 0 auto 36px;
+      padding: 0 20px;
+    }
+    .financing-banner {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.09) 0%, rgba(17, 24, 39, 0.85) 50%, rgba(59, 130, 246, 0.07) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 16px;
+      padding: 18px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .financing-banner::before {
+      content: '';
+      position: absolute;
+      top: -50px;
+      left: 10%;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .financing-content {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .financing-icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #10B981;
+    }
+    .financing-text h4 {
+      font-family: 'Manrope', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: #FFF;
+      margin: 0 0 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .financing-badge {
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(16, 185, 129, 0.2);
+      color: #34D399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+    .financing-text p {
+      font-size: 13px;
+      color: var(--fg-muted);
+      margin: 0 0 8px;
+      line-height: 1.4;
+    }
+    .bank-tags-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .bank-pill {
+      font-size: 10.5px;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #94A3B8;
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .financing-cta-box {
+      flex-shrink: 0;
+    }
+    .btn-financing-cta {
+      background: #10B981;
+      color: #000;
+      font-weight: 800;
+      font-size: 13px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 18px rgba(16, 185, 129, 0.35);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      white-space: nowrap;
+    }
+    .btn-financing-cta:hover {
+      background: #059669;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 22px rgba(16, 185, 129, 0.45);
+    }
+
+    /* ── FILTROS Y CHIPS ── */
+    .filter-bar {
+      max-width: 1200px;
+      margin: 0 auto 28px;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+    .filter-chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--fg-muted);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .chip:hover {
+      color: var(--fg);
+      border-color: rgba(255,255,255,0.25);
+    }
+    .chip.active {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: #3B82F6;
+      color: #FFF;
+      font-weight: 600;
+    }
+
+    .search-input-box {
+      position: relative;
+      min-width: 260px;
+    }
+    .search-input-box input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      padding: 8px 12px 8px 36px;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+    }
+    .search-input-box input:focus { border-color: var(--border-focus); }
+    .search-input-box svg {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      stroke: var(--fg-muted);
+    }
+
+    /* ── GRID DE ACTIVOS (INMUEBLES & AUTOS) ── */
+    .catalog-container {
+      position: relative;
+      z-index: 10;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+    }
+
+    /* Card Design */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(59, 130, 246, 0.4);
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.6);
+    }
+
+    .card-img-wrap {
+      position: relative;
+      height: 220px;
+      background: #000;
+      overflow: hidden;
+    }
+    .card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .card:hover .card-img { transform: scale(1.04); }
+
+    .card-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(16, 185, 129, 0.9);
+      color: #FFF;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+    .card-badge.sold {
+      background: rgba(239, 68, 68, 0.95);
+      border: 1px solid #EF4444;
+    }
+
+    .sold-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(12, 13, 17, 0.75);
+      backdrop-filter: blur(2px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      z-index: 5;
+    }
+    .sold-stamp {
+      background: #EF4444;
+      color: #FFF;
+      font-family: 'Manrope', sans-serif;
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: 0.1em;
+      padding: 6px 18px;
+      border-radius: 6px;
+      border: 2px solid #FFF;
+      transform: rotate(-6deg);
+      box-shadow: 0 4px 20px rgba(239, 68, 68, 0.5);
+    }
+    .sold-sub {
+      font-size: 11px;
+      color: #FCA5A5;
+      font-weight: 600;
+    }
+
+    .card-body {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .card-location {
+      font-size: 11.5px;
+      color: var(--fg-muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 6px;
+    }
+    .card-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: 16.5px;
+      font-weight: 700;
+      line-height: 1.35;
+      margin-bottom: 12px;
+      color: #FFF;
+    }
+
+    .card-price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .card-price {
+      font-size: 22px;
+      font-weight: 800;
+      font-family: 'Manrope', sans-serif;
+      color: #FFF;
+    }
+    .card-market-price {
+      font-size: 13px;
+      color: var(--fg-muted);
+      text-decoration: line-through;
+    }
+
+    /* Specs Pills */
+    .card-specs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+      font-size: 12px;
+      color: #CBD5E1;
+    }
+    .spec-item {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .spec-item svg { width: 13px; height: 13px; stroke: #94A3B8; }
+
+    /* Actions */
+    .card-actions {
+      margin-top: auto;
+      display: flex;
+      gap: 8px;
+    }
+    .btn-card-primary {
+      flex: 1;
+      background: #25D366;
+      color: #000;
+      font-weight: 700;
+      font-size: 12.5px;
+      padding: 10px;
+      border-radius: 8px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+    .btn-card-primary:hover { background: #22BF5B; }
+    .btn-card-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: #FFF;
+      font-weight: 600;
+      font-size: 12.5px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-card-secondary:hover {
+      border-color: var(--border-focus);
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    /* Admin Overlay Controls on Card */
+    .card-admin-bar {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+    }
+    .btn-toggle-sold {
+      background: transparent;
+      border: 1px solid #F59E0B;
+      color: #F59E0B;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 10.5px;
+      font-weight: 600;
+    }
+    .btn-delete-card {
+      background: transparent;
+      border: 1px solid #EF4444;
+      color: #EF4444;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 10.5px;
+      font-weight: 600;
+    }
+
+    /* Modal Form Styling */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 14px;
+    }
+    .modal-header h3 {
+      font-family: 'Manrope', sans-serif;
+      font-size: 18px;
+      color: #FFF;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: var(--fg-muted);
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .form-group {
+      margin-bottom: 14px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--fg-muted);
+      margin-bottom: 6px;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--border-focus);
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 30px 20px;
+      text-align: center;
+      color: var(--fg-muted);
+      font-size: 12px;
+      background: var(--surface);
+    }
+
+    /* ================================================================
+       DISEÑO RESPONSIVO AVANZADO PARA SMARTPHONES & TABLETS
+       ================================================================ */
+    @media (max-width: 768px) {
+      header {
+        padding: 10px 14px;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+      }
+      .brand-logo {
+        gap: 8px;
+        min-width: 0;
+        flex-shrink: 1;
+      }
+      .brand-oi-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+        flex-shrink: 0;
+      }
+      .brand-title {
+        font-size: 14px;
+        white-space: nowrap;
+      }
+      .brand-title-full {
+        display: none;
+      }
+      .brand-title-short {
+        display: inline;
+        font-size: 14.5px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+      .brand-tag {
+        display: none;
+      }
+      .header-actions {
+        width: auto;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+      .btn-admin {
+        font-size: 11px;
+        padding: 6px 10px;
+        gap: 5px;
+        white-space: nowrap;
+      }
+      .btn-whatsapp-header {
+        display: none !important; /* En móviles/tablets WhatsApp ya está fijo permanentemente en la barra inferior */
+      }
+
+      .hero-container {
+        padding: 26px 14px 16px;
+      }
+      .hero-kicker {
+        font-size: 10px;
+        padding: 3px 10px;
+        margin-bottom: 12px;
+      }
+      .hero-title {
+        font-size: 24px;
+        margin-bottom: 10px;
+      }
+      .hero-desc {
+        font-size: 13.5px;
+        margin-bottom: 22px;
+      }
+
+      .category-selector-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 22px;
+      }
+      .cat-btn {
+        padding: 14px 10px;
+        border-radius: 14px;
+        min-height: 122px;
+        justify-content: center;
+      }
+      .cat-icon-box {
+        width: 42px;
+        height: 42px;
+        border-radius: 11px;
+        margin-bottom: 8px;
+      }
+      .cat-icon-box svg {
+        width: 22px;
+        height: 22px;
+      }
+      .cat-title {
+        font-size: 14.5px;
+        margin-bottom: 4px;
+        line-height: 1.25;
+      }
+      .cat-sub {
+        display: none; /* Se oculta el párrafo descriptivo largo en móvil para evitar que se vea saturado/aplastado */
+      }
+      .cat-badge {
+        font-size: 10.5px;
+        padding: 3px 8px;
+        margin-top: 2px;
+      }
+
+      .financing-banner-wrap {
+        padding: 0 14px;
+        margin-bottom: 22px;
+      }
+      .financing-banner {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 16px;
+        gap: 14px;
+      }
+      .financing-content {
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .financing-icon-box {
+        width: 40px;
+        height: 40px;
+      }
+      .financing-text h4 {
+        font-size: 15px;
+      }
+      .financing-text p {
+        font-size: 12.5px;
+      }
+      .btn-financing-cta {
+        width: 100%;
+        justify-content: center;
+        padding: 11px 16px;
+        font-size: 12.5px;
+      }
+
+      .filter-bar {
+        padding: 0 14px;
+        margin-bottom: 20px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+      .filter-chips {
+        width: 100%;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
+      }
+      .chip {
+        white-space: nowrap;
+        font-size: 12px;
+        padding: 6px 12px;
+      }
+      .search-input-box {
+        min-width: 100%;
+      }
+
+      .catalog-container {
+        padding: 0 14px 90px;
+      }
+      .catalog-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .card-img-wrap {
+        height: 200px;
+      }
+      .card-body {
+        padding: 14px;
+      }
+      .card-title {
+        font-size: 16px;
+        margin-bottom: 8px;
+      }
+      .card-price {
+        font-size: 20px;
+      }
+      .card-specs {
+        gap: 6px;
+        margin-bottom: 14px;
+      }
+      .spec-item {
+        font-size: 11px;
+        padding: 3px 8px;
+      }
+      .card-actions {
+        gap: 8px;
+      }
+      .btn-card-primary, .btn-card-secondary {
+        font-size: 12px;
+        padding: 9px 10px;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+      .modal-box {
+        padding: 16px;
+        border-radius: 14px;
+        width: 100%;
+        max-height: 94vh;
+      }
+
+      footer {
+        padding: 24px 14px 85px;
+      }
+      footer > div {
+        flex-direction: column !important;
+        text-align: center !important;
+        gap: 8px !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      header {
+        padding: 8px 10px;
+        gap: 6px;
+      }
+      .brand-title-full {
+        display: none;
+      }
+      .brand-title-short {
+        display: inline;
+        font-size: 13.5px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+      .brand-oi-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 13px;
+      }
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .header-actions .btn-admin {
+        padding: 5px 7px;
+        font-size: 10px;
+        gap: 3px;
+      }
+      .header-actions .btn-whatsapp-header {
+        padding: 5px 8px;
+        font-size: 10px;
+        gap: 3px;
+      }
+      .hide-mobile-sm {
+        display: none !important;
+      }
+      .category-selector-grid {
+        gap: 8px;
+        margin-bottom: 20px;
+      }
+      .cat-btn {
+        padding: 12px 8px;
+        min-height: 115px;
+      }
+      .cat-title {
+        font-size: 13.5px;
+      }
+      .cat-icon-box {
+        width: 38px;
+        height: 38px;
+        margin-bottom: 6px;
+      }
+      .cat-icon-box svg {
+        width: 20px;
+        height: 20px;
+      }
+      .cat-badge {
+        font-size: 10px;
+        padding: 2px 7px;
+      }
+    }
+
+    /* ── BARRA INFERIOR FLOTANTE MÓVIL ── */
+    .mobile-bottom-bar {
+      display: none;
+    }
+    @media (max-width: 768px) {
+      .mobile-bottom-bar {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 45;
+        background: rgba(12, 13, 17, 0.95);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-top: 1px solid var(--border);
+        padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
+        justify-content: space-around;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.6);
+      }
+      .mobile-bottom-btn {
+        flex: 1;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--fg-muted);
+        padding: 8px 6px;
+        border-radius: 8px;
+        font-size: 11.5px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s;
+      }
+      .mobile-bottom-btn.active {
+        background: rgba(59, 130, 246, 0.18);
+        border-color: #3B82F6;
+        color: #FFF;
+      }
+      .mobile-bottom-btn.wa {
+        background: #25D366;
+        color: #000;
+        border-color: #25D366;
+        font-weight: 700;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-glow-orb orb-1"></div>
+  <div class="bg-glow-orb orb-2"></div>
+
+  <!-- HEADER -->
+  <header>
+    <a href="./index.html" class="brand-logo">
+      <div class="brand-oi-icon">OI</div>
+      <div>
+        <div class="brand-title">
+          <span class="brand-title-full">Opportunity Intelligence</span>
+          <span class="brand-title-short">Catálogo VIP</span>
+        </div>
+      </div>
+      <span class="brand-tag">CATÁLOGO VIP</span>
+    </a>
+
+    <div class="header-actions">
+      <button id="btn-admin-mode" class="btn-admin" onclick="toggleAdminMode()" title="Acceso de Administrador">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span id="admin-mode-text">Acceso Admin</span>
+      </button>
+
+      <button id="btn-add-asset" class="btn-admin" style="display:none;background:#10B981;border-color:#10B981;color:#000;font-weight:700;" onclick="openNewAssetModal()" title="Publicar Nuevo Activo">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span>Publicar<span class="hide-mobile-sm">&nbsp;Activo</span></span>
+      </button>
+
+      <a id="header-whatsapp-link" href="https://wa.me/50765461527?text=Hola,%20deseo%20consultar%20sobre%20el%20inventario%20disponible" target="_blank" class="btn-whatsapp-header" title="Contactar Asesor">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.173.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824z"/></svg>
+        <span>WhatsApp<span class="header-wa-extra">&nbsp;Asesor</span></span>
+      </a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero-container">
+    <div class="hero-kicker">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Inventario Verificado 2026
+    </div>
+    <h1 class="hero-title">
+      Catálogo Privado de <span>Oportunidades de Compra</span>
+    </h1>
+    <p class="hero-desc">
+      Inmuebles y vehículos de adjudicación bancaria y liquidación privada en Panamá. Selecciona la categoría que deseas explorar:
+    </p>
+
+    <!-- ── DOS BOTONES PRINCIPALES DE SELECCIÓN (ESTILO ENCUENTRA24) ── -->
+    <div class="category-selector-grid">
+      <div class="cat-btn active" id="btn-cat-properties" onclick="setCategory('real_estate')">
+        <div class="cat-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <div class="cat-title">Bienes Raíces</div>
+        <div class="cat-sub">Apartamentos de lujo, penthouses, casas y terrenos en distritos de alta demanda.</div>
+        <span class="cat-badge" id="badge-count-properties">3 Disponibles</span>
+      </div>
+
+      <div class="cat-btn" id="btn-cat-vehicles" onclick="setCategory('vehicles')">
+        <div class="cat-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="3" width="22" height="13" rx="2"/>
+            <circle cx="7" cy="19" r="2"/>
+            <circle cx="17" cy="19" r="2"/>
+            <path d="M5 16h14"/>
+          </svg>
+        </div>
+        <div class="cat-title">Vehículos & 4x4</div>
+        <div class="cat-sub">Pickups, SUVs familiares y autos deportivos con inspección de 50 puntos y precio de liquidación.</div>
+        <span class="cat-badge" id="badge-count-vehicles">3 Disponibles</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── BANNER PUBLICITARIO / CONCIERGE DE FINANCIAMIENTO ── -->
+  <div class="financing-banner-wrap">
+    <div class="financing-banner">
+      <div class="financing-content">
+        <div class="financing-icon-box">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="1" x2="12" y2="23"/>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+        </div>
+        <div class="financing-text">
+          <h4>
+            ¿Necesitas Financiamiento Bancario?
+            <span class="financing-badge">PRE-APROBACIÓN VIP</span>
+          </h4>
+          <p>
+            Te ayudamos a tramitar tu crédito hipotecario o préstamo de auto con las mejores tasas a través de entidades aliadas en Panamá. Asesoría directa sin costo.
+          </p>
+          <div class="bank-tags-row">
+            <span class="bank-pill">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 10v11M19 10v11M9 10v11M15 10v11M12 2L2 7h20L12 2z"/></svg>
+              Banco General
+            </span>
+            <span class="bank-pill">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 10v11M19 10v11M9 10v11M15 10v11M12 2L2 7h20L12 2z"/></svg>
+              BAC Credomatic
+            </span>
+            <span class="bank-pill">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 10v11M19 10v11M9 10v11M15 10v11M12 2L2 7h20L12 2z"/></svg>
+              Banistmo
+            </span>
+            <span class="bank-pill">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 10v11M19 10v11M9 10v11M15 10v11M12 2L2 7h20L12 2z"/></svg>
+              Scotiabank
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="financing-cta-box">
+        <a href="https://wa.me/50765461527?text=Hola,%20deseo%20asesor%C3%ADa%20para%20pre-aprobar%20mi%20financiamiento%20bancario%20(Hipotecario%20/%20Auto)%20en%20Opportunity%20Intelligence" target="_blank" class="btn-financing-cta">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.173.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824z"/></svg>
+          Solicitar Pre-Aprobación
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILTROS Y BÚSQUEDA -->
+  <div class="filter-bar">
+    <div class="filter-chips" id="filter-chips-container">
+      <button class="chip active" onclick="setFilter('all')">Todos</button>
+      <button class="chip" onclick="setFilter('available')">Disponibles</button>
+      <button class="chip" onclick="setFilter('sold')">Vendidos</button>
+    </div>
+
+    <div class="search-input-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="catalog-search-input" placeholder="Buscar por título, zona o marca..." oninput="handleSearch(this.value)">
+    </div>
+  </div>
+
+  <!-- CONTENEDOR DEL CATÁLOGO -->
+  <main class="catalog-container">
+    <div class="catalog-grid" id="catalog-grid">
+      <!-- Las tarjetas se generan dinámicamente con JavaScript -->
+    </div>
+  </main>
+
+  <!-- MODAL: AGREGAR O EDITAR ACTIVO (MODO ADMIN) -->
+  <div class="modal-overlay" id="admin-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modal-title-text">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          Publicar Nuevo Activo
+        </h3>
+        <button class="modal-close" onclick="closeAdminModal()">✕</button>
+      </div>
+
+      <form id="asset-form" onsubmit="handleSaveAsset(event)">
+        <input type="hidden" id="form-asset-id">
+        
+        <div class="form-group">
+          <label>Categoría *</label>
+          <select id="form-category" class="form-select" onchange="toggleFormFieldsByCategory(this.value)" required>
+            <option value="real_estate">Bienes Raíces (Inmueble)</option>
+            <option value="vehicles">Vehículo (Auto / 4x4)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Título del Anuncio *</label>
+          <input type="text" id="form-title" class="form-input" placeholder="ej. Condominio de Lujo en Bella Vista" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Precio de Venta ($ USD) *</label>
+            <input type="number" id="form-price" class="form-input" placeholder="350000" required>
+          </div>
+          <div class="form-group">
+            <label>Valor Avalúo / Mercado ($ USD)</label>
+            <input type="number" id="form-market-price" class="form-input" placeholder="410000">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Ubicación / Distrito (o Dirección) *</label>
+          <input type="text" id="form-location" class="form-input" placeholder="ej. Bella Vista, Ciudad de Panamá" required>
+        </div>
+
+        <!-- Campos para Inmuebles -->
+        <div id="fields-real-estate" class="form-row">
+          <div class="form-group">
+            <label>Área (m²)</label>
+            <input type="number" id="form-area" class="form-input" placeholder="145">
+          </div>
+          <div class="form-group">
+            <label>Recámaras / Baños</label>
+            <input type="text" id="form-beds-baths" class="form-input" placeholder="3 Rec • 2.5 Baños">
+          </div>
+        </div>
+
+        <!-- Campos para Vehículos -->
+        <div id="fields-vehicles" class="form-row" style="display:none;">
+          <div class="form-group">
+            <label>Año & Kilometraje</label>
+            <input type="text" id="form-year-km" class="form-input" placeholder="2022 • 48,000 km">
+          </div>
+          <div class="form-group">
+            <label>Transmisión & Motor</label>
+            <input type="text" id="form-trans-engine" class="form-input" placeholder="Manual 6 Vel • 2.8 Turbo Diésel">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>URL de Imagen Principal *</label>
+          <input type="url" id="form-image" class="form-input" placeholder="https://images.unsplash.com/..." required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Etiqueta de Oportunidad</label>
+            <input type="text" id="form-badge" class="form-input" placeholder="ej. -15% Bajo Avalúo">
+          </div>
+          <div class="form-group">
+            <label>Estado del Activo</label>
+            <select id="form-status" class="form-select">
+              <option value="available">🟢 Disponible para Venta</option>
+              <option value="sold">🔴 VENDIDO / ADJUDICADO</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Enlace Ficha VIP (Landing Page Opcional)</label>
+          <input type="text" id="form-landing-url" class="form-input" placeholder="../landings/landing1.html?id=OI-RE-2026">
+        </div>
+
+        <div style="margin-top:20px;display:flex;justify-content:flex-end;gap:10px;">
+          <button type="button" class="btn-admin" onclick="closeAdminModal()">Cancelar</button>
+          <button type="submit" class="btn-admin" style="background:#3B82F6;border-color:#3B82F6;color:#FFF;font-weight:700;">
+            Guardar en Catálogo
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <div style="max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+      <div>© 2026 Opportunity Intelligence — Plataforma Privada de Liquidaciones</div>
+      <div>https://opportunity.aizprua.com/catalogo</div>
+    </div>
+  </footer>
+
+  <!-- BARRA INFERIOR FLOTANTE MÓVIL (QUICK-ACTIONS) -->
+  <div class="mobile-bottom-bar">
+    <button class="mobile-bottom-btn active" id="mob-btn-properties" onclick="setCategory('real_estate')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Inmuebles
+    </button>
+    <button class="mobile-bottom-btn" id="mob-btn-vehicles" onclick="setCategory('vehicles')">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="22" height="13" rx="2"/><circle cx="7" cy="19" r="2"/><circle cx="17" cy="19" r="2"/><path d="M5 16h14"/></svg>
+      Vehículos
+    </button>
+    <a href="https://wa.me/50765461527?text=Hola,%20deseo%20consultar%20sobre%20el%20inventario%20disponible" target="_blank" class="mobile-bottom-btn wa">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.173.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824z"/></svg>
+      Asesor
+    </a>
+  </div>
+
+  <script>
+    const ADVISOR_PHONE = '50765461527';
+
+    // ── INVENTARIO BASE (PRE-CONFIGURADO CON LOS EJEMPLOS DE LAS IMÁGENES) ──
+    const DEFAULT_INVENTORY = [
+      // Inmuebles
+      {
+        id: 'prop-1',
+        category: 'real_estate',
+        title: 'Condominio de Lujo en Bella Vista',
+        location: 'Calle 44 Este, Bella Vista, Panamá',
+        price: 350000,
+        marketPrice: 410000,
+        badge: '-15% Bajo Avalúo',
+        image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80',
+        specs: ['145 m²', '3 Recámaras', '2.5 Baños', '2 Estac.'],
+        status: 'available',
+        landingUrl: '../landings/landing1.html?id=OI-RE-2026'
+      },
+      {
+        id: 'prop-2',
+        category: 'real_estate',
+        title: 'Apartamento Frente al Mar en Punta Pacífica',
+        location: 'Punta Pacífica, Ciudad de Panamá',
+        price: 690000,
+        marketPrice: 820000,
+        badge: 'Oportunidad VIP',
+        image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80',
+        specs: ['320 m²', '4 Recámaras', '4.5 Baños', '3 Estac.'],
+        status: 'available',
+        landingUrl: '../landings/landing1.html?id=OI-RE-2027'
+      },
+      {
+        id: 'prop-3',
+        category: 'real_estate',
+        title: 'Beachfront Apartment en Playa Escondida',
+        location: 'Playa Escondida Resort, Costa Arriba, Colón',
+        price: 400000,
+        marketPrice: 490000,
+        badge: 'Adjudicación Bancaria',
+        image: 'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&w=800&q=80',
+        specs: ['185 m²', '3 Recámaras', '3 Baños', 'Piscina Infinity'],
+        status: 'sold',
+        landingUrl: '../landings/landing1.html?id=OI-RE-PLAYA'
+      },
+
+      // Vehículos
+      {
+        id: 'car-1',
+        category: 'vehicles',
+        title: 'Toyota Hilux 4x4 Diésel 2.8L',
+        location: 'Bella Vista / San Francisco, Panamá',
+        price: 24500,
+        marketPrice: 31000,
+        badge: '-21% Debajo de Mercado',
+        image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80',
+        specs: ['Año 2022', '48,000 km', 'Manual 6 Vel', 'Diésel 4x4'],
+        status: 'available',
+        landingUrl: '../landings/landing2.html?id=OI-AUTO-2022'
+      },
+      {
+        id: 'car-2',
+        category: 'vehicles',
+        title: 'Toyota Land Cruiser Prado TXL Diésel',
+        location: 'Costa del Este, Panamá',
+        price: 69500,
+        marketPrice: 78000,
+        badge: 'Inspección 50 Pts',
+        image: 'https://images.unsplash.com/photo-1594502184342-2e12f877aa73?auto=format&fit=crop&w=800&q=80',
+        specs: ['Año 2023', '25,000 km', 'Automático', 'Diésel 4x4'],
+        status: 'available',
+        landingUrl: '../landings/landing2.html?id=OI-AUTO-PRADO'
+      },
+      {
+        id: 'car-3',
+        category: 'vehicles',
+        title: 'MINI Cooper S John Cooper Works',
+        location: 'Costa del Este, Panamá',
+        price: 40000,
+        marketPrice: 49000,
+        badge: '-27% Ganga',
+        image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80',
+        specs: ['Año 2023', '21,000 km', 'Automático', 'Gasolina Turbo'],
+        status: 'sold',
+        landingUrl: '../landings/landing2.html?id=OI-AUTO-MINI'
+      }
+    ];
+
+    // Cargar del localStorage o inicializar con los datos por defecto
+    let inventory = JSON.parse(localStorage.getItem('oi_catalog_inventory') || 'null');
+    if (!inventory || !Array.isArray(inventory) || inventory.length === 0) {
+      inventory = DEFAULT_INVENTORY;
+      localStorage.setItem('oi_catalog_inventory', JSON.stringify(inventory));
+    } else {
+      // Auto-migrar rutas antiguas en cache local hacia la nueva carpeta apps/landings/
+      let updated = false;
+      inventory.forEach(item => {
+        if (item.landingUrl && item.landingUrl.includes('../dashboard/landing')) {
+          item.landingUrl = item.landingUrl.replace('../dashboard/landing', '../landings/landing');
+          updated = true;
+        }
+      });
+      if (updated) {
+        localStorage.setItem('oi_catalog_inventory', JSON.stringify(inventory));
+      }
+    }
+
+    let currentCategory = 'real_estate'; // 'real_estate' o 'vehicles'
+    let currentFilter = 'all';           // 'all', 'available', 'sold'
+    let searchQuery = '';
+    let isAdminMode = localStorage.getItem('oi_admin_authorized') === 'true';
+
+    // ── GESTIÓN DE CATEGORÍAS ──
+    function setCategory(cat) {
+      currentCategory = cat;
+      document.getElementById('btn-cat-properties').classList.toggle('active', cat === 'real_estate');
+      document.getElementById('btn-cat-vehicles').classList.toggle('active', cat === 'vehicles');
+      
+      const mobProp = document.getElementById('mob-btn-properties');
+      const mobVeh = document.getElementById('mob-btn-vehicles');
+      if (mobProp) mobProp.classList.toggle('active', cat === 'real_estate');
+      if (mobVeh) mobVeh.classList.toggle('active', cat === 'vehicles');
+
+      renderCatalog();
+    }
+
+    // ── FILTROS ──
+    function setFilter(filt) {
+      currentFilter = filt;
+      document.querySelectorAll('.chip').forEach(el => el.classList.remove('active'));
+      const activeBtn = Array.from(document.querySelectorAll('.chip')).find(b => b.getAttribute('onclick')?.includes(`'${filt}'`));
+      if (activeBtn) activeBtn.classList.add('active');
+      renderCatalog();
+    }
+
+    function handleSearch(val) {
+      searchQuery = (val || '').toLowerCase().trim();
+      renderCatalog();
+    }
+
+    // ── RENDERIZADO DEL CATÁLOGO ──
+    function renderCatalog() {
+      const grid = document.getElementById('catalog-grid');
+      grid.innerHTML = '';
+
+      // Contar disponibles
+      const propCount = inventory.filter(i => i.category === 'real_estate' && i.status === 'available').length;
+      const vehCount = inventory.filter(i => i.category === 'vehicles' && i.status === 'available').length;
+      document.getElementById('badge-count-properties').textContent = `${propCount} Disponibles`;
+      document.getElementById('badge-count-vehicles').textContent = `${vehCount} Disponibles`;
+
+      // Filtrar ítems
+      const filtered = inventory.filter(item => {
+        if (item.category !== currentCategory) return false;
+        if (currentFilter === 'available' && item.status !== 'available') return false;
+        if (currentFilter === 'sold' && item.status !== 'sold') return false;
+        if (searchQuery) {
+          const matchTitle = (item.title || '').toLowerCase().includes(searchQuery);
+          const matchLoc = (item.location || '').toLowerCase().includes(searchQuery);
+          if (!matchTitle && !matchLoc) return false;
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align:center; padding: 60px 20px; color: var(--fg-muted);">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:12px;opacity:0.5;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <div style="font-size:16px;font-weight:700;color:#FFF;margin-bottom:4px;">No se encontraron activos</div>
+            <div style="font-size:13px;">Prueba ajustando los filtros o el término de búsqueda.</div>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const isSold = item.status === 'sold';
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.id = `card-${item.id}`;
+
+        const specsHtml = (item.specs || []).map(s => `
+          <div class="spec-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            ${s}
+          </div>
+        `).join('');
+
+        const formattedPrice = '$' + Number(item.price).toLocaleString('en-US');
+        const formattedMarket = item.marketPrice ? '$' + Number(item.marketPrice).toLocaleString('en-US') : '';
+
+        // Enlace de WhatsApp con mensaje personalizado
+        const waMsg = encodeURIComponent(`Hola, vi en el catálogo el activo "${item.title}" (${formattedPrice} USD). Deseo más información.`);
+        const waUrl = `https://wa.me/${ADVISOR_PHONE}?text=${waMsg}`;
+
+        // Link de landing inteligente para producción y entorno local
+        const isFile = window.location.protocol === 'file:';
+        let landingHref = item.landingUrl;
+        if (!landingHref) {
+          if (item.category === 'real_estate') {
+            landingHref = isFile ? `../dashboard/landing1.html?id=${encodeURIComponent(item.id)}` : `/propiedades?id=${encodeURIComponent(item.id)}`;
+          } else {
+            landingHref = isFile ? `../dashboard/landing2.html?id=${encodeURIComponent(item.id)}` : `/autos?id=${encodeURIComponent(item.id)}`;
+          }
+        } else if (!isFile) {
+          landingHref = landingHref.replace('../dashboard/landing1.html', '/propiedades').replace('../dashboard/landing2.html', '/autos');
+        } else if (isFile && !landingHref.startsWith('..') && !landingHref.startsWith('http')) {
+          landingHref = item.category === 'real_estate' 
+            ? `../dashboard/landing1.html?id=${encodeURIComponent(item.id)}` 
+            : `../dashboard/landing2.html?id=${encodeURIComponent(item.id)}`;
+        }
+
+        // Barra de administración si está activa
+        let adminBarHtml = '';
+        if (isAdminMode) {
+          adminBarHtml = `
+            <div class="card-admin-bar">
+              <button class="btn-toggle-sold" onclick="toggleItemSold('${item.id}')">
+                ${isSold ? '🟢 Marcar Disponible' : '🔴 Marcar VENDIDO'}
+              </button>
+              <div style="display:flex;gap:6px;">
+                <button class="btn-toggle-sold" style="border-color:#3B82F6;color:#3B82F6;" onclick="editAsset('${item.id}')">Editar</button>
+                <button class="btn-delete-card" onclick="deleteAsset('${item.id}')">Eliminar</button>
+              </div>
+            </div>
+          `;
+        }
+
+        card.innerHTML = `
+          <div class="card-img-wrap">
+            <img class="card-img" src="${item.image}" alt="${item.title}" loading="lazy">
+            <div class="card-badge ${isSold ? 'sold' : ''}">
+              ${isSold ? 'VENDIDO' : (item.badge || 'Oportunidad')}
+            </div>
+            ${isSold ? `
+              <div class="sold-overlay">
+                <div class="sold-stamp">VENDIDO</div>
+                <div class="sold-sub">Adjudicado Exitosamente</div>
+              </div>
+            ` : ''}
+          </div>
+
+          <div class="card-body">
+            <div class="card-location">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              ${item.location || 'Ciudad de Panamá'}
+            </div>
+            <h3 class="card-title">${item.title}</h3>
+            
+            <div class="card-price-row">
+              <span class="card-price">${formattedPrice}</span>
+              ${formattedMarket ? `<span class="card-market-price">${formattedMarket}</span>` : ''}
+            </div>
+
+            <div class="card-specs">
+              ${specsHtml}
+            </div>
+
+            <div class="card-actions">
+              <a href="${waUrl}" target="_blank" class="btn-card-primary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.173.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824z"/></svg>
+                WhatsApp
+              </a>
+              <a href="${landingHref}" class="btn-card-secondary">
+                Ficha VIP
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </a>
+            </div>
+
+            ${adminBarHtml}
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // ── GESTIÓN DE MODO ADMINISTRADOR ──
+    function toggleAdminMode() {
+      if (!isAdminMode) {
+        isAdminMode = true;
+        localStorage.setItem('oi_admin_authorized', 'true');
+      } else {
+        isAdminMode = false;
+        localStorage.removeItem('oi_admin_authorized');
+      }
+      updateAdminUI();
+      renderCatalog();
+    }
+
+    function updateAdminUI() {
+      const text = document.getElementById('admin-mode-text');
+      const addBtn = document.getElementById('btn-add-asset');
+      const isMobile = window.innerWidth <= 768;
+      if (isAdminMode) {
+        text.textContent = isMobile ? 'Admin: ON' : 'Modo Admin: ACTIVO';
+        addBtn.style.display = 'inline-flex';
+      } else {
+        text.textContent = isMobile ? 'Admin' : 'Acceso Admin';
+        addBtn.style.display = 'none';
+      }
+    }
+    window.addEventListener('resize', updateAdminUI);
+
+    // Cambiar estado a Vendido / Disponible
+    function toggleItemSold(id) {
+      const item = inventory.find(i => i.id === id);
+      if (!item) return;
+      item.status = item.status === 'sold' ? 'available' : 'sold';
+      saveInventory();
+      renderCatalog();
+    }
+
+    // Eliminar activo
+    function deleteAsset(id) {
+      if (!confirm('¿Estás seguro de que deseas eliminar este activo del catálogo?')) return;
+      inventory = inventory.filter(i => i.id !== id);
+      saveInventory();
+      renderCatalog();
+    }
+
+    // ── MODAL AGREGAR / EDITAR ACTIVO ──
+    function openNewAssetModal() {
+      document.getElementById('form-asset-id').value = '';
+      document.getElementById('asset-form').reset();
+      document.getElementById('modal-title-text').textContent = 'Publicar Nuevo Activo';
+      document.getElementById('form-category').value = currentCategory;
+      toggleFormFieldsByCategory(currentCategory);
+      document.getElementById('admin-modal').classList.add('active');
+    }
+
+    function closeAdminModal() {
+      document.getElementById('admin-modal').classList.remove('active');
+    }
+
+    function toggleFormFieldsByCategory(cat) {
+      const isRe = cat === 'real_estate';
+      document.getElementById('fields-real-estate').style.display = isRe ? 'grid' : 'none';
+      document.getElementById('fields-vehicles').style.display = isRe ? 'none' : 'grid';
+    }
+
+    function editAsset(id) {
+      const item = inventory.find(i => i.id === id);
+      if (!item) return;
+
+      document.getElementById('form-asset-id').value = item.id;
+      document.getElementById('form-category').value = item.category;
+      document.getElementById('form-title').value = item.title;
+      document.getElementById('form-price').value = item.price;
+      document.getElementById('form-market-price').value = item.marketPrice || '';
+      document.getElementById('form-location').value = item.location;
+      document.getElementById('form-image').value = item.image;
+      document.getElementById('form-badge').value = item.badge || '';
+      document.getElementById('form-status').value = item.status || 'available';
+      document.getElementById('form-landing-url').value = item.landingUrl || '';
+
+      toggleFormFieldsByCategory(item.category);
+
+      if (item.category === 'real_estate') {
+        document.getElementById('form-area').value = parseInt(item.specs?.[0]) || '';
+        document.getElementById('form-beds-baths').value = item.specs?.slice(1).join(' • ') || '';
+      } else {
+        document.getElementById('form-year-km').value = item.specs?.slice(0, 2).join(' • ') || '';
+        document.getElementById('form-trans-engine').value = item.specs?.slice(2).join(' • ') || '';
+      }
+
+      document.getElementById('modal-title-text').textContent = 'Editar Activo';
+      document.getElementById('admin-modal').classList.add('active');
+    }
+
+    function handleSaveAsset(e) {
+      e.preventDefault();
+      const id = document.getElementById('form-asset-id').value || `oi-${Date.now()}`;
+      const cat = document.getElementById('form-category').value;
+      const title = document.getElementById('form-title').value.trim();
+      const price = Number(document.getElementById('form-price').value);
+      const marketPrice = Number(document.getElementById('form-market-price').value) || null;
+      const location = document.getElementById('form-location').value.trim();
+      const image = document.getElementById('form-image').value.trim();
+      const badge = document.getElementById('form-badge').value.trim();
+      const status = document.getElementById('form-status').value;
+      const landingUrl = document.getElementById('form-landing-url').value.trim();
+
+      let specs = [];
+      if (cat === 'real_estate') {
+        const area = document.getElementById('form-area').value;
+        const bb = document.getElementById('form-beds-baths').value;
+        if (area) specs.push(`${area} m²`);
+        if (bb) specs.push(...bb.split('•').map(s => s.trim()));
+      } else {
+        const yk = document.getElementById('form-year-km').value;
+        const te = document.getElementById('form-trans-engine').value;
+        if (yk) specs.push(...yk.split('•').map(s => s.trim()));
+        if (te) specs.push(...te.split('•').map(s => s.trim()));
+      }
+
+      const existingIndex = inventory.findIndex(i => i.id === id);
+      const assetData = { id, category: cat, title, price, marketPrice, location, image, badge, status, landingUrl, specs };
+
+      if (existingIndex >= 0) {
+        inventory[existingIndex] = assetData;
+      } else {
+        inventory.unshift(assetData);
+      }
+
+      saveInventory();
+      closeAdminModal();
+      setCategory(cat);
+    }
+
+    function saveInventory() {
+      localStorage.setItem('oi_catalog_inventory', JSON.stringify(inventory));
+    }
+
+    // Inicializar interfaz
+    updateAdminUI();
+    renderCatalog();
+  </script>
+</body>
+</html>
