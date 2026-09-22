@@ -1130,6 +1130,11 @@
         <span>Publicar<span class="hide-mobile-sm">&nbsp;Activo</span></span>
       </button>
 
+      <button id="btn-change-pwd" class="btn-admin" style="display:none;" onclick="openChangePwdModal()" title="Cambiar Master Key">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span class="hide-mobile-sm">Clave</span>
+      </button>
+
       <a id="header-whatsapp-link" href="https://wa.me/50765461527?text=Hola,%20deseo%20consultar%20sobre%20el%20inventario%20disponible" target="_blank" class="btn-whatsapp-header" title="Contactar Asesor">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.173.086.275.072.376-.044.101-.116.433-.506.549-.68.116-.173.231-.145.39-.086s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824z"/></svg>
         <span>WhatsApp<span class="header-wa-extra">&nbsp;Asesor</span></span>
@@ -1350,6 +1355,85 @@
     </div>
   </div>
 
+  <!-- MODAL DE AUTENTICACIÓN ADMIN (ANTI-HACKING SHA-256 + RATE LIMITER) -->
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal-box" style="max-width: 400px; text-align: center; padding: 26px 22px;">
+      <div style="width: 52px; height: 52px; border-radius: 14px; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.3); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; color: #60A5FA;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+      </div>
+
+      <h3 style="font-family: 'Manrope', sans-serif; font-size: 18px; font-weight: 800; color: #FFF; margin-bottom: 6px;">
+        Acceso Administrativo
+      </h3>
+      <p style="font-size: 12.5px; color: var(--fg-muted); margin-bottom: 18px; line-height: 1.4;">
+        Ingresa tu Master Key de seguridad para gestionar el inventario de Opportunity Intelligence.
+      </p>
+
+      <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+        <div style="position: relative; margin-bottom: 12px; text-align: left;">
+          <div style="position: relative;">
+            <input type="password" id="auth-input-key" class="form-input" placeholder="Ingresa Master Key" required autocomplete="current-password" style="padding-right: 40px; font-size: 14px;">
+            <button type="button" onclick="togglePasswordVisibility('auth-input-key', 'auth-eye-icon')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--fg-muted); cursor: pointer; padding: 4px;">
+              <svg id="auth-eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div id="auth-error-msg" style="display: none; padding: 8px 12px; border-radius: 8px; font-size: 11.5px; margin-bottom: 14px; text-align: left; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); color: #FCA5A5;">
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 16px;">
+          <button type="button" class="btn-admin" onclick="closeAuthModal()" style="flex: 1; justify-content: center; padding: 10px;">
+            Cancelar
+          </button>
+          <button type="submit" id="btn-auth-submit" class="btn-admin" style="flex: 1; justify-content: center; padding: 10px; background: #3B82F6; border-color: #3B82F6; color: #FFF; font-weight: 700;">
+            Desbloquear
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL CAMBIAR CONTRASEÑA MASTER -->
+  <div class="modal-overlay" id="change-pwd-modal">
+    <div class="modal-box" style="max-width: 420px; padding: 24px;">
+      <div class="modal-header">
+        <h3 style="font-size: 17px; font-weight: 800;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Cambiar Master Key
+        </h3>
+        <button class="modal-close" onclick="closeChangePwdModal()">✕</button>
+      </div>
+
+      <form id="change-pwd-form" onsubmit="handleChangePwdSubmit(event)">
+        <div class="form-group">
+          <label>Clave Actual *</label>
+          <input type="password" id="pwd-current" class="form-input" required placeholder="Clave actual">
+        </div>
+        <div class="form-group">
+          <label>Nueva Clave *</label>
+          <input type="password" id="pwd-new" class="form-input" required minlength="6" placeholder="Mínimo 6 caracteres">
+        </div>
+        <div class="form-group">
+          <label>Confirmar Nueva Clave *</label>
+          <input type="password" id="pwd-confirm" class="form-input" required minlength="6" placeholder="Repite la nueva clave">
+        </div>
+
+        <div id="change-pwd-msg" style="display:none; padding: 8px 12px; border-radius: 8px; font-size: 11.5px; margin-bottom: 14px;"></div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
+          <button type="button" class="btn-admin" onclick="closeChangePwdModal()">Cancelar</button>
+          <button type="submit" class="btn-admin" style="background:#10B981;border-color:#10B981;color:#000;font-weight:700;">
+            Guardar Nueva Clave
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <footer>
     <div style="max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
       <div>© 2026 Opportunity Intelligence — Plataforma Privada de Liquidaciones</div>
@@ -1482,8 +1566,7 @@
 
     let currentCategory = 'real_estate'; // 'real_estate' o 'vehicles'
     let currentFilter = 'all';           // 'all', 'available', 'sold'
-    let searchQuery = '';
-    let isAdminMode = localStorage.getItem('oi_admin_authorized') === 'true';
+    let isAdminMode = isSessionValid();
 
     // ── GESTIÓN DE CATEGORÍAS ──
     function setCategory(cat) {
@@ -1649,29 +1732,238 @@
       });
     }
 
-    // ── GESTIÓN DE MODO ADMINISTRADOR ──
-    function toggleAdminMode() {
-      if (!isAdminMode) {
-        isAdminMode = true;
-        localStorage.setItem('oi_admin_authorized', 'true');
-      } else {
-        isAdminMode = false;
-        localStorage.removeItem('oi_admin_authorized');
+    // ── GESTIÓN DE MODO ADMINISTRADOR (ANTI-HACKING SHA-256 + RATE LIMITER) ──
+    const OI_SALT = 'OI_SECURE_SALT_2026_VIP';
+    const DEFAULT_MASTER_HASH = 'a4a223f6bf5f99160429111fdceca598e897be88d941a2827821d24ac6c96283'; // 'OI#2026*VIP' + OI_SALT
+
+    // Helper SHA-256 con Web Crypto API nativa
+    async function sha256(message) {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // Verificar si está bloqueado por fuerza bruta
+    function getLockoutRemainingSeconds() {
+      const lockUntil = parseInt(localStorage.getItem('oi_admin_lock_until') || '0', 10);
+      const now = Date.now();
+      if (now < lockUntil) {
+        return Math.ceil((lockUntil - now) / 1000);
       }
-      updateAdminUI();
-      renderCatalog();
+      return 0;
+    }
+
+    // Verificar si la sesión de 1 hora está activa y vigente
+    function isSessionValid() {
+      try {
+        const session = JSON.parse(localStorage.getItem('oi_admin_session') || '{}');
+        return session && session.authorized === true && session.exp > Date.now();
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function toggleAdminMode() {
+      if (isAdminMode) {
+        // Cerrar sesión
+        isAdminMode = false;
+        localStorage.removeItem('oi_admin_session');
+        localStorage.removeItem('oi_admin_authorized');
+        updateAdminUI();
+        renderCatalog();
+        return;
+      }
+
+      // Si ya tiene sesión válida en curso, ingresa de inmediato
+      if (isSessionValid()) {
+        isAdminMode = true;
+        updateAdminUI();
+        renderCatalog();
+        return;
+      }
+
+      openAuthModal();
+    }
+
+    function openAuthModal() {
+      const modal = document.getElementById('auth-modal');
+      const input = document.getElementById('auth-input-key');
+      const errMsg = document.getElementById('auth-error-msg');
+      const submitBtn = document.getElementById('btn-auth-submit');
+
+      input.value = '';
+      const remainingSec = getLockoutRemainingSeconds();
+      if (remainingSec > 0) {
+        const mins = Math.ceil(remainingSec / 60);
+        errMsg.style.display = 'block';
+        errMsg.innerHTML = `⚠️ Acceso temporalmente bloqueado por seguridad. Espera <b>${mins} min</b> para reintentar.`;
+        input.disabled = true;
+        submitBtn.disabled = true;
+      } else {
+        errMsg.style.display = 'none';
+        input.disabled = false;
+        submitBtn.disabled = false;
+      }
+
+      modal.classList.add('active');
+      setTimeout(() => input.focus(), 150);
+    }
+
+    function closeAuthModal() {
+      document.getElementById('auth-modal').classList.remove('active');
+    }
+
+    async function handleAuthSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('auth-input-key');
+      const errMsg = document.getElementById('auth-error-msg');
+      const submitBtn = document.getElementById('btn-auth-submit');
+      const enteredKey = input.value.trim();
+
+      const remainingSec = getLockoutRemainingSeconds();
+      if (remainingSec > 0) {
+        const mins = Math.ceil(remainingSec / 60);
+        errMsg.style.display = 'block';
+        errMsg.innerHTML = `⚠️ Acceso bloqueado. Espera <b>${mins} min</b>.`;
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Verificando...';
+
+      try {
+        const currentHash = localStorage.getItem('oi_admin_master_hash') || DEFAULT_MASTER_HASH;
+        const enteredHash = await sha256(enteredKey + OI_SALT);
+
+        if (enteredHash === currentHash) {
+          // Éxito: restablecer intentos fallidos
+          localStorage.removeItem('oi_admin_fails');
+          localStorage.removeItem('oi_admin_lock_until');
+          // Guardar sesión válida por 1 hora (3,600,000 ms)
+          localStorage.setItem('oi_admin_session', JSON.stringify({
+            authorized: true,
+            exp: Date.now() + 3600000
+          }));
+          localStorage.setItem('oi_admin_authorized', 'true');
+          isAdminMode = true;
+
+          closeAuthModal();
+          updateAdminUI();
+          renderCatalog();
+        } else {
+          // Clave incorrecta: contador de intentos
+          let fails = parseInt(localStorage.getItem('oi_admin_fails') || '0', 10) + 1;
+          localStorage.setItem('oi_admin_fails', fails.toString());
+
+          if (fails >= 3) {
+            // Bloqueo de 15 minutos
+            const lockUntil = Date.now() + 15 * 60 * 1000;
+            localStorage.setItem('oi_admin_lock_until', lockUntil.toString());
+            errMsg.style.display = 'block';
+            errMsg.innerHTML = '🚨 <b>Acceso bloqueado:</b> 3 intentos fallidos consecutivos. Sistema bloqueado por 15 minutos.';
+            input.disabled = true;
+            submitBtn.disabled = true;
+          } else {
+            const left = 3 - fails;
+            errMsg.style.display = 'block';
+            errMsg.innerHTML = `❌ Master Key incorrecta. Quedan <b>${left} intento${left > 1 ? 's' : ''}</b> antes de bloqueo temporal.`;
+            input.select();
+          }
+        }
+      } catch (err) {
+        errMsg.style.display = 'block';
+        errMsg.textContent = 'Error al verificar credenciales: ' + err.message;
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Desbloquear';
+      }
+    }
+
+    function togglePasswordVisibility(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      if (!input) return;
+      if (input.type === 'password') {
+        input.type = 'text';
+        if (icon) {
+          icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+        }
+      } else {
+        input.type = 'password';
+        if (icon) {
+          icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+        }
+      }
+    }
+
+    // Modal Cambiar Master Key
+    function openChangePwdModal() {
+      document.getElementById('change-pwd-form').reset();
+      const msg = document.getElementById('change-pwd-msg');
+      msg.style.display = 'none';
+      document.getElementById('change-pwd-modal').classList.add('active');
+    }
+
+    function closeChangePwdModal() {
+      document.getElementById('change-pwd-modal').classList.remove('active');
+    }
+
+    async function handleChangePwdSubmit(e) {
+      e.preventDefault();
+      const currentPwd = document.getElementById('pwd-current').value;
+      const newPwd = document.getElementById('pwd-new').value;
+      const confirmPwd = document.getElementById('pwd-confirm').value;
+      const msg = document.getElementById('change-pwd-msg');
+
+      if (newPwd !== confirmPwd) {
+        msg.style.display = 'block';
+        msg.style.background = 'rgba(239, 68, 68, 0.12)';
+        msg.style.border = '1px solid rgba(239, 68, 68, 0.35)';
+        msg.style.color = '#FCA5A5';
+        msg.textContent = '❌ Las nuevas claves no coinciden.';
+        return;
+      }
+
+      const activeHash = localStorage.getItem('oi_admin_master_hash') || DEFAULT_MASTER_HASH;
+      const testCurrentHash = await sha256(currentPwd + OI_SALT);
+
+      if (testCurrentHash !== activeHash) {
+        msg.style.display = 'block';
+        msg.style.background = 'rgba(239, 68, 68, 0.12)';
+        msg.style.border = '1px solid rgba(239, 68, 68, 0.35)';
+        msg.style.color = '#FCA5A5';
+        msg.textContent = '❌ La clave actual es incorrecta.';
+        return;
+      }
+
+      const newHash = await sha256(newPwd + OI_SALT);
+      localStorage.setItem('oi_admin_master_hash', newHash);
+
+      msg.style.display = 'block';
+      msg.style.background = 'rgba(16, 185, 129, 0.12)';
+      msg.style.border = '1px solid rgba(16, 185, 129, 0.35)';
+      msg.style.color = '#6EE7B7';
+      msg.textContent = '✅ Master Key actualizada exitosamente.';
+
+      setTimeout(() => {
+        closeChangePwdModal();
+      }, 1200);
     }
 
     function updateAdminUI() {
       const text = document.getElementById('admin-mode-text');
       const addBtn = document.getElementById('btn-add-asset');
+      const pwdBtn = document.getElementById('btn-change-pwd');
       const isMobile = window.innerWidth <= 768;
       if (isAdminMode) {
-        text.textContent = isMobile ? 'Admin: ON' : 'Modo Admin: ACTIVO';
+        text.textContent = isMobile ? 'Salir' : 'Cerrar Sesión';
         addBtn.style.display = 'inline-flex';
+        if (pwdBtn) pwdBtn.style.display = 'inline-flex';
       } else {
         text.textContent = isMobile ? 'Admin' : 'Acceso Admin';
         addBtn.style.display = 'none';
+        if (pwdBtn) pwdBtn.style.display = 'none';
       }
     }
     window.addEventListener('resize', updateAdminUI);
