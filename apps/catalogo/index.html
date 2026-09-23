@@ -481,6 +481,25 @@
       border-color: rgba(59, 130, 246, 0.4);
       box-shadow: 0 14px 35px rgba(0, 0, 0, 0.6);
     }
+    .card-admin-draggable {
+      cursor: grab;
+      user-select: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease, border-color 0.2s ease;
+    }
+    .card-admin-draggable:active {
+      cursor: grabbing;
+    }
+    .card.dragging {
+      opacity: 0.45;
+      transform: scale(0.97);
+      border: 2px dashed #3B82F6 !important;
+      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.25) !important;
+    }
+    .card.drag-over {
+      border: 2px solid #3B82F6 !important;
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.45) !important;
+      transform: translateY(-2px);
+    }
 
     .card-img-wrap {
       position: relative;
@@ -515,6 +534,61 @@
     .card-badge.sold {
       background: rgba(239, 68, 68, 0.95);
       border: 1px solid #EF4444;
+    }
+
+    .card-photo-count {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #F8FAFC;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      z-index: 4;
+      pointer-events: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+    .card-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #FFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 4;
+      opacity: 0;
+      transition: all 0.2s ease;
+      font-size: 18px;
+      line-height: 1;
+      user-select: none;
+    }
+    .card:hover .card-nav-btn {
+      opacity: 1;
+    }
+    .card-nav-btn:hover {
+      background: #3B82F6;
+      border-color: #60A5FA;
+      transform: translateY(-50%) scale(1.1);
+    }
+    .card-nav-prev { left: 8px; }
+    .card-nav-next { right: 8px; }
+    @media (hover: none) {
+      .card-nav-btn { opacity: 0.9; }
     }
 
     .sold-overlay {
@@ -704,6 +778,152 @@
       max-height: 90vh;
       overflow-y: auto;
       padding: 24px;
+      scrollbar-width: none; /* Firefox */
+      -ms-overflow-style: none; /* IE / Edge */
+    }
+    .modal-box::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Edge */
+      width: 0;
+      height: 0;
+    }
+
+    /* Nota u observación destacada en tarjeta */
+    .card-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      background: rgba(59, 130, 246, 0.08);
+      border: 1px solid rgba(59, 130, 246, 0.22);
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 14px;
+      font-size: 11.5px;
+      line-height: 1.45;
+      color: #93C5FD;
+    }
+    .card-note svg {
+      flex-shrink: 0;
+      margin-top: 2px;
+      stroke: #60A5FA;
+    }
+
+    /* Galería de fotos en Modal */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+    @media (max-width: 540px) {
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .thumb-card {
+      position: relative;
+      height: 90px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1.5px solid var(--border);
+      background: #000;
+      transition: all 0.2s ease;
+      cursor: grab;
+      user-select: none;
+    }
+    .thumb-card:active {
+      cursor: grabbing;
+    }
+    .thumb-order-controls {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      display: flex;
+      gap: 3px;
+      z-index: 3;
+    }
+    .thumb-move-btn {
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #FFF;
+      font-size: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      line-height: 1;
+    }
+    .thumb-move-btn:hover {
+      background: #3B82F6;
+      border-color: #60A5FA;
+      transform: scale(1.1);
+    }
+    .thumb-card.is-primary {
+      border: 2px solid #3B82F6;
+      box-shadow: 0 0 14px rgba(59, 130, 246, 0.5);
+    }
+    .thumb-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .thumb-del-btn {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(239, 68, 68, 0.9);
+      border: none;
+      color: #FFF;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 3;
+      transition: all 0.15s;
+    }
+    .thumb-del-btn:hover {
+      background: #DC2626;
+      transform: scale(1.12);
+    }
+    .thumb-star-btn {
+      position: absolute;
+      bottom: 4px;
+      left: 4px;
+      right: 4px;
+      padding: 3px 5px;
+      border-radius: 4px;
+      font-size: 9.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      border: none;
+      z-index: 3;
+      transition: all 0.2s;
+    }
+    .thumb-card.is-primary .thumb-star-btn {
+      background: #F59E0B;
+      color: #000;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+    .thumb-card:not(.is-primary) .thumb-star-btn {
+      background: rgba(15, 23, 42, 0.8);
+      color: #CBD5E1;
+      backdrop-filter: blur(4px);
+    }
+    .thumb-card:not(.is-primary) .thumb-star-btn:hover {
+      background: #3B82F6;
+      color: #FFF;
     }
     .modal-header {
       display: flex;
@@ -881,28 +1101,76 @@
       .financing-banner {
         flex-direction: column;
         align-items: stretch;
-        padding: 16px;
+        padding: 18px 16px;
         gap: 14px;
       }
       .financing-content {
-        align-items: flex-start;
-        gap: 12px;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 10px 12px;
+        align-items: center;
       }
       .financing-icon-box {
         width: 40px;
         height: 40px;
+        grid-column: 1;
+        grid-row: 1;
+        border-radius: 10px;
+      }
+      .financing-text {
+        display: contents;
       }
       .financing-text h4 {
+        grid-column: 2;
+        grid-row: 1;
         font-size: 15px;
+        line-height: 1.3;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+      .financing-badge {
+        font-size: 9.5px;
+        padding: 2px 6px;
       }
       .financing-text p {
-        font-size: 12.5px;
+        grid-column: 1 / -1;
+        font-size: 13px;
+        line-height: 1.5;
+        color: var(--fg-muted);
+        margin: 4px 0 2px;
+      }
+      .bank-tags-row {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        width: 100%;
+        margin-top: 2px;
+      }
+      .bank-pill {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 7px 10px;
+        font-size: 11.5px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 8px;
+        color: #CBD5E1;
+      }
+      .bank-pill svg {
+        flex-shrink: 0;
       }
       .btn-financing-cta {
         width: 100%;
         justify-content: center;
-        padding: 11px 16px;
-        font-size: 12.5px;
+        padding: 12px 16px;
+        font-size: 13px;
+        border-radius: 12px;
       }
 
       .filter-bar {
@@ -1097,6 +1365,271 @@
         color: #000;
         border-color: #25D366;
         font-weight: 700;
+      }
+    }
+
+    /* ── VISOR DE IMÁGENES VIP INTELIGENTE (LIGHTBOX ULTRA-PREMIUM) ── */
+    .card-img-wrap {
+      cursor: pointer;
+    }
+    .card-zoom-hint {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #F8FAFC;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 9px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      z-index: 3;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: all 0.2s ease;
+      pointer-events: none;
+    }
+    .card:hover .card-zoom-hint {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    @media (hover: none) {
+      .card-zoom-hint {
+        opacity: 0.85;
+        transform: translateY(0);
+      }
+    }
+
+    .oi-lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(7, 9, 14, 0.96);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      z-index: 1200;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 16px 20px 20px;
+      user-select: none;
+      opacity: 0;
+      transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .oi-lightbox.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .oi-lb-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      z-index: 10;
+    }
+    .oi-lb-info {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .oi-lb-title {
+      font-family: 'Manrope', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      color: #FFF;
+    }
+    .oi-lb-price {
+      font-size: 15px;
+      font-weight: 700;
+      color: #60A5FA;
+    }
+    .oi-lb-counter {
+      background: rgba(59, 130, 246, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      color: #93C5FD;
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+    .oi-lb-close-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #FFF;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .oi-lb-close-btn:hover {
+      background: rgba(239, 68, 68, 0.85);
+      border-color: #EF4444;
+      transform: scale(1.08);
+    }
+
+    /* Escenario Central */
+    .oi-lb-stage {
+      position: relative;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 14px 0;
+      min-height: 0;
+      overflow: hidden;
+    }
+    .oi-lb-main-img {
+      max-width: 90vw;
+      max-height: 65vh;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .oi-lb-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #FFF;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.2s ease;
+      line-height: 1;
+    }
+    .oi-lb-nav-btn:hover {
+      background: #3B82F6;
+      border-color: #60A5FA;
+      transform: translateY(-50%) scale(1.1);
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+    }
+    .oi-lb-prev { left: 16px; }
+    .oi-lb-next { right: 16px; }
+
+    /* Barra Inferior (Miniaturas + Botón WhatsApp) */
+    .oi-lb-footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      z-index: 10;
+    }
+    .oi-lb-thumbs {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      overflow-x: auto;
+      max-width: 100%;
+      padding: 4px;
+      scrollbar-width: none;
+    }
+    .oi-lb-thumbs::-webkit-scrollbar { display: none; }
+    .oi-lb-thumb {
+      width: 62px;
+      height: 46px;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
+      opacity: 0.55;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+      background: #000;
+    }
+    .oi-lb-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .oi-lb-thumb.active {
+      opacity: 1;
+      border: 2px solid #3B82F6;
+      box-shadow: 0 0 12px rgba(59, 130, 246, 0.6);
+      transform: scale(1.06);
+    }
+    .oi-lb-thumb:hover:not(.active) {
+      opacity: 0.85;
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .oi-lb-action-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .oi-lb-wa-btn {
+      background: #25D366;
+      color: #000;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 9px 20px;
+      border-radius: 24px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(37, 211, 102, 0.35);
+      transition: all 0.2s ease;
+    }
+    .oi-lb-wa-btn:hover {
+      background: #20BA5A;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 22px rgba(37, 211, 102, 0.5);
+    }
+
+    @media (max-width: 640px) {
+      .oi-lightbox {
+        padding: 12px 14px 16px;
+      }
+      .oi-lb-title {
+        font-size: 15px;
+      }
+      .oi-lb-price {
+        font-size: 14px;
+      }
+      .oi-lb-main-img {
+        max-width: 96vw;
+        max-height: 56vh;
+      }
+      .oi-lb-nav-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 20px;
+      }
+      .oi-lb-prev { left: 8px; }
+      .oi-lb-next { right: 8px; }
+      .oi-lb-thumb {
+        width: 52px;
+        height: 38px;
+      }
+      .oi-lb-wa-btn {
+        font-size: 12px;
+        padding: 8px 16px;
       }
     }
   </style>
@@ -1329,14 +1862,25 @@
         </div>
 
         <div class="form-group">
-          <label>Foto Principal (Subir Archivo o Enlace URL) *</label>
-          <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 6px;">
-            <input type="file" id="form-image-file" accept="image/*" class="form-input" style="padding: 6px 10px; font-size: 12px; flex: 1;" onchange="handleImageFileUpload(event)">
+          <label>Fotos del Activo *</label>
+
+          <!-- Botón de subida de fotos -->
+          <div style="margin-bottom: 8px;">
+            <label class="btn-admin" id="btn-upload-photos-label" style="cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 8px 14px; background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.35); color: #93C5FD; font-weight: 600;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span>Subir Fotos (Archivos)</span>
+              <input type="file" id="form-gallery-files" accept="image/*" multiple style="display: none;" onchange="handleGalleryFilesUpload(event)">
+            </label>
           </div>
-          <input type="text" id="form-image" class="form-input" placeholder="https://... o foto seleccionada" required oninput="updateImagePreview(this.value)">
-          <div id="image-preview-container" style="display:none; margin-top:8px; border-radius:8px; overflow:hidden; max-height:140px; border:1px solid var(--border);">
-            <img id="image-preview" src="" style="width:100%; height:140px; object-fit:cover; display:block;">
+
+          <!-- Cuadrícula de Miniaturas -->
+          <div id="gallery-thumbnails" class="gallery-grid"></div>
+          <div id="gallery-empty-tip" style="display: block; padding: 16px; text-align: center; border: 1px dashed var(--border); border-radius: 8px; color: var(--fg-muted); font-size: 12px;">
+            Selecciona fotos desde tu equipo (puedes elegir cuál es la portada con <b>⭐ Principal</b>).
           </div>
+
+          <!-- Campo oculto para compatibilidad con validación de formulario -->
+          <input type="hidden" id="form-image" required>
         </div>
 
         <div class="form-row">
@@ -1351,6 +1895,11 @@
               <option value="sold">🔴 VENDIDO / ADJUDICADO</option>
             </select>
           </div>
+        </div>
+
+        <div class="form-group">
+          <label>Notas / Observaciones Clave (Opcional)</label>
+          <textarea id="form-notes" class="form-input" rows="2" placeholder="ej. Mantenimientos de agencia al día, un solo dueño, libre de gravamen o entrega inmediata..." style="resize: vertical; min-height: 54px; font-family: inherit; font-size: 13px;"></textarea>
         </div>
 
         <div class="form-group">
@@ -1470,6 +2019,34 @@
     </a>
   </div>
 
+  <!-- VISOR DE IMÁGENES VIP INTELIGENTE (LIGHTBOX ULTRA-PREMIUM) -->
+  <div class="oi-lightbox" id="oi-lightbox" onclick="handleLightboxBackdropClick(event)">
+    <div class="oi-lb-header">
+      <div class="oi-lb-info">
+        <span class="oi-lb-title" id="oi-lb-title"></span>
+        <span class="oi-lb-price" id="oi-lb-price"></span>
+        <span class="oi-lb-counter" id="oi-lb-counter">1 de 1</span>
+      </div>
+      <button type="button" class="oi-lb-close-btn" onclick="closeImageViewer()" title="Cerrar (Esc)">✕</button>
+    </div>
+
+    <div class="oi-lb-stage" id="oi-lb-stage">
+      <button type="button" class="oi-lb-nav-btn oi-lb-prev" id="oi-lb-prev-btn" onclick="navigateLightbox(-1, event)" title="Anterior (←)">‹</button>
+      <img id="oi-lb-main-img" class="oi-lb-main-img" src="" alt="Vista previa">
+      <button type="button" class="oi-lb-nav-btn oi-lb-next" id="oi-lb-next-btn" onclick="navigateLightbox(1, event)" title="Siguiente (→)">›</button>
+    </div>
+
+    <div class="oi-lb-footer">
+      <div class="oi-lb-thumbs" id="oi-lb-thumbs"></div>
+      <div class="oi-lb-action-row">
+        <a id="oi-lb-wa-link" href="#" target="_blank" class="oi-lb-wa-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Consultar por este Activo
+        </a>
+      </div>
+    </div>
+  </div>
+
   <script>
     const ADVISOR_PHONE = '50765461527';
 
@@ -1485,6 +2062,12 @@
         marketPrice: 410000,
         badge: '-15% Bajo Avalúo',
         image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80',
+        images: [
+          'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80',
+          'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80',
+          'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80',
+          'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80'
+        ],
         specs: ['145 m²', '3 Recámaras', '2.5 Baños', '2 Estac.'],
         status: 'available',
         landingUrl: '../landings/landing1.html?id=OI-RE-2026'
@@ -1526,6 +2109,12 @@
         marketPrice: 31000,
         badge: '-21% Debajo de Mercado',
         image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80',
+        images: [
+          'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80',
+          'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=800&q=80',
+          'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80',
+          'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80'
+        ],
         specs: ['Año 2022', '48,000 km', 'Manual 6 Vel', 'Diésel 4x4'],
         status: 'available',
         landingUrl: '../landings/landing2.html?id=OI-AUTO-2022'
@@ -1573,19 +2162,80 @@
         if (res.ok) {
           const remoteData = await res.json();
           if (Array.isArray(remoteData) && remoteData.length > 0) {
-            inventory = remoteData.map(item => ({
-              id: item.id,
-              category: item.category,
-              title: item.title,
-              price: Number(item.price),
-              marketPrice: item.market_price ? Number(item.market_price) : null,
-              location: item.location,
-              image: item.image,
-              badge: item.badge,
-              status: item.status || 'available',
-              landingUrl: item.landing_url,
-              specs: typeof item.specs === 'string' ? JSON.parse(item.specs) : (item.specs || [])
-            }));
+            inventory = remoteData.map(item => {
+              let parsedSpecs = [];
+              try {
+                parsedSpecs = typeof item.specs === 'string' ? JSON.parse(item.specs) : (item.specs || []);
+              } catch (e) {
+                parsedSpecs = [];
+              }
+
+              let extractedNote = item.notes || null;
+              let extractedImages = item.images || null;
+              let extractedOrder = null;
+              let cleanSpecs = [];
+              if (Array.isArray(parsedSpecs)) {
+                cleanSpecs = parsedSpecs.filter(s => {
+                  if (typeof s === 'string') {
+                    if (s.startsWith('__NOTE__:')) {
+                      if (!extractedNote) extractedNote = s.slice(9);
+                      return false;
+                    }
+                    if (s.startsWith('__IMAGES__:')) {
+                      try {
+                        const parsedImgs = JSON.parse(s.slice(11));
+                        if (Array.isArray(parsedImgs)) extractedImages = parsedImgs;
+                      } catch (e) {}
+                      return false;
+                    }
+                    if (s.startsWith('__ORDER__:')) {
+                      const num = parseInt(s.slice(10), 10);
+                      if (!isNaN(num)) extractedOrder = num;
+                      return false;
+                    }
+                  }
+                  return true;
+                });
+              }
+
+              if (!extractedImages || !Array.isArray(extractedImages) || extractedImages.length === 0) {
+                extractedImages = item.image ? [item.image] : [];
+              }
+              const mainImg = extractedImages[0] || item.image || '';
+
+              return {
+                id: item.id,
+                category: item.category,
+                title: item.title,
+                price: Number(item.price),
+                marketPrice: item.market_price ? Number(item.market_price) : null,
+                location: item.location,
+                image: mainImg,
+                images: extractedImages,
+                badge: item.badge,
+                notes: extractedNote,
+                order: extractedOrder,
+                status: item.status || 'available',
+                landingUrl: item.landing_url,
+                specs: cleanSpecs
+              };
+            });
+
+            // Respetar el orden guardado por el usuario
+            const savedOrderIds = JSON.parse(localStorage.getItem('oi_catalog_order_ids') || 'null');
+            if (Array.isArray(savedOrderIds) && savedOrderIds.length > 0) {
+              inventory.sort((a, b) => {
+                const idxA = savedOrderIds.indexOf(a.id);
+                const idxB = savedOrderIds.indexOf(b.id);
+                if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+                if (idxA !== -1) return -1;
+                if (idxB !== -1) return 1;
+                return (a.order ?? 9999) - (b.order ?? 9999);
+              });
+            } else {
+              inventory.sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999));
+            }
+
             localStorage.setItem('oi_catalog_inventory', JSON.stringify(inventory));
             renderCatalog();
             updateCloudStatus(true);
@@ -1613,10 +2263,23 @@
 
     // Cargar del localStorage o inicializar con los datos por defecto
     let inventory = JSON.parse(localStorage.getItem('oi_catalog_inventory') || 'null');
+    const localSavedOrder = JSON.parse(localStorage.getItem('oi_catalog_order_ids') || 'null');
+
     if (!inventory || !Array.isArray(inventory) || inventory.length === 0) {
       inventory = DEFAULT_INVENTORY;
-      localStorage.setItem('oi_catalog_inventory', JSON.stringify(inventory));
+      saveInventory();
     } else {
+      // Ordenar según la última configuración guardada
+      if (Array.isArray(localSavedOrder) && localSavedOrder.length > 0) {
+        inventory.sort((a, b) => {
+          const idxA = localSavedOrder.indexOf(a.id);
+          const idxB = localSavedOrder.indexOf(b.id);
+          if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+          if (idxA !== -1) return -1;
+          if (idxB !== -1) return 1;
+          return 0;
+        });
+      }
       // Auto-migrar rutas antiguas en cache local hacia la nueva carpeta apps/landings/
       let updated = false;
       inventory.forEach(item => {
@@ -1626,7 +2289,7 @@
         }
       });
       if (updated) {
-        localStorage.setItem('oi_catalog_inventory', JSON.stringify(inventory));
+        saveInventory();
       }
     }
 
@@ -1637,24 +2300,25 @@
 
     function getSpecsArray(specs) {
       if (!specs) return [];
-      if (Array.isArray(specs)) return specs;
-      if (typeof specs === 'string') {
+      let arr = [];
+      if (Array.isArray(specs)) {
+        arr = specs;
+      } else if (typeof specs === 'string') {
         const trimmed = specs.trim();
         if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
           try {
             const parsed = JSON.parse(trimmed);
-            if (Array.isArray(parsed)) return parsed;
+            if (Array.isArray(parsed)) arr = parsed;
           } catch (e) {}
+        } else if (trimmed.includes('•')) {
+          arr = trimmed.split('•').map(s => s.trim()).filter(Boolean);
+        } else if (trimmed.includes(',')) {
+          arr = trimmed.split(',').map(s => s.trim()).filter(Boolean);
+        } else {
+          arr = [trimmed];
         }
-        if (trimmed.includes('•')) {
-          return trimmed.split('•').map(s => s.trim()).filter(Boolean);
-        }
-        if (trimmed.includes(',')) {
-          return trimmed.split(',').map(s => s.trim()).filter(Boolean);
-        }
-        return [trimmed];
       }
-      return [];
+      return arr.filter(s => typeof s === 'string' && !s.startsWith('__NOTE__:') && !s.startsWith('__IMAGES__:') && !s.startsWith('__ORDER__:'));
     }
 
     // ── GESTIÓN DE CATEGORÍAS ──
@@ -1723,8 +2387,18 @@
       filtered.forEach(item => {
         const isSold = item.status === 'sold';
         const card = document.createElement('div');
-        card.className = 'card';
+        card.className = `card ${isAdminMode ? 'card-admin-draggable' : ''}`;
         card.id = `card-${item.id}`;
+        card.dataset.id = item.id;
+
+        if (isAdminMode) {
+          card.draggable = true;
+          card.setAttribute('ondragstart', `handleCardDragStart(event, '${item.id}')`);
+          card.setAttribute('ondragover', `handleCardDragOver(event)`);
+          card.setAttribute('ondragleave', `handleCardDragLeave(event)`);
+          card.setAttribute('ondrop', `handleCardDrop(event, '${item.id}')`);
+          card.setAttribute('ondragend', `handleCardDragEnd(event)`);
+        }
 
         const specsHtml = getSpecsArray(item.specs).map(s => `
           <div class="spec-item">
@@ -1762,23 +2436,41 @@
         if (isAdminMode) {
           adminBarHtml = `
             <div class="card-admin-bar">
-              <button class="btn-toggle-sold" onclick="toggleItemSold('${item.id}')">
+              <button type="button" class="btn-toggle-sold" onclick="toggleItemSold('${item.id}')" draggable="false" ondragstart="event.stopPropagation()">
                 ${isSold ? '🟢 Marcar Disponible' : '🔴 Marcar VENDIDO'}
               </button>
-              <div style="display:flex;gap:6px;">
-                <button class="btn-toggle-sold" style="border-color:#3B82F6;color:#3B82F6;" onclick="editAsset('${item.id}')">Editar</button>
-                <button class="btn-delete-card" onclick="deleteAsset('${item.id}')">Eliminar</button>
+              <div style="display:flex;gap:6px;align-items:center;">
+                <span title="Arrastra la tarjeta para cambiar su orden" style="font-size:12px;color:var(--fg-muted);opacity:0.6;cursor:grab;margin-right:2px;letter-spacing:-1px;">⋮⋮</span>
+                <button type="button" class="btn-toggle-sold" style="border-color:#3B82F6;color:#3B82F6;" onclick="editAsset('${item.id}')" draggable="false" ondragstart="event.stopPropagation()">Editar</button>
+                <button type="button" class="btn-delete-card" onclick="deleteAsset('${item.id}')" draggable="false" ondragstart="event.stopPropagation()">Eliminar</button>
               </div>
             </div>
           `;
         }
 
+        const itemImages = (item.images && item.images.length > 0) ? item.images : [item.image].filter(Boolean);
+        const hasMultipleImgs = itemImages.length > 1;
+        const activeIdx = (typeof item._activeImgIndex === 'number' && item._activeImgIndex < itemImages.length) ? item._activeImgIndex : 0;
+        const currentActiveImg = itemImages[activeIdx] || item.image;
+
         card.innerHTML = `
-          <div class="card-img-wrap">
-            <img class="card-img" src="${item.image}" alt="${item.title}" loading="lazy">
+          <div class="card-img-wrap" onclick="openImageViewer('${item.id}')">
+            <img class="card-img" id="card-img-${item.id}" src="${currentActiveImg}" alt="${item.title}" loading="lazy">
             <div class="card-badge ${isSold ? 'sold' : ''}">
               ${isSold ? 'VENDIDO' : (item.badge || 'Oportunidad')}
             </div>
+            <div class="card-zoom-hint" title="Ver galería en pantalla completa">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              <span>Ver Fotos</span>
+            </div>
+            ${hasMultipleImgs ? `
+              <button type="button" class="card-nav-btn card-nav-prev" onclick="changeCardPhoto('${item.id}', -1, event)" title="Foto anterior">‹</button>
+              <button type="button" class="card-nav-btn card-nav-next" onclick="changeCardPhoto('${item.id}', 1, event)" title="Siguiente foto">›</button>
+              <div class="card-photo-count" id="card-count-${item.id}">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                ${activeIdx + 1}/${itemImages.length}
+              </div>
+            ` : ''}
             ${isSold ? `
               <div class="sold-overlay">
                 <div class="sold-stamp">VENDIDO</div>
@@ -1803,12 +2495,19 @@
               ${specsHtml}
             </div>
 
+            ${item.notes ? `
+              <div class="card-note">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                <span>${item.notes}</span>
+              </div>
+            ` : ''}
+
             <div class="card-actions">
-              <a href="${waUrl}" target="_blank" class="btn-card-primary">
+              <a href="${waUrl}" target="_blank" class="btn-card-primary" draggable="false" ondragstart="event.stopPropagation()">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                 WhatsApp
               </a>
-              <a href="${landingHref}" class="btn-card-secondary">
+              <a href="${landingHref}" class="btn-card-secondary" draggable="false" ondragstart="event.stopPropagation()">
                 Ficha VIP
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </a>
@@ -1819,6 +2518,73 @@
         `;
         grid.appendChild(card);
       });
+    }
+
+    // ── DRAG & DROP PARA ORDENAR TARJETAS EN MODO ADMIN ──
+    let draggedCardId = null;
+
+    function handleCardDragStart(e, id) {
+      if (!isAdminMode) return;
+      draggedCardId = id;
+      if (e.dataTransfer) {
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', id);
+      }
+      setTimeout(() => {
+        const el = document.getElementById(`card-${id}`);
+        if (el) el.classList.add('dragging');
+      }, 10);
+    }
+
+    function handleCardDragOver(e) {
+      if (!isAdminMode) return;
+      e.preventDefault();
+      if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+      const targetCard = e.currentTarget;
+      if (targetCard && !targetCard.classList.contains('drag-over') && targetCard.id !== `card-${draggedCardId}`) {
+        document.querySelectorAll('.card.drag-over').forEach(c => c.classList.remove('drag-over'));
+        targetCard.classList.add('drag-over');
+      }
+    }
+
+    function handleCardDragLeave(e) {
+      const targetCard = e.currentTarget;
+      if (targetCard && !targetCard.contains(e.relatedTarget)) {
+        targetCard.classList.remove('drag-over');
+      }
+    }
+
+    function handleCardDragEnd(e) {
+      document.querySelectorAll('.card').forEach(c => {
+        c.classList.remove('dragging');
+        c.classList.remove('drag-over');
+      });
+      draggedCardId = null;
+    }
+
+    function handleCardDrop(e, targetId) {
+      if (!isAdminMode) return;
+      e.preventDefault();
+      const sourceId = draggedCardId;
+      handleCardDragEnd(e);
+
+      if (!sourceId || sourceId === targetId) return;
+
+      const fromIndex = inventory.findIndex(i => i.id === sourceId);
+      const toIndex = inventory.findIndex(i => i.id === targetId);
+      if (fromIndex === -1 || toIndex === -1) return;
+
+      const [moved] = inventory.splice(fromIndex, 1);
+      inventory.splice(toIndex, 0, moved);
+
+      // Asignar orden secuencial a cada activo
+      inventory.forEach((item, idx) => {
+        item.order = idx;
+      });
+
+      saveInventory();
+      renderCatalog();
+      syncOrderToCloud();
     }
 
     // ── GESTIÓN DE MODO ADMINISTRADOR (ANTI-HACKING SHA-256 + RATE LIMITER) ──
@@ -2057,53 +2823,212 @@
     }
     window.addEventListener('resize', updateAdminUI);
 
-    // ── GESTIÓN DE ARCHIVOS DE IMAGEN & PREVIEW ──
-    function handleImageFileUpload(e) {
-      const file = e.target.files?.[0];
-      if (!file) return;
+    // ── GESTIÓN DE GALERÍA DE FOTOS (HASTA 8 FOTOS) & FOTO PRINCIPAL ──
+    let currentGalleryImages = [];
+    let currentPrimaryIndex = 0;
 
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        const img = new Image();
-        img.onload = function() {
-          const maxDim = 1200;
-          let width = img.width;
-          let height = img.height;
-          if (width > maxDim || height > maxDim) {
-            if (width > height) {
-              height = Math.round((height * maxDim) / width);
-              width = maxDim;
-            } else {
-              width = Math.round((width * maxDim) / height);
-              height = maxDim;
-            }
-          }
-          const canvas = document.createElement('canvas');
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
-          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.82);
+    function renderGalleryThumbnails() {
+      const container = document.getElementById('gallery-thumbnails');
+      const counter = document.getElementById('gallery-counter');
+      const emptyTip = document.getElementById('gallery-empty-tip');
+      const hiddenInput = document.getElementById('form-image');
+      const uploadLabel = document.getElementById('btn-upload-photos-label');
 
-          const inputUrl = document.getElementById('form-image');
-          inputUrl.value = compressedDataUrl;
-          updateImagePreview(compressedDataUrl);
-        };
-        img.src = evt.target.result;
-      };
-      reader.readAsDataURL(file);
+      if (!container) return;
+      container.innerHTML = '';
+
+      const total = currentGalleryImages.length;
+      if (counter) {
+        counter.textContent = `${total}/8 Fotos`;
+        counter.style.color = total >= 8 ? '#EF4444' : '#60A5FA';
+      }
+
+      if (uploadLabel) {
+        uploadLabel.style.opacity = total >= 8 ? '0.5' : '1';
+        uploadLabel.style.pointerEvents = total >= 8 ? 'none' : 'auto';
+      }
+
+      if (total === 0) {
+        if (emptyTip) emptyTip.style.display = 'block';
+        if (hiddenInput) hiddenInput.value = '';
+        return;
+      }
+
+      if (emptyTip) emptyTip.style.display = 'none';
+
+      if (currentPrimaryIndex >= total) currentPrimaryIndex = 0;
+      if (hiddenInput) hiddenInput.value = currentGalleryImages[currentPrimaryIndex];
+
+      currentGalleryImages.forEach((imgUrl, idx) => {
+        const isPrimary = (idx === currentPrimaryIndex);
+        const card = document.createElement('div');
+        card.className = `thumb-card ${isPrimary ? 'is-primary' : ''}`;
+        card.setAttribute('draggable', 'true');
+        card.setAttribute('ondragstart', `handleThumbDragStart(event, ${idx})`);
+        card.setAttribute('ondragover', `handleThumbDragOver(event)`);
+        card.setAttribute('ondrop', `handleThumbDrop(event, ${idx})`);
+
+        card.innerHTML = `
+          <img src="${imgUrl}" alt="Foto ${idx + 1}" loading="lazy">
+          <div class="thumb-order-controls">
+            ${idx > 0 ? `<button type="button" class="thumb-move-btn" onclick="moveGalleryPhoto(${idx}, -1)" title="Mover hacia la izquierda">◀</button>` : ''}
+            ${idx < total - 1 ? `<button type="button" class="thumb-move-btn" onclick="moveGalleryPhoto(${idx}, 1)" title="Mover hacia la derecha">▶</button>` : ''}
+          </div>
+          <button type="button" class="thumb-del-btn" onclick="removeGalleryPhoto(${idx})" title="Eliminar foto">✕</button>
+          <button type="button" class="thumb-star-btn" onclick="setPrimaryPhoto(${idx})" title="${isPrimary ? 'Foto Principal Seleccionada' : 'Marcar como Foto Principal'}">
+            ${isPrimary ? '⭐ Principal' : 'Hacer Principal'}
+          </button>
+        `;
+        container.appendChild(card);
+      });
     }
 
-    function updateImagePreview(url) {
-      const container = document.getElementById('image-preview-container');
-      const preview = document.getElementById('image-preview');
-      if (url && (url.startsWith('http') || url.startsWith('data:image'))) {
-        preview.src = url;
-        container.style.display = 'block';
-      } else {
-        container.style.display = 'none';
+    function moveGalleryPhoto(idx, delta) {
+      const targetIdx = idx + delta;
+      if (targetIdx < 0 || targetIdx >= currentGalleryImages.length) return;
+      const [item] = currentGalleryImages.splice(idx, 1);
+      currentGalleryImages.splice(targetIdx, 0, item);
+      currentPrimaryIndex = 0;
+      renderGalleryThumbnails();
+    }
+
+    let draggedThumbIdx = null;
+    function handleThumbDragStart(e, idx) {
+      draggedThumbIdx = idx;
+      if (e.dataTransfer) {
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', idx);
       }
     }
+    function handleThumbDragOver(e) {
+      e.preventDefault();
+      if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+    }
+    function handleThumbDrop(e, targetIdx) {
+      e.preventDefault();
+      if (draggedThumbIdx === null || draggedThumbIdx === targetIdx) return;
+      const [item] = currentGalleryImages.splice(draggedThumbIdx, 1);
+      currentGalleryImages.splice(targetIdx, 0, item);
+      currentPrimaryIndex = 0;
+      draggedThumbIdx = null;
+      renderGalleryThumbnails();
+    }
+
+    function setPrimaryPhoto(idx) {
+      if (idx < 0 || idx >= currentGalleryImages.length) return;
+      const [chosen] = currentGalleryImages.splice(idx, 1);
+      currentGalleryImages.unshift(chosen);
+      currentPrimaryIndex = 0;
+      renderGalleryThumbnails();
+    }
+
+    function removeGalleryPhoto(idx) {
+      if (idx < 0 || idx >= currentGalleryImages.length) return;
+      currentGalleryImages.splice(idx, 1);
+      if (currentPrimaryIndex >= currentGalleryImages.length) {
+        currentPrimaryIndex = Math.max(0, currentGalleryImages.length - 1);
+      }
+      renderGalleryThumbnails();
+    }
+
+    async function handleGalleryFilesUpload(e) {
+      const files = Array.from(e.target.files || []);
+      if (!files.length) return;
+
+      const remainingSlots = 8 - currentGalleryImages.length;
+      if (remainingSlots <= 0) {
+        alert('Ya alcanzaste el límite máximo de 8 fotos.');
+        e.target.value = '';
+        return;
+      }
+
+      const filesToProcess = files.slice(0, remainingSlots);
+      if (files.length > remainingSlots) {
+        alert(`Solo se agregaron ${remainingSlots} fotos para cumplir el límite de 8.`);
+      }
+
+      const compressPromises = filesToProcess.map(file => {
+        return new Promise(resolve => {
+          const reader = new FileReader();
+          reader.onload = evt => {
+            const img = new Image();
+            img.onload = () => {
+              const maxDim = 1000;
+              let width = img.width;
+              let height = img.height;
+              if (width > maxDim || height > maxDim) {
+                if (width > height) {
+                  height = Math.round((height * maxDim) / width);
+                  width = maxDim;
+                } else {
+                  width = Math.round((width * maxDim) / height);
+                  height = maxDim;
+                }
+              }
+              const canvas = document.createElement('canvas');
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, width, height);
+              resolve(canvas.toDataURL('image/jpeg', 0.78));
+            };
+            img.src = evt.target.result;
+          };
+          reader.readAsDataURL(file);
+        });
+      });
+
+      const compressedImages = await Promise.all(compressPromises);
+      currentGalleryImages.push(...compressedImages);
+      e.target.value = '';
+      renderGalleryThumbnails();
+    }
+
+    function addPhotoFromUrl() {
+      const input = document.getElementById('form-gallery-url-input');
+      if (!input) return;
+      const url = input.value.trim();
+      if (!url) return;
+      if (currentGalleryImages.length >= 8) {
+        alert('Límite de 8 fotos alcanzado.');
+        return;
+      }
+      if (!url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('data:image/')) {
+        alert('Por favor introduce un enlace URL válido (ej. https://...)');
+        return;
+      }
+      currentGalleryImages.push(url);
+      input.value = '';
+      renderGalleryThumbnails();
+    }
+
+    window.changeCardPhoto = function(assetId, delta, event) {
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      const item = inventory.find(i => i.id === assetId);
+      if (!item) return;
+      const imgs = (item.images && item.images.length > 0) ? item.images : [item.image].filter(Boolean);
+      if (imgs.length <= 1) return;
+
+      if (typeof item._activeImgIndex !== 'number') item._activeImgIndex = 0;
+      item._activeImgIndex = (item._activeImgIndex + delta + imgs.length) % imgs.length;
+
+      const imgEl = document.getElementById(`card-img-${assetId}`);
+      const countEl = document.getElementById(`card-count-${assetId}`);
+      if (imgEl) {
+        imgEl.style.opacity = '0.7';
+        imgEl.src = imgs[item._activeImgIndex];
+        setTimeout(() => { imgEl.style.opacity = '1'; }, 90);
+      }
+      if (countEl) {
+        countEl.innerHTML = `
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          ${item._activeImgIndex + 1}/${imgs.length}
+        `;
+      }
+    };
 
     // Cambiar estado a Vendido / Disponible
     async function toggleItemSold(id) {
@@ -2150,7 +3075,11 @@
     function openNewAssetModal() {
       document.getElementById('form-asset-id').value = '';
       document.getElementById('asset-form').reset();
-      document.getElementById('image-preview-container').style.display = 'none';
+      const notesField = document.getElementById('form-notes');
+      if (notesField) notesField.value = '';
+      currentGalleryImages = [];
+      currentPrimaryIndex = 0;
+      renderGalleryThumbnails();
       document.getElementById('modal-title-text').textContent = 'Publicar Nuevo Activo';
       document.getElementById('form-category').value = currentCategory;
       toggleFormFieldsByCategory(currentCategory);
@@ -2181,8 +3110,13 @@
       document.getElementById('form-badge').value = item.badge || '';
       document.getElementById('form-status').value = item.status || 'available';
       document.getElementById('form-landing-url').value = item.landingUrl || '';
+      const notesEl = document.getElementById('form-notes');
+      if (notesEl) notesEl.value = item.notes || '';
 
-      updateImagePreview(item.image);
+      currentGalleryImages = (item.images && item.images.length > 0) ? [...item.images] : (item.image ? [item.image] : []);
+      currentPrimaryIndex = 0;
+      renderGalleryThumbnails();
+
       toggleFormFieldsByCategory(item.category);
 
       if (item.category === 'real_estate') {
@@ -2215,6 +3149,7 @@
       const badge = document.getElementById('form-badge').value.trim();
       const status = document.getElementById('form-status').value;
       const landingUrl = document.getElementById('form-landing-url').value.trim();
+      const notes = (document.getElementById('form-notes')?.value || '').trim();
 
       let specs = [];
       if (cat === 'real_estate') {
@@ -2230,7 +3165,30 @@
       }
 
       const existingIndex = inventory.findIndex(i => i.id === id);
-      const assetData = { id, category: cat, title, price, marketPrice, location, image, badge, status, landingUrl, specs };
+      let primaryImage = document.getElementById('form-image').value.trim();
+      let galleryImages = [...currentGalleryImages];
+      if (galleryImages.length === 0 && primaryImage) {
+        galleryImages = [primaryImage];
+      }
+      if (galleryImages.length > 0 && !primaryImage) {
+        primaryImage = galleryImages[0];
+      }
+
+      const assetData = { 
+        id, 
+        category: cat, 
+        title, 
+        price, 
+        marketPrice, 
+        location, 
+        image: primaryImage, 
+        images: galleryImages, 
+        badge, 
+        status, 
+        landingUrl, 
+        specs, 
+        notes: notes || null 
+      };
 
       if (existingIndex >= 0) {
         inventory[existingIndex] = assetData;
@@ -2244,6 +3202,13 @@
 
       // Sincronizar en la nube InsForge
       try {
+        const specsWithMeta = [...specs];
+        if (notes) {
+          specsWithMeta.push(`__NOTE__:${notes}`);
+        }
+        if (galleryImages && galleryImages.length > 0) {
+          specsWithMeta.push(`__IMAGES__:${JSON.stringify(galleryImages)}`);
+        }
         const payload = [{
           id,
           category: cat,
@@ -2251,11 +3216,11 @@
           price,
           market_price: marketPrice,
           location,
-          image,
+          image: primaryImage,
           badge,
           status,
           landing_url: landingUrl,
-          specs: JSON.stringify(specs),
+          specs: JSON.stringify(specsWithMeta),
           updated_at: new Date().toISOString()
         }];
         await fetch(INSFORGE_CONFIG.endpoint, {
@@ -2279,8 +3244,225 @@
     }
 
     function saveInventory() {
+      inventory.forEach((item, idx) => {
+        if (typeof item.order !== 'number') item.order = idx;
+      });
       localStorage.setItem('oi_catalog_inventory', JSON.stringify(inventory));
+      localStorage.setItem('oi_catalog_order_ids', JSON.stringify(inventory.map(i => i.id)));
     }
+
+    let syncOrderDebounce = null;
+    function syncOrderToCloud() {
+      clearTimeout(syncOrderDebounce);
+      syncOrderDebounce = setTimeout(async () => {
+        try {
+          const payload = inventory.map((item, idx) => {
+            const specsWithMeta = [...(item.specs || [])];
+            if (item.notes) specsWithMeta.push(`__NOTE__:${item.notes}`);
+            if (item.images && item.images.length > 0) specsWithMeta.push(`__IMAGES__:${JSON.stringify(item.images)}`);
+            specsWithMeta.push(`__ORDER__:${idx}`);
+
+            return {
+              id: item.id,
+              category: item.category,
+              title: item.title,
+              price: item.price,
+              market_price: item.marketPrice,
+              location: item.location,
+              image: item.image,
+              badge: item.badge,
+              status: item.status,
+              landing_url: item.landingUrl,
+              specs: JSON.stringify(specsWithMeta),
+              updated_at: new Date().toISOString()
+            };
+          });
+
+          await fetch(INSFORGE_CONFIG.endpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key': INSFORGE_CONFIG.apiKey,
+              'Prefer': 'resolution=merge-duplicates'
+            },
+            body: JSON.stringify(payload)
+          });
+          updateCloudStatus(true);
+        } catch (err) {
+          console.warn('Error sincronizando orden a InsForge:', err);
+        }
+      }, 400);
+    }
+
+    // ── VISOR DE IMÁGENES VIP INTELIGENTE (LIGHTBOX ULTRA-PREMIUM) ──
+    let activeLightboxItem = null;
+    let activeLightboxIndex = 0;
+    let activeLightboxImages = [];
+
+    function openImageViewer(assetId, initialIndex = null) {
+      const item = inventory.find(i => i.id === assetId);
+      if (!item) return;
+
+      activeLightboxItem = item;
+      const imgs = (item.images && item.images.length > 0) ? item.images : [item.image].filter(Boolean);
+      activeLightboxImages = imgs.length > 0 ? imgs : ['https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80'];
+      
+      const targetIdx = (typeof initialIndex === 'number') ? initialIndex : (item._activeImgIndex || 0);
+      activeLightboxIndex = Math.min(Math.max(0, targetIdx), activeLightboxImages.length - 1);
+
+      // Título y Precio
+      const titleEl = document.getElementById('oi-lb-title');
+      const priceEl = document.getElementById('oi-lb-price');
+      if (titleEl) titleEl.textContent = item.title;
+      if (priceEl) priceEl.textContent = '$' + Number(item.price).toLocaleString('en-US') + ' USD';
+
+      // WhatsApp link directo
+      const formattedPrice = '$' + Number(item.price).toLocaleString('en-US');
+      const waMsg = encodeURIComponent(`Hola, estoy viendo las fotos del activo "${item.title}" (${formattedPrice} USD) en el catálogo de Opportunity Intelligence. Deseo más detalles.`);
+      const waLink = document.getElementById('oi-lb-wa-link');
+      if (waLink) waLink.href = `https://wa.me/${ADVISOR_PHONE}?text=${waMsg}`;
+
+      // Mostrar/ocultar botones de navegación si hay más de 1 imagen
+      const hasMultiple = activeLightboxImages.length > 1;
+      const prevBtn = document.getElementById('oi-lb-prev-btn');
+      const nextBtn = document.getElementById('oi-lb-next-btn');
+      if (prevBtn) prevBtn.style.display = hasMultiple ? 'flex' : 'none';
+      if (nextBtn) nextBtn.style.display = hasMultiple ? 'flex' : 'none';
+
+      // Renderizar miniaturas inferiores
+      const thumbsContainer = document.getElementById('oi-lb-thumbs');
+      if (thumbsContainer) {
+        thumbsContainer.innerHTML = '';
+        if (hasMultiple) {
+          thumbsContainer.style.display = 'flex';
+          activeLightboxImages.forEach((url, idx) => {
+            const t = document.createElement('div');
+            t.className = `oi-lb-thumb ${idx === activeLightboxIndex ? 'active' : ''}`;
+            t.innerHTML = `<img src="${url}" alt="Foto ${idx + 1}" loading="lazy">`;
+            t.onclick = (e) => {
+              e.stopPropagation();
+              selectLightboxIndex(idx);
+            };
+            thumbsContainer.appendChild(t);
+          });
+        } else {
+          thumbsContainer.style.display = 'none';
+        }
+      }
+
+      updateLightboxDisplay();
+
+      const modal = document.getElementById('oi-lightbox');
+      if (modal) modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function updateLightboxDisplay() {
+      const imgEl = document.getElementById('oi-lb-main-img');
+      const counterEl = document.getElementById('oi-lb-counter');
+
+      if (!imgEl || !activeLightboxImages.length) return;
+
+      imgEl.style.opacity = '0.35';
+      imgEl.style.transform = 'scale(0.98)';
+
+      setTimeout(() => {
+        imgEl.src = activeLightboxImages[activeLightboxIndex];
+        imgEl.style.opacity = '1';
+        imgEl.style.transform = 'scale(1)';
+      }, 90);
+
+      if (counterEl) {
+        counterEl.textContent = `${activeLightboxIndex + 1} de ${activeLightboxImages.length}`;
+      }
+
+      // Actualizar borde en miniaturas y auto-scroll a la activa
+      const thumbs = document.querySelectorAll('.oi-lb-thumb');
+      thumbs.forEach((t, i) => {
+        const isActive = (i === activeLightboxIndex);
+        t.classList.toggle('active', isActive);
+        if (isActive && typeof t.scrollIntoView === 'function') {
+          t.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+      });
+    }
+
+    function navigateLightbox(delta, e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      if (!activeLightboxImages || activeLightboxImages.length <= 1) return;
+      activeLightboxIndex = (activeLightboxIndex + delta + activeLightboxImages.length) % activeLightboxImages.length;
+      updateLightboxDisplay();
+    }
+
+    function selectLightboxIndex(idx) {
+      if (idx < 0 || idx >= activeLightboxImages.length) return;
+      activeLightboxIndex = idx;
+      updateLightboxDisplay();
+    }
+
+    function closeImageViewer() {
+      const modal = document.getElementById('oi-lightbox');
+      if (modal) modal.classList.remove('active');
+      document.body.style.overflow = '';
+      if (activeLightboxItem) {
+        activeLightboxItem._activeImgIndex = activeLightboxIndex;
+        const imgEl = document.getElementById(`card-img-${activeLightboxItem.id}`);
+        const countEl = document.getElementById(`card-count-${activeLightboxItem.id}`);
+        if (imgEl && activeLightboxImages[activeLightboxIndex]) {
+          imgEl.src = activeLightboxImages[activeLightboxIndex];
+        }
+        if (countEl && activeLightboxImages.length > 1) {
+          countEl.innerHTML = `
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            ${activeLightboxIndex + 1}/${activeLightboxImages.length}
+          `;
+        }
+      }
+      activeLightboxItem = null;
+    }
+
+    function handleLightboxBackdropClick(e) {
+      if (e.target.id === 'oi-lightbox' || e.target.id === 'oi-lb-stage') {
+        closeImageViewer();
+      }
+    }
+
+    // Teclado para navegar con flechas y cerrar con Escape
+    window.addEventListener('keydown', (e) => {
+      const modal = document.getElementById('oi-lightbox');
+      if (!modal || !modal.classList.contains('active')) return;
+
+      if (e.key === 'Escape') {
+        closeImageViewer();
+      } else if (e.key === 'ArrowLeft') {
+        navigateLightbox(-1);
+      } else if (e.key === 'ArrowRight') {
+        navigateLightbox(1);
+      }
+    });
+
+    // Soporte táctil Swipe para móviles en el visor
+    let lbTouchStartX = 0;
+    let lbTouchEndX = 0;
+    window.addEventListener('DOMContentLoaded', () => {
+      const stageEl = document.getElementById('oi-lb-stage');
+      if (stageEl) {
+        stageEl.addEventListener('touchstart', (e) => {
+          lbTouchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+        stageEl.addEventListener('touchend', (e) => {
+          lbTouchEndX = e.changedTouches[0].screenX;
+          const diff = lbTouchStartX - lbTouchEndX;
+          if (Math.abs(diff) > 40) {
+            if (diff > 0) navigateLightbox(1);
+            else navigateLightbox(-1);
+          }
+        }, { passive: true });
+      }
+    });
 
     // Inicializar interfaz y sincronizar desde la nube
     updateAdminUI();
