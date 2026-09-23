@@ -1632,7 +1632,30 @@
 
     let currentCategory = 'real_estate'; // 'real_estate' o 'vehicles'
     let currentFilter = 'all';           // 'all', 'available', 'sold'
+    let searchQuery = '';
     let isAdminMode = isSessionValid();
+
+    function getSpecsArray(specs) {
+      if (!specs) return [];
+      if (Array.isArray(specs)) return specs;
+      if (typeof specs === 'string') {
+        const trimmed = specs.trim();
+        if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+          try {
+            const parsed = JSON.parse(trimmed);
+            if (Array.isArray(parsed)) return parsed;
+          } catch (e) {}
+        }
+        if (trimmed.includes('•')) {
+          return trimmed.split('•').map(s => s.trim()).filter(Boolean);
+        }
+        if (trimmed.includes(',')) {
+          return trimmed.split(',').map(s => s.trim()).filter(Boolean);
+        }
+        return [trimmed];
+      }
+      return [];
+    }
 
     // ── GESTIÓN DE CATEGORÍAS ──
     function setCategory(cat) {
@@ -1703,7 +1726,7 @@
         card.className = 'card';
         card.id = `card-${item.id}`;
 
-        const specsHtml = (item.specs || []).map(s => `
+        const specsHtml = getSpecsArray(item.specs).map(s => `
           <div class="spec-item">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
             ${s}
