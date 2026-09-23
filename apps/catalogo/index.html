@@ -893,23 +893,29 @@
       background: #DC2626;
       transform: scale(1.12);
     }
-    .thumb-star-btn {
+    .thumb-bottom-actions {
       position: absolute;
       bottom: 4px;
       left: 4px;
       right: 4px;
-      padding: 3px 5px;
+      display: flex;
+      gap: 4px;
+      z-index: 3;
+    }
+    .thumb-star-btn {
+      flex: 1;
+      padding: 4px 2px;
       border-radius: 4px;
-      font-size: 9.5px;
+      font-size: 9px;
       font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 3px;
+      gap: 2px;
       border: none;
-      z-index: 3;
       transition: all 0.2s;
+      white-space: nowrap;
     }
     .thumb-card.is-primary .thumb-star-btn {
       background: #F59E0B;
@@ -917,13 +923,38 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.5);
     }
     .thumb-card:not(.is-primary) .thumb-star-btn {
-      background: rgba(15, 23, 42, 0.8);
+      background: rgba(15, 23, 42, 0.85);
       color: #CBD5E1;
       backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
     }
     .thumb-card:not(.is-primary) .thumb-star-btn:hover {
       background: #3B82F6;
       color: #FFF;
+    }
+    .thumb-blur-btn {
+      flex: 1;
+      padding: 4px 2px;
+      border-radius: 4px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(59, 130, 246, 0.45);
+      color: #93C5FD;
+      font-size: 9px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .thumb-blur-btn:hover {
+      background: #3B82F6;
+      border-color: #60A5FA;
+      color: #FFF;
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
     }
     .modal-header {
       display: flex;
@@ -1996,6 +2027,77 @@
     </div>
   </div>
 
+  <!-- MODAL EDITOR DE PRIVACIDAD / DESENFOCAR PLACA -->
+  <div class="modal-overlay" id="blur-editor-modal">
+    <div class="modal-box" style="max-width: 760px; padding: 22px; width: 95%;">
+      <div class="modal-header" style="margin-bottom: 12px; padding-bottom: 10px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="width:34px; height:34px; border-radius:8px; background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.3); display:flex; align-items:center; justify-content:center; color:#60A5FA; flex-shrink:0;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div>
+            <h3 style="font-size: 16px; font-weight: 800; color: #FFF; margin:0;">
+              Editor de Privacidad — Tapar Placa
+            </h3>
+            <span style="font-size: 11.5px; color: var(--fg-muted);">Dibuja un recuadro sobre la placa. Puedes moverlo, rotarlo o ajustar sus esquinas</span>
+          </div>
+        </div>
+        <button type="button" class="modal-close" onclick="closeBlurEditor()">✕</button>
+      </div>
+
+      <div id="blur-canvas-wrapper" style="position: relative; background: #07090E; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; min-height: 260px; max-height: 54vh; margin: 10px 0; user-select: none;">
+        <canvas id="blur-editor-canvas" style="max-width: 100%; max-height: 52vh; display: block; cursor: crosshair; touch-action: none;"></canvas>
+      </div>
+
+      <!-- BARRA DE AJUSTE Y ENDEREZADO DE LA PLACA -->
+      <div id="blur-adjust-toolbar" style="display: none; background: rgba(19, 23, 34, 0.95); border: 1px solid rgba(59, 130, 246, 0.45); border-radius: 10px; padding: 10px 14px; margin: 8px 0 12px; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; box-shadow: 0 4px 18px rgba(0,0,0,0.5);">
+        <div style="display:flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+          <span style="font-size: 11.5px; font-weight: 700; color: #93C5FD; display:flex; align-items:center; gap:4px; margin-right: 2px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            Inclinación:
+          </span>
+          <button type="button" class="btn-admin" onclick="adjustBlurAngle(-2)" style="padding: 4px 8px; font-size: 11px;" title="Inclinar 2° a la izquierda">↶ -2°</button>
+          <span id="blur-angle-display" style="font-size: 12px; font-weight: 700; color: #FFF; min-width: 34px; text-align: center; font-family: monospace;">0°</span>
+          <button type="button" class="btn-admin" onclick="adjustBlurAngle(2)" style="padding: 4px 8px; font-size: 11px;" title="Inclinar 2° a la derecha">↷ +2°</button>
+          <button type="button" class="btn-admin" onclick="adjustBlurAngle(0, true)" style="padding: 4px 7px; font-size: 10.5px; color: var(--fg-muted);" title="Enderezar a 0°">Enderezar (0°)</button>
+        </div>
+
+        <div style="display:flex; align-items: center; gap: 8px;">
+          <button type="button" class="btn-admin" onclick="cancelBlurSelection()" style="padding: 6px 12px; font-size: 11.5px; color: #94A3B8;">
+            Descartar
+          </button>
+          <button type="button" class="btn-admin" onclick="applyBlurSelection()" style="background: #3B82F6; border-color: #60A5FA; color: #FFF; font-weight: 800; padding: 6px 14px; font-size: 11.5px; gap: 6px; box-shadow: 0 0 14px rgba(59, 130, 246, 0.5);">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Aplicar Desenfoque
+          </button>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 14px;">
+        <div style="display:flex; gap: 8px;">
+          <button type="button" class="btn-admin" onclick="undoBlurAction()" id="btn-blur-undo" style="padding: 8px 12px; font-size: 12px; gap: 5px;" title="Deshacer el último desenfoque">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+            Deshacer
+          </button>
+          <button type="button" class="btn-admin" onclick="resetBlurCanvas()" style="padding: 8px 12px; font-size: 12px; gap: 5px;" title="Restaurar foto original">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            Reiniciar
+          </button>
+        </div>
+
+        <div style="display:flex; gap: 8px;">
+          <button type="button" class="btn-admin" onclick="closeBlurEditor()" style="padding: 8px 14px; font-size: 12px;">
+            Cancelar
+          </button>
+          <button type="button" class="btn-admin" onclick="saveBlurredImage()" style="background: #10B981; border-color: #10B981; color: #000; font-weight: 700; padding: 8px 16px; font-size: 12px; gap: 6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Guardar Foto
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <footer>
     <div style="max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
       <div>© 2026 Opportunity Intelligence — Plataforma Privada de Liquidaciones</div>
@@ -2873,9 +2975,14 @@
             ${idx < total - 1 ? `<button type="button" class="thumb-move-btn" onclick="moveGalleryPhoto(${idx}, 1)" title="Mover hacia la derecha">▶</button>` : ''}
           </div>
           <button type="button" class="thumb-del-btn" onclick="removeGalleryPhoto(${idx})" title="Eliminar foto">✕</button>
-          <button type="button" class="thumb-star-btn" onclick="setPrimaryPhoto(${idx})" title="${isPrimary ? 'Foto Principal Seleccionada' : 'Marcar como Foto Principal'}">
-            ${isPrimary ? '⭐ Principal' : 'Hacer Principal'}
-          </button>
+          <div class="thumb-bottom-actions">
+            <button type="button" class="thumb-star-btn" onclick="setPrimaryPhoto(${idx})" title="${isPrimary ? 'Foto Principal Seleccionada' : 'Marcar como Foto Principal'}">
+              ${isPrimary ? '⭐ Portada' : 'Portada'}
+            </button>
+            <button type="button" class="thumb-blur-btn" onclick="openBlurEditor(${idx})" title="Tapar o desenfocar placa del auto">
+              🛡️ Placa
+            </button>
+          </div>
         `;
         container.appendChild(card);
       });
@@ -2977,6 +3084,7 @@
       });
 
       const compressedImages = await Promise.all(compressPromises);
+      compressedImages.forEach(u => galleryOriginalCleanMap.set(u, u));
       currentGalleryImages.push(...compressedImages);
       e.target.value = '';
       renderGalleryThumbnails();
@@ -2995,6 +3103,7 @@
         alert('Por favor introduce un enlace URL válido (ej. https://...)');
         return;
       }
+      galleryOriginalCleanMap.set(url, url);
       currentGalleryImages.push(url);
       input.value = '';
       renderGalleryThumbnails();
@@ -3112,6 +3221,15 @@
       if (notesEl) notesEl.value = item.notes || '';
 
       currentGalleryImages = (item.images && item.images.length > 0) ? [...item.images] : (item.image ? [item.image] : []);
+      if (item.originalImages && Array.isArray(item.originalImages)) {
+        currentGalleryImages.forEach((u, i) => {
+          galleryOriginalCleanMap.set(u, item.originalImages[i] || u);
+        });
+      } else {
+        currentGalleryImages.forEach(u => {
+          if (!galleryOriginalCleanMap.has(u)) galleryOriginalCleanMap.set(u, u);
+        });
+      }
       currentPrimaryIndex = 0;
       renderGalleryThumbnails();
 
@@ -3181,6 +3299,7 @@
         location, 
         image: primaryImage, 
         images: galleryImages, 
+        originalImages: galleryImages.map(u => galleryOriginalCleanMap.get(u) || u),
         badge, 
         status, 
         landingUrl, 
@@ -3430,6 +3549,12 @@
 
     // Teclado para navegar con flechas y cerrar con Escape
     window.addEventListener('keydown', (e) => {
+      const blurModal = document.getElementById('blur-editor-modal');
+      if (blurModal && blurModal.classList.contains('active')) {
+        if (e.key === 'Escape') closeBlurEditor();
+        return;
+      }
+
       const modal = document.getElementById('oi-lightbox');
       if (!modal || !modal.classList.contains('active')) return;
 
@@ -3461,6 +3586,479 @@
         }, { passive: true });
       }
     });
+
+    // ── EDITOR DE PRIVACIDAD / DESENFOCAR PLACA CON ROTACIÓN Y AJUSTE ──
+    const galleryOriginalCleanMap = new Map();
+    let blurEditingIndex = null;
+    let blurBaseCanvas = null;        // Canvas fuera de pantalla con la imagen base
+    let blurOriginalCleanImg = null;  // Objeto Image con la foto limpia original
+    let blurOriginalCleanUrl = null;  // URL de la foto limpia original
+    let isBlurResetToClean = false;   // Indicador si el usuario presionó Reiniciar
+    let blurHistory = [];             // Historial de ImageData para Deshacer
+    let blurSelection = null;         // { cx, cy, w, h, angle }
+    let blurDragMode = null;          // 'create' | 'move' | 'rotate' | 'nw' | 'ne' | 'se' | 'sw'
+    let blurDragStart = { x: 0, y: 0 };
+    let blurBoxInitial = null;
+
+    function openBlurEditor(idx) {
+      if (idx < 0 || idx >= currentGalleryImages.length) return;
+      blurEditingIndex = idx;
+      blurHistory = [];
+      blurSelection = null;
+      blurDragMode = null;
+      isBlurResetToClean = false;
+
+      const currentUrl = currentGalleryImages[idx];
+      blurOriginalCleanUrl = galleryOriginalCleanMap.get(currentUrl) || currentUrl;
+
+      const modal = document.getElementById('blur-editor-modal');
+      const canvas = document.getElementById('blur-editor-canvas');
+      if (!modal || !canvas) return;
+
+      // Cargar la imagen limpia original en segundo plano para restaurarla con Reiniciar
+      const cleanImg = new Image();
+      cleanImg.crossOrigin = 'anonymous';
+      cleanImg.src = blurOriginalCleanUrl;
+      blurOriginalCleanImg = cleanImg;
+
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        const maxDim = 1200;
+        let w = img.naturalWidth || img.width;
+        let h = img.naturalHeight || img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) {
+            h = Math.round((h * maxDim) / w);
+            w = maxDim;
+          } else {
+            w = Math.round((w * maxDim) / h);
+            h = maxDim;
+          }
+        }
+
+        // Crear baseCanvas independiente
+        blurBaseCanvas = document.createElement('canvas');
+        blurBaseCanvas.width = w;
+        blurBaseCanvas.height = h;
+        const bCtx = blurBaseCanvas.getContext('2d');
+        bCtx.drawImage(img, 0, 0, w, h);
+
+        canvas.width = w;
+        canvas.height = h;
+
+        saveBlurState();
+        renderBlurCanvas();
+        updateBlurToolbarUI();
+        modal.classList.add('active');
+        setupBlurCanvasListeners();
+      };
+      img.onerror = () => {
+        alert('No se pudo cargar la imagen para edición.');
+      };
+      img.src = currentUrl;
+    }
+
+    function closeBlurEditor() {
+      const modal = document.getElementById('blur-editor-modal');
+      if (modal) modal.classList.remove('active');
+      blurEditingIndex = null;
+      blurBaseCanvas = null;
+      blurOriginalCleanImg = null;
+      blurOriginalCleanUrl = null;
+      blurHistory = [];
+      blurSelection = null;
+      blurDragMode = null;
+      updateBlurToolbarUI();
+    }
+
+    function saveBlurState() {
+      if (!blurBaseCanvas) return;
+      const bCtx = blurBaseCanvas.getContext('2d');
+      blurHistory.push(bCtx.getImageData(0, 0, blurBaseCanvas.width, blurBaseCanvas.height));
+      if (blurHistory.length > 20) blurHistory.shift();
+      updateUndoButton();
+    }
+
+    function undoBlurAction() {
+      if (blurHistory.length <= 1) return;
+      blurHistory.pop();
+      const prevState = blurHistory[blurHistory.length - 1];
+      if (blurBaseCanvas && prevState) {
+        const bCtx = blurBaseCanvas.getContext('2d');
+        bCtx.putImageData(prevState, 0, 0);
+      }
+      blurSelection = null;
+      updateBlurToolbarUI();
+      renderBlurCanvas();
+      updateUndoButton();
+    }
+
+    function resetBlurCanvas() {
+      if (!blurBaseCanvas) return;
+      const bCtx = blurBaseCanvas.getContext('2d');
+
+      const doReset = () => {
+        if (blurOriginalCleanImg && blurOriginalCleanImg.complete && blurOriginalCleanImg.naturalWidth > 0) {
+          bCtx.clearRect(0, 0, blurBaseCanvas.width, blurBaseCanvas.height);
+          bCtx.drawImage(blurOriginalCleanImg, 0, 0, blurBaseCanvas.width, blurBaseCanvas.height);
+          blurHistory = [bCtx.getImageData(0, 0, blurBaseCanvas.width, blurBaseCanvas.height)];
+        } else if (blurHistory.length > 0) {
+          bCtx.putImageData(blurHistory[0], 0, 0);
+          blurHistory = [blurHistory[0]];
+        }
+        isBlurResetToClean = true;
+        blurSelection = null;
+        blurDragMode = null;
+        updateBlurToolbarUI();
+        renderBlurCanvas();
+        updateUndoButton();
+      };
+
+      if (blurOriginalCleanImg && !blurOriginalCleanImg.complete) {
+        blurOriginalCleanImg.onload = doReset;
+      } else {
+        doReset();
+      }
+    }
+
+    function updateUndoButton() {
+      const btnUndo = document.getElementById('btn-blur-undo');
+      if (btnUndo) {
+        btnUndo.disabled = blurHistory.length <= 1;
+        btnUndo.style.opacity = blurHistory.length <= 1 ? '0.5' : '1';
+        btnUndo.style.pointerEvents = blurHistory.length <= 1 ? 'none' : 'auto';
+      }
+    }
+
+    function updateBlurToolbarUI() {
+      const toolbar = document.getElementById('blur-adjust-toolbar');
+      const angleDisplay = document.getElementById('blur-angle-display');
+      if (!toolbar) return;
+
+      if (blurSelection) {
+        toolbar.style.display = 'flex';
+        if (angleDisplay) {
+          const deg = Math.round((blurSelection.angle * 180) / Math.PI);
+          angleDisplay.textContent = `${deg}°`;
+        }
+      } else {
+        toolbar.style.display = 'none';
+      }
+    }
+
+    function adjustBlurAngle(deltaDeg, reset = false) {
+      if (!blurSelection) return;
+      if (reset) {
+        blurSelection.angle = 0;
+      } else {
+        blurSelection.angle += (deltaDeg * Math.PI) / 180;
+      }
+      updateBlurToolbarUI();
+      renderBlurCanvas();
+    }
+
+    function cancelBlurSelection() {
+      blurSelection = null;
+      updateBlurToolbarUI();
+      renderBlurCanvas();
+    }
+
+    function applyBlurSelection() {
+      if (!blurSelection || !blurBaseCanvas) return;
+      const { cx, cy, w, h, angle } = blurSelection;
+      if (w < 6 || h < 6) return;
+
+      isBlurResetToClean = false;
+
+      const bCtx = blurBaseCanvas.getContext('2d');
+
+      // Crear imagen pixelada en miniatura para muestreo nítido
+      const scale = 1 / 14;
+      const smallCanvas = document.createElement('canvas');
+      smallCanvas.width = Math.max(4, Math.ceil(blurBaseCanvas.width * scale));
+      smallCanvas.height = Math.max(4, Math.ceil(blurBaseCanvas.height * scale));
+      const sCtx = smallCanvas.getContext('2d');
+      sCtx.imageSmoothingEnabled = true;
+      sCtx.drawImage(blurBaseCanvas, 0, 0, smallCanvas.width, smallCanvas.height);
+
+      // Aplicar máscara de recorte rotada
+      bCtx.save();
+      bCtx.translate(cx, cy);
+      bCtx.rotate(angle);
+      bCtx.beginPath();
+      bCtx.rect(-w / 2, -h / 2, w, h);
+      bCtx.clip();
+
+      // Dibujar imagen pixelada en escala real sin suavizado
+      bCtx.setTransform(1, 0, 0, 1, 0, 0);
+      bCtx.imageSmoothingEnabled = false;
+      bCtx.drawImage(smallCanvas, 0, 0, blurBaseCanvas.width, blurBaseCanvas.height);
+      bCtx.restore();
+
+      // Dibujar borde sutil elegante alrededor de la placa tapada
+      bCtx.save();
+      bCtx.translate(cx, cy);
+      bCtx.rotate(angle);
+      bCtx.strokeStyle = 'rgba(255, 255, 255, 0.28)';
+      bCtx.lineWidth = 1.5;
+      bCtx.strokeRect(-w / 2 + 0.5, -h / 2 + 0.5, w - 1, h - 1);
+      bCtx.restore();
+
+      saveBlurState();
+      blurSelection = null;
+      updateBlurToolbarUI();
+      renderBlurCanvas();
+    }
+
+    function renderBlurCanvas() {
+      const canvas = document.getElementById('blur-editor-canvas');
+      if (!canvas || !blurBaseCanvas) return;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(blurBaseCanvas, 0, 0);
+
+      if (!blurSelection) return;
+
+      const { cx, cy, w, h, angle } = blurSelection;
+      const hw = w / 2;
+      const hh = h / 2;
+
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(angle);
+
+      // Relleno y borde del recuadro
+      ctx.fillStyle = 'rgba(59, 130, 246, 0.22)';
+      ctx.fillRect(-hw, -hh, w, h);
+
+      ctx.strokeStyle = '#60A5FA';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 4]);
+      ctx.strokeRect(-hw, -hh, w, h);
+      ctx.setLineDash([]);
+
+      // Línea y perilla de rotación superior
+      ctx.beginPath();
+      ctx.moveTo(0, -hh);
+      ctx.lineTo(0, -hh - 24);
+      ctx.strokeStyle = '#38BDF8';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(0, -hh - 24, 7, 0, Math.PI * 2);
+      ctx.fillStyle = '#38BDF8';
+      ctx.fill();
+      ctx.strokeStyle = '#FFF';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Tiradores en las 4 esquinas
+      const corners = [
+        { x: -hw, y: -hh },
+        { x: hw, y: -hh },
+        { x: hw, y: hh },
+        { x: -hw, y: hh }
+      ];
+      corners.forEach(c => {
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, 6, 0, Math.PI * 2);
+        ctx.fillStyle = '#FFF';
+        ctx.fill();
+        ctx.strokeStyle = '#3B82F6';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      });
+
+      // Cruz guía en el centro
+      ctx.beginPath();
+      ctx.moveTo(-6, 0); ctx.lineTo(6, 0);
+      ctx.moveTo(0, -6); ctx.lineTo(0, 6);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function saveBlurredImage() {
+      if (blurEditingIndex === null || !blurBaseCanvas) return;
+
+      // Si hay un recuadro activo sin aplicar, aplicarlo antes de guardar
+      if (blurSelection) {
+        applyBlurSelection();
+      }
+
+      let finalUrl;
+      if (isBlurResetToClean && blurOriginalCleanUrl) {
+        // Restaurar la foto limpia original sin desenfoque
+        finalUrl = blurOriginalCleanUrl;
+      } else {
+        finalUrl = blurBaseCanvas.toDataURL('image/jpeg', 0.82);
+        if (blurOriginalCleanUrl) {
+          galleryOriginalCleanMap.set(finalUrl, blurOriginalCleanUrl);
+        }
+      }
+
+      currentGalleryImages[blurEditingIndex] = finalUrl;
+
+      if (blurEditingIndex === currentPrimaryIndex) {
+        const hiddenInput = document.getElementById('form-image');
+        if (hiddenInput) hiddenInput.value = finalUrl;
+      }
+
+      renderGalleryThumbnails();
+      closeBlurEditor();
+    }
+
+    let blurListenersAttached = false;
+    function setupBlurCanvasListeners() {
+      if (blurListenersAttached) return;
+      blurListenersAttached = true;
+
+      const canvas = document.getElementById('blur-editor-canvas');
+      if (!canvas) return;
+
+      function getCanvasPt(e) {
+        const clientX = (e.touches && e.touches.length > 0) ? e.touches[0].clientX : e.clientX;
+        const clientY = (e.touches && e.touches.length > 0) ? e.touches[0].clientY : e.clientY;
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        return {
+          x: Math.max(0, Math.min(canvas.width, (clientX - rect.left) * scaleX)),
+          y: Math.max(0, Math.min(canvas.height, (clientY - rect.top) * scaleY))
+        };
+      }
+
+      function hitTest(pt) {
+        if (!blurSelection) return 'none';
+        const { cx, cy, w, h, angle } = blurSelection;
+        const hw = w / 2;
+        const hh = h / 2;
+
+        const dx = pt.x - cx;
+        const dy = pt.y - cy;
+        const cos = Math.cos(-angle);
+        const sin = Math.sin(-angle);
+        const lx = dx * cos - dy * sin;
+        const ly = dx * sin + dy * cos;
+
+        // Perilla de rotación
+        const distRot = Math.hypot(lx - 0, ly - (-hh - 24));
+        if (distRot <= 16) return 'rotate';
+
+        // Esquinas
+        if (Math.hypot(lx - (-hw), ly - (-hh)) <= 14) return 'nw';
+        if (Math.hypot(lx - hw, ly - (-hh)) <= 14) return 'ne';
+        if (Math.hypot(lx - hw, ly - hh) <= 14) return 'se';
+        if (Math.hypot(lx - (-hw), ly - hh) <= 14) return 'sw';
+
+        // Cuerpo interior
+        if (Math.abs(lx) <= hw && Math.abs(ly) <= hh) return 'move';
+
+        return 'none';
+      }
+
+      function handlePointerDown(e) {
+        const pt = getCanvasPt(e);
+        const hit = hitTest(pt);
+
+        if (hit !== 'none') {
+          blurDragMode = hit;
+          blurDragStart = pt;
+          blurBoxInitial = { ...blurSelection };
+        } else {
+          blurDragMode = 'create';
+          blurDragStart = pt;
+          blurSelection = {
+            cx: pt.x,
+            cy: pt.y,
+            w: 4,
+            h: 4,
+            angle: 0
+          };
+          blurBoxInitial = { ...blurSelection };
+          updateBlurToolbarUI();
+          renderBlurCanvas();
+        }
+      }
+
+      function handlePointerMove(e) {
+        const pt = getCanvasPt(e);
+
+        if (!blurDragMode) {
+          const hit = hitTest(pt);
+          if (hit === 'rotate') canvas.style.cursor = 'grab';
+          else if (hit === 'move') canvas.style.cursor = 'move';
+          else if (hit === 'nw' || hit === 'se') canvas.style.cursor = 'nwse-resize';
+          else if (hit === 'ne' || hit === 'sw') canvas.style.cursor = 'nesw-resize';
+          else canvas.style.cursor = 'crosshair';
+          return;
+        }
+
+        if (blurDragMode === 'create') {
+          const minX = Math.min(blurDragStart.x, pt.x);
+          const minY = Math.min(blurDragStart.y, pt.y);
+          const w = Math.max(10, Math.abs(pt.x - blurDragStart.x));
+          const h = Math.max(8, Math.abs(pt.y - blurDragStart.y));
+          blurSelection.cx = minX + w / 2;
+          blurSelection.cy = minY + h / 2;
+          blurSelection.w = w;
+          blurSelection.h = h;
+          blurSelection.angle = 0;
+          updateBlurToolbarUI();
+          renderBlurCanvas();
+        } else if (blurDragMode === 'move') {
+          const dx = pt.x - blurDragStart.x;
+          const dy = pt.y - blurDragStart.y;
+          blurSelection.cx = blurBoxInitial.cx + dx;
+          blurSelection.cy = blurBoxInitial.cy + dy;
+          renderBlurCanvas();
+        } else if (blurDragMode === 'rotate') {
+          const dx = pt.x - blurSelection.cx;
+          const dy = pt.y - blurSelection.cy;
+          blurSelection.angle = Math.atan2(dy, dx) + Math.PI / 2;
+          updateBlurToolbarUI();
+          renderBlurCanvas();
+        } else if (['nw', 'ne', 'se', 'sw'].includes(blurDragMode)) {
+          const dx = pt.x - blurBoxInitial.cx;
+          const dy = pt.y - blurBoxInitial.cy;
+          const cos = Math.cos(-blurBoxInitial.angle);
+          const sin = Math.sin(-blurBoxInitial.angle);
+          const lx = dx * cos - dy * sin;
+          const ly = dx * sin + dy * cos;
+
+          blurSelection.w = Math.max(16, Math.abs(lx) * 2);
+          blurSelection.h = Math.max(12, Math.abs(ly) * 2);
+          renderBlurCanvas();
+        }
+      }
+
+      function handlePointerUp() {
+        if (!blurDragMode) return;
+        blurDragMode = null;
+        updateBlurToolbarUI();
+        renderBlurCanvas();
+      }
+
+      canvas.addEventListener('mousedown', handlePointerDown);
+      window.addEventListener('mousemove', handlePointerMove);
+      window.addEventListener('mouseup', handlePointerUp);
+
+      canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        handlePointerDown(e);
+      }, { passive: false });
+      window.addEventListener('touchmove', (e) => {
+        if (blurDragMode) {
+          e.preventDefault();
+          handlePointerMove(e);
+        }
+      }, { passive: false });
+      window.addEventListener('touchend', handlePointerUp);
+    }
 
     // Inicializar interfaz y sincronizar desde la nube
     updateAdminUI();
