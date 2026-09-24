@@ -2926,6 +2926,7 @@
     // ── GESTIÓN DE GALERÍA DE FOTOS (HASTA 8 FOTOS) & FOTO PRINCIPAL ──
     let currentGalleryImages = [];
     let currentPrimaryIndex = 0;
+    const galleryOriginalCleanMap = new Map();
 
     function renderGalleryThumbnails() {
       const container = document.getElementById('gallery-thumbnails');
@@ -3190,11 +3191,21 @@
       document.getElementById('modal-title-text').textContent = 'Publicar Nuevo Activo';
       document.getElementById('form-category').value = currentCategory;
       toggleFormFieldsByCategory(currentCategory);
+      const saveBtn = document.getElementById('btn-save-asset');
+      if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Guardar en Catálogo';
+      }
       document.getElementById('admin-modal').classList.add('active');
     }
 
     function closeAdminModal() {
       document.getElementById('admin-modal').classList.remove('active');
+      const saveBtn = document.getElementById('btn-save-asset');
+      if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Guardar en Catálogo';
+      }
     }
 
     function toggleFormFieldsByCategory(cat) {
@@ -3244,6 +3255,11 @@
       }
 
       document.getElementById('modal-title-text').textContent = 'Editar Activo';
+      const saveBtn = document.getElementById('btn-save-asset');
+      if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Guardar en Catálogo';
+      }
       document.getElementById('admin-modal').classList.add('active');
     }
 
@@ -3255,103 +3271,119 @@
         saveBtn.textContent = 'Guardando en Nube...';
       }
 
-      const id = document.getElementById('form-asset-id').value || `oi-${Date.now()}`;
-      const cat = document.getElementById('form-category').value;
-      const title = document.getElementById('form-title').value.trim();
-      const price = Number(document.getElementById('form-price').value);
-      const marketPrice = Number(document.getElementById('form-market-price').value) || null;
-      const location = document.getElementById('form-location').value.trim();
-      const image = document.getElementById('form-image').value.trim();
-      const badge = document.getElementById('form-badge').value.trim();
-      const status = document.getElementById('form-status').value;
-      const landingUrl = document.getElementById('form-landing-url').value.trim();
-      const notes = (document.getElementById('form-notes')?.value || '').trim();
-
-      let specs = [];
-      if (cat === 'real_estate') {
-        const area = document.getElementById('form-area').value;
-        const bb = document.getElementById('form-beds-baths').value;
-        if (area) specs.push(`${area} m²`);
-        if (bb) specs.push(...bb.split('•').map(s => s.trim()));
-      } else {
-        const yk = document.getElementById('form-year-km').value;
-        const te = document.getElementById('form-trans-engine').value;
-        if (yk) specs.push(...yk.split('•').map(s => s.trim()));
-        if (te) specs.push(...te.split('•').map(s => s.trim()));
-      }
-
-      const existingIndex = inventory.findIndex(i => i.id === id);
-      let primaryImage = document.getElementById('form-image').value.trim();
-      let galleryImages = [...currentGalleryImages];
-      if (galleryImages.length === 0 && primaryImage) {
-        galleryImages = [primaryImage];
-      }
-      if (galleryImages.length > 0 && !primaryImage) {
-        primaryImage = galleryImages[0];
-      }
-
-      const assetData = { 
-        id, 
-        category: cat, 
-        title, 
-        price, 
-        marketPrice, 
-        location, 
-        image: primaryImage, 
-        images: galleryImages, 
-        originalImages: galleryImages.map(u => galleryOriginalCleanMap.get(u) || u),
-        badge, 
-        status, 
-        landingUrl, 
-        specs, 
-        notes: notes || null 
-      };
-
-      if (existingIndex >= 0) {
-        inventory[existingIndex] = assetData;
-      } else {
-        inventory.unshift(assetData);
-      }
-
-      saveInventory();
-      closeAdminModal();
-      setCategory(cat);
-
-      // Sincronizar en la nube InsForge
       try {
-        const specsWithMeta = [...specs];
-        if (notes) {
-          specsWithMeta.push(`__NOTE__:${notes}`);
+        const id = document.getElementById('form-asset-id')?.value || `oi-${Date.now()}`;
+        const cat = document.getElementById('form-category')?.value || currentCategory || 'real_estate';
+        const title = (document.getElementById('form-title')?.value || '').trim();
+        const price = Number(document.getElementById('form-price')?.value) || 0;
+        const marketPrice = Number(document.getElementById('form-market-price')?.value) || null;
+        const location = (document.getElementById('form-location')?.value || '').trim();
+        const image = (document.getElementById('form-image')?.value || '').trim();
+        const badge = (document.getElementById('form-badge')?.value || '').trim();
+        const status = document.getElementById('form-status')?.value || 'available';
+        const landingUrl = (document.getElementById('form-landing-url')?.value || '').trim();
+        const notes = (document.getElementById('form-notes')?.value || '').trim();
+
+        let specs = [];
+        if (cat === 'real_estate') {
+          const area = document.getElementById('form-area')?.value;
+          const bb = document.getElementById('form-beds-baths')?.value;
+          if (area) specs.push(`${area} m²`);
+          if (bb) specs.push(...bb.split('•').map(s => s.trim()).filter(Boolean));
+        } else {
+          const yk = document.getElementById('form-year-km')?.value;
+          const te = document.getElementById('form-trans-engine')?.value;
+          if (yk) specs.push(...yk.split('•').map(s => s.trim()).filter(Boolean));
+          if (te) specs.push(...te.split('•').map(s => s.trim()).filter(Boolean));
         }
-        if (galleryImages && galleryImages.length > 0) {
-          specsWithMeta.push(`__IMAGES__:${JSON.stringify(galleryImages)}`);
+
+        const existingIndex = inventory.findIndex(i => i.id === id);
+        let primaryImage = image;
+        let galleryImages = Array.isArray(currentGalleryImages) ? [...currentGalleryImages] : [];
+        if (galleryImages.length === 0 && primaryImage) {
+          galleryImages = [primaryImage];
         }
-        const payload = [{
-          id,
-          category: cat,
-          title,
-          price,
-          market_price: marketPrice,
-          location,
-          image: primaryImage,
-          badge,
-          status,
-          landing_url: landingUrl,
-          specs: JSON.stringify(specsWithMeta),
-          updated_at: new Date().toISOString()
-        }];
-        await fetch(INSFORGE_CONFIG.endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': INSFORGE_CONFIG.apiKey,
-            'Prefer': 'resolution=merge-duplicates'
-          },
-          body: JSON.stringify(payload)
-        });
-        updateCloudStatus(true);
+        if (galleryImages.length > 0 && !primaryImage) {
+          primaryImage = galleryImages[0];
+        }
+
+        const assetData = { 
+          id, 
+          category: cat, 
+          title, 
+          price, 
+          marketPrice, 
+          location, 
+          image: primaryImage, 
+          images: galleryImages, 
+          originalImages: galleryImages.map(u => (typeof galleryOriginalCleanMap !== 'undefined' && galleryOriginalCleanMap.get(u)) || u),
+          badge, 
+          status, 
+          landingUrl, 
+          specs, 
+          notes: notes || null 
+        };
+
+        if (existingIndex >= 0) {
+          inventory[existingIndex] = assetData;
+        } else {
+          inventory.unshift(assetData);
+        }
+
+        saveInventory();
+        closeAdminModal();
+        setCategory(cat);
+
+        // Sincronizar en la nube InsForge con límite de tiempo
+        try {
+          const specsWithMeta = [...specs];
+          if (notes) {
+            specsWithMeta.push(`__NOTE__:${notes}`);
+          }
+          if (galleryImages && galleryImages.length > 0) {
+            specsWithMeta.push(`__IMAGES__:${JSON.stringify(galleryImages)}`);
+          }
+          const payload = [{
+            id,
+            category: cat,
+            title,
+            price,
+            market_price: marketPrice,
+            location,
+            image: primaryImage,
+            badge,
+            status,
+            landing_url: landingUrl,
+            specs: JSON.stringify(specsWithMeta),
+            updated_at: new Date().toISOString()
+          }];
+
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+          const res = await fetch(INSFORGE_CONFIG.endpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key': INSFORGE_CONFIG.apiKey,
+              'Prefer': 'resolution=merge-duplicates'
+            },
+            body: JSON.stringify(payload),
+            signal: controller.signal
+          });
+          clearTimeout(timeoutId);
+
+          if (res.ok) {
+            updateCloudStatus(true);
+          } else {
+            console.warn('InsForge respondió con error HTTP:', res.status);
+          }
+        } catch (cloudErr) {
+          console.warn('Error sincronizando con InsForge:', cloudErr);
+        }
       } catch (err) {
-        console.warn('Error sincronizando con InsForge:', err);
+        console.error('Error al guardar activo:', err);
+        alert('Ocurrió un error al procesar el activo: ' + err.message);
       } finally {
         if (saveBtn) {
           saveBtn.disabled = false;
@@ -3364,8 +3396,12 @@
       inventory.forEach((item, idx) => {
         if (typeof item.order !== 'number') item.order = idx;
       });
-      localStorage.setItem('oi_catalog_inventory', JSON.stringify(inventory));
-      localStorage.setItem('oi_catalog_order_ids', JSON.stringify(inventory.map(i => i.id)));
+      try {
+        localStorage.setItem('oi_catalog_inventory', JSON.stringify(inventory));
+        localStorage.setItem('oi_catalog_order_ids', JSON.stringify(inventory.map(i => i.id)));
+      } catch (err) {
+        console.warn('Advertencia: localStorage no pudo almacenar el inventario completo (posible límite de cuota excedido):', err);
+      }
     }
 
     let syncOrderDebounce = null;
@@ -3588,7 +3624,6 @@
     });
 
     // ── EDITOR DE PRIVACIDAD / DESENFOCAR PLACA CON ROTACIÓN Y AJUSTE ──
-    const galleryOriginalCleanMap = new Map();
     let blurEditingIndex = null;
     let blurBaseCanvas = null;        // Canvas fuera de pantalla con la imagen base
     let blurOriginalCleanImg = null;  // Objeto Image con la foto limpia original
