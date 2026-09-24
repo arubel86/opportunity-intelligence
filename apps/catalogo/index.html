@@ -116,13 +116,16 @@
       background: transparent;
       border: 1px solid rgba(255, 255, 255, 0.15);
       color: var(--fg-muted);
-      font-size: 11.5px;
-      padding: 6px 12px;
-      border-radius: 6px;
+      font-size: 12px;
+      padding: 8px 14px;
+      min-height: 36px;
+      border-radius: 8px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      line-height: 1;
+      box-sizing: border-box;
       transition: all 0.2s;
     }
     .btn-admin:hover {
@@ -136,12 +139,15 @@
       color: #000;
       font-weight: 700;
       font-size: 12px;
-      padding: 7px 14px;
-      border-radius: 6px;
+      padding: 8px 16px;
+      min-height: 36px;
+      border-radius: 8px;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      line-height: 1;
+      box-sizing: border-box;
       transition: transform 0.2s;
     }
     .btn-whatsapp-header:hover { transform: translateY(-1px); }
@@ -409,10 +415,13 @@
       background: var(--surface);
       border: 1px solid var(--border);
       color: var(--fg-muted);
-      padding: 6px 14px;
+      padding: 8px 18px;
       border-radius: 20px;
-      font-size: 12.5px;
+      font-size: 13px;
+      line-height: 1.2;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
       transition: all 0.2s;
     }
     .chip:hover {
@@ -747,21 +756,28 @@
       background: transparent;
       border: 1px solid #F59E0B;
       color: #F59E0B;
-      padding: 3px 8px;
-      border-radius: 4px;
+      padding: 5px 10px;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 10.5px;
+      font-size: 11px;
       font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
     }
     .btn-delete-card {
       background: transparent;
       border: 1px solid #EF4444;
       color: #EF4444;
-      padding: 3px 8px;
-      border-radius: 4px;
+      padding: 5px 10px;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 10.5px;
+      font-size: 11px;
       font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.2s;
     }
 
     /* Modal Form Styling */
@@ -1091,8 +1107,10 @@
         flex-shrink: 0;
       }
       .btn-admin {
-        font-size: 11px;
-        padding: 6px 10px;
+        font-size: 11.5px;
+        padding: 7px 12px;
+        min-height: 32px;
+        border-radius: 7px;
         gap: 5px;
         white-space: nowrap;
       }
@@ -1248,7 +1266,7 @@
       .chip {
         white-space: nowrap;
         font-size: 12px;
-        padding: 6px 12px;
+        padding: 7px 14px;
       }
       .search-input-box {
         min-width: 100%;
