@@ -723,6 +723,15 @@
       border-color: var(--border-focus);
       background: rgba(59, 130, 246, 0.1);
     }
+    .btn-card-secondary:disabled,
+    .btn-card-secondary.btn-disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      border-color: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.02);
+      color: rgba(255, 255, 255, 0.4);
+      pointer-events: none;
+    }
 
     /* Admin Overlay Controls on Card */
     .card-admin-bar {
@@ -2486,7 +2495,7 @@
       }
 
       filtered.forEach(item => {
-        const isSold = item.status === 'sold';
+        const isSold = item.status === 'sold' || (item.badge && /vendid/i.test(item.badge));
         const card = document.createElement('div');
         card.className = `card ${isAdminMode ? 'card-admin-draggable' : ''}`;
         card.id = `card-${item.id}`;
@@ -2511,14 +2520,16 @@
         const formattedPrice = '$' + Number(item.price).toLocaleString('en-US');
         const formattedMarket = item.marketPrice ? '$' + Number(item.marketPrice).toLocaleString('en-US') : '';
 
-        // Enlace de WhatsApp con mensaje personalizado
-        const waMsg = encodeURIComponent(`Hola, vi en el catálogo el activo "${item.title}" (${formattedPrice} USD). Deseo más información.`);
+        // Enlace de WhatsApp con mensaje personalizado (mensaje de búsqueda de similares si está vendido)
+        const waMsg = isSold
+          ? encodeURIComponent(`Hola, vi que "${item.title}" ya fue vendido. ¿Tienen alguna oportunidad similar disponible en inventario?`)
+          : encodeURIComponent(`Hola, vi en el catálogo el activo "${item.title}" (${formattedPrice} USD). Deseo más información.`);
         const waUrl = `https://wa.me/${ADVISOR_PHONE}?text=${waMsg}`;
 
-        // Link de landing: solo si está configurado en el activo
+        // Link de landing: solo si está configurado en el activo y NO está vendido
         const isFile = window.location.protocol === 'file:';
         let landingHref = (item.landingUrl && item.landingUrl.trim()) ? item.landingUrl.trim() : '';
-        const hasLanding = !!landingHref;
+        const hasLanding = !!landingHref && !isSold;
         if (hasLanding && !isFile) {
           landingHref = landingHref.replace('../dashboard/landing1.html', '/propiedades').replace('../dashboard/landing2.html', '/autos');
         }
@@ -2605,7 +2616,7 @@
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </a>
               ` : `
-                <button type="button" class="btn-card-secondary" style="cursor:default;" draggable="false" ondragstart="event.stopPropagation()">
+                <button type="button" class="btn-card-secondary btn-disabled" disabled style="${isSold ? 'opacity:0.35;cursor:not-allowed;' : 'opacity:0.45;cursor:default;'}" title="${isSold ? 'Activo vendido - Ficha VIP no disponible' : 'Ficha VIP no disponible'}" draggable="false" ondragstart="event.stopPropagation()">
                   Ficha VIP
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </button>
@@ -3468,9 +3479,12 @@
       if (titleEl) titleEl.textContent = item.title;
       if (priceEl) priceEl.textContent = '$' + Number(item.price).toLocaleString('en-US') + ' USD';
 
-      // WhatsApp link directo
+      // WhatsApp link directo (adaptado si el activo está vendido)
       const formattedPrice = '$' + Number(item.price).toLocaleString('en-US');
-      const waMsg = encodeURIComponent(`Hola, estoy viendo las fotos del activo "${item.title}" (${formattedPrice} USD) en el catálogo de Opportunity Intelligence. Deseo más detalles.`);
+      const isSold = item.status === 'sold' || (item.badge && /vendid/i.test(item.badge));
+      const waMsg = isSold
+        ? encodeURIComponent(`Hola, vi que "${item.title}" ya fue vendido. ¿Tienen alguna oportunidad similar disponible en inventario?`)
+        : encodeURIComponent(`Hola, estoy viendo las fotos del activo "${item.title}" (${formattedPrice} USD) en el catálogo de Opportunity Intelligence. Deseo más detalles.`);
       const waLink = document.getElementById('oi-lb-wa-link');
       if (waLink) waLink.href = `https://wa.me/${ADVISOR_PHONE}?text=${waMsg}`;
 
