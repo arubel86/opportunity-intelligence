@@ -808,11 +808,30 @@
       font-size: 11.5px;
       line-height: 1.45;
       color: #93C5FD;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .card-note:hover {
+      background: rgba(59, 130, 246, 0.14);
+      border-color: rgba(59, 130, 246, 0.4);
     }
     .card-note svg {
       flex-shrink: 0;
       margin-top: 2px;
       stroke: #60A5FA;
+    }
+    .card-note-text {
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: break-word;
+    }
+    .card-note:hover .card-note-text,
+    .card-note.expanded .card-note-text {
+      -webkit-line-clamp: unset;
+      overflow: visible;
     }
 
     /* Galería de fotos en Modal */
@@ -2650,9 +2669,9 @@
             </div>
 
             ${item.notes ? `
-              <div class="card-note">
+              <div class="card-note" onclick="this.classList.toggle('expanded')" title="Pasa el mouse o toca para ver la nota completa">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                <span>${item.notes}</span>
+                <span class="card-note-text">${item.notes}</span>
               </div>
             ` : ''}
 
