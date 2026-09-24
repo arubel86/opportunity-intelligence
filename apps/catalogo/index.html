@@ -2261,8 +2261,55 @@
     const INSFORGE_CONFIG = {
       baseUrl: 'https://insforge.aizprua.com',
       apiKey: 'ik_2bed7411a0830c9985681c4a5ccf2dadc81df1c78a3f30b8e8710d64ecb2d13f',
-      endpoint: 'https://insforge.aizprua.com/api/database/records/catalog_assets'
+      endpoint: 'https://insforge.aizprua.com/api/database/records/catalog_assets',
+      storageEndpoint: 'https://insforge.aizprua.com/api/storage/buckets/catalog-assets/objects'
     };
+
+    // Subir imagen en Base64 a InsForge Storage para mantener la base de datos ultraligera
+    async function uploadBase64ToStorage(base64Str, filenameHint = 'asset') {
+      if (!base64Str || typeof base64Str !== 'string' || !base64Str.startsWith('data:')) {
+        return base64Str;
+      }
+      try {
+        const matches = base64Str.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+        if (!matches || matches.length !== 3) return base64Str;
+
+        const mimeType = matches[1];
+        const byteCharacters = atob(matches[2]);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: mimeType });
+
+        let ext = 'jpg';
+        if (mimeType.includes('png')) ext = 'png';
+        else if (mimeType.includes('webp')) ext = 'webp';
+
+        const safeFilename = `${filenameHint}-${Date.now()}-${Math.random().toString(36).substring(2, 6)}.${ext}`;
+        const form = new FormData();
+        form.append('file', blob, safeFilename);
+
+        const res = await fetch(INSFORGE_CONFIG.storageEndpoint, {
+          method: 'POST',
+          headers: {
+            'x-api-key': INSFORGE_CONFIG.apiKey
+          },
+          body: form
+        });
+
+        if (res.ok) {
+          const json = await res.json();
+          return json.url || base64Str;
+        } else {
+          console.warn('InsForge Storage devolvió código:', res.status);
+        }
+      } catch (err) {
+        console.warn('Error subiendo imagen a Storage, fallback a local:', err);
+      }
+      return base64Str;
+    }
 
     async function fetchCatalogFromCloud() {
       try {
@@ -3311,9 +3358,23 @@
           if (te) specs.push(...te.split('•').map(s => s.trim()).filter(Boolean));
         }
 
-        const existingIndex = inventory.findIndex(i => i.id === id);
+        if (saveBtn) {
+          saveBtn.disabled = true;
+          saveBtn.textContent = 'Subiendo fotos a Storage...';
+        }
+
+        // Subir a Storage si son Base64 para blindar la BD contra sobrecargas
         let primaryImage = image;
+        if (primaryImage && primaryImage.startsWith('data:')) {
+          primaryImage = await uploadBase64ToStorage(primaryImage, `${id}-main`);
+        }
+
         let galleryImages = Array.isArray(currentGalleryImages) ? [...currentGalleryImages] : [];
+        for (let i = 0; i < galleryImages.length; i++) {
+          if (galleryImages[i] && galleryImages[i].startsWith('data:')) {
+            galleryImages[i] = await uploadBase64ToStorage(galleryImages[i], `${id}-gallery-${i}`);
+          }
+        }
         if (galleryImages.length === 0 && primaryImage) {
           galleryImages = [primaryImage];
         }
@@ -3321,6 +3382,23 @@
           primaryImage = galleryImages[0];
         }
 
+        // Mapear fotos originales limpias
+        let originalImages = [];
+        if (typeof galleryOriginalCleanMap !== 'undefined') {
+          for (let i = 0; i < galleryImages.length; i++) {
+            const orig = galleryOriginalCleanMap.get(galleryImages[i]) || galleryImages[i];
+            if (orig && orig.startsWith('data:')) {
+              const uploadedOrig = await uploadBase64ToStorage(orig, `${id}-orig-${i}`);
+              originalImages.push(uploadedOrig);
+            } else {
+              originalImages.push(orig);
+            }
+          }
+        } else {
+          originalImages = [...galleryImages];
+        }
+
+        const existingIndex = inventory.findIndex(i => i.id === id);
         const assetData = { 
           id, 
           category: cat, 
@@ -3330,7 +3408,7 @@
           location, 
           image: primaryImage, 
           images: galleryImages, 
-          originalImages: galleryImages.map(u => (typeof galleryOriginalCleanMap !== 'undefined' && galleryOriginalCleanMap.get(u)) || u),
+          originalImages: originalImages,
           badge, 
           status, 
           landingUrl, 
