@@ -2346,7 +2346,11 @@
               inventory.sort((a, b) => (a.order ?? 9999) - (b.order ?? 9999));
             }
 
-            localStorage.setItem('oi_catalog_inventory', JSON.stringify(inventory));
+            try {
+              localStorage.setItem('oi_catalog_inventory', JSON.stringify(inventory));
+            } catch (storageErr) {
+              console.warn('localStorage excedió cuota al guardar copia local (usando inventario en memoria):', storageErr);
+            }
             renderCatalog();
             updateCloudStatus(true);
             return;
