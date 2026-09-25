@@ -1845,8 +1845,13 @@
       </button>
 
       <button id="btn-change-pwd" class="btn-admin" style="display:none;" onclick="openChangePwdModal()" title="Cambiar Master Key">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2 2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         <span class="hide-mobile-sm">Clave</span>
+      </button>
+
+      <button id="btn-affiliates" class="btn-admin" style="display:none;" onclick="openAffiliatesModal()" title="Gestión de Enlaces de Asesoras">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        <span class="hide-mobile-sm">Vendedoras</span>
       </button>
 
       <a id="header-whatsapp-link" href="https://wa.me/50765461527?text=Hola,%20deseo%20consultar%20sobre%20el%20inventario%20disponible" target="_blank" class="btn-whatsapp-header" title="Contactar Asesor">
@@ -2172,6 +2177,69 @@
     </div>
   </div>
 
+  <!-- MODAL GESTOR DE ENLACES DE AFILIACIÓN (ASESORAS ERIKA Y AMY) -->
+  <div class="modal-overlay" id="affiliates-modal">
+    <div class="modal-box" style="max-width: 520px; padding: 24px;">
+      <div class="modal-header">
+        <h3 style="font-size: 17px; font-weight: 800; display:flex; align-items:center; gap:8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          Enlaces de Afiliadas (Vendedoras)
+        </h3>
+        <button class="modal-close" onclick="closeAffiliatesModal()">✕</button>
+      </div>
+
+      <p style="font-size: 12.5px; color: var(--fg-muted); margin-bottom: 16px; line-height: 1.5;">
+        Comparte estos enlaces oficiales. Cada prospecto que ingrese desde ellos enviará automáticamente los mensajes de WhatsApp identificando a la asesora para el cálculo de comisiones.
+      </p>
+
+      <!-- Asesora Erika -->
+      <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+          <span style="font-weight:700; font-size:14px; color:#F8FAFC; display:flex; align-items:center; gap:6px;">
+            <span style="width:8px; height:8px; border-radius:50%; background:#10B981; display:inline-block;"></span>
+            Erika
+          </span>
+          <span style="font-size:11px; color:#93C5FD; background:rgba(59,130,246,0.12); padding:2px 8px; border-radius:12px; font-family:'JetBrains Mono',monospace;">?ref=erika</span>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="link-erika" readonly value="https://opportunity.aizprua.com/catalogo?ref=erika" class="form-input" style="font-size:12px; font-family:'JetBrains Mono',monospace; padding:8px 10px; background:#0C0D11;">
+          <button type="button" class="btn-modal-action btn-modal-primary" style="min-height:36px; padding:0 14px; font-size:12px; white-space:nowrap;" onclick="copyAffiliateText('link-erika', this)">Copiar</button>
+        </div>
+      </div>
+
+      <!-- Asesora Amy -->
+      <div style="background: var(--surface-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+          <span style="font-weight:700; font-size:14px; color:#F8FAFC; display:flex; align-items:center; gap:6px;">
+            <span style="width:8px; height:8px; border-radius:50%; background:#10B981; display:inline-block;"></span>
+            Amy
+          </span>
+          <span style="font-size:11px; color:#93C5FD; background:rgba(59,130,246,0.12); padding:2px 8px; border-radius:12px; font-family:'JetBrains Mono',monospace;">?ref=amy</span>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="link-amy" readonly value="https://opportunity.aizprua.com/catalogo?ref=amy" class="form-input" style="font-size:12px; font-family:'JetBrains Mono',monospace; padding:8px 10px; background:#0C0D11;">
+          <button type="button" class="btn-modal-action btn-modal-primary" style="min-height:36px; padding:0 14px; font-size:12px; white-space:nowrap;" onclick="copyAffiliateText('link-amy', this)">Copiar</button>
+        </div>
+      </div>
+
+      <!-- Generador Dinámico de Nuevo Asesor -->
+      <div style="border-top: 1px solid var(--border); padding-top: 14px;">
+        <label style="font-size: 12px; font-weight: 600; color: var(--fg); display:block; margin-bottom: 6px;">
+          Crear enlace para nuevo asesor:
+        </label>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="custom-advisor-input" placeholder="Ej: Carlos" class="form-input" style="font-size:12px; padding:8px 10px;" oninput="generateCustomAdvisorLink()">
+          <button type="button" class="btn-modal-action btn-modal-success" id="btn-copy-custom-advisor" style="min-height:36px; padding:0 14px; font-size:12px; white-space:nowrap;" onclick="copyCustomAdvisorLink(this)" disabled>Copiar</button>
+        </div>
+        <div id="custom-advisor-preview" style="font-size:11px; color:#94A3B8; font-family:'JetBrains Mono',monospace; margin-top:6px; min-height:16px;"></div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+        <button type="button" class="btn-modal-action btn-modal-cancel" onclick="closeAffiliatesModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL EDITOR DE PRIVACIDAD / DESENFOCAR PLACA -->
   <div class="modal-overlay" id="blur-editor-modal">
     <div class="modal-box" style="max-width: 760px; padding: 22px; width: 95%;">
@@ -2296,6 +2364,63 @@
 
   <script>
     const ADVISOR_PHONE = '50765461527';
+
+    // ── SISTEMA DE AFILIACIÓN (ASESORAS ERIKA Y AMY) ──
+    const ADVISORS = {
+      erika: { name: 'Erika', tag: '[Asesora: Erika]' },
+      amy: { name: 'Amy', tag: '[Asesora: Amy]' }
+    };
+
+    function getActiveAdvisor() {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const refParam = urlParams.get('ref') || urlParams.get('asesor') || urlParams.get('vendedora') || urlParams.get('afiliado');
+        if (refParam) {
+          const cleanRef = refParam.trim().toLowerCase();
+          if (ADVISORS[cleanRef]) {
+            localStorage.setItem('oi_catalog_ref', cleanRef);
+            sessionStorage.setItem('oi_catalog_ref', cleanRef);
+            return ADVISORS[cleanRef];
+          } else {
+            const custom = { name: refParam.trim(), tag: `[Asesor: ${refParam.trim()}]` };
+            localStorage.setItem('oi_catalog_ref', cleanRef);
+            sessionStorage.setItem('oi_catalog_ref', cleanRef);
+            return custom;
+          }
+        }
+        const savedRef = sessionStorage.getItem('oi_catalog_ref') || localStorage.getItem('oi_catalog_ref');
+        if (savedRef) {
+          const cleanSaved = savedRef.trim().toLowerCase();
+          if (ADVISORS[cleanSaved]) return ADVISORS[cleanSaved];
+          return { name: savedRef.trim(), tag: `[Asesor: ${savedRef.trim()}]` };
+        }
+      } catch (e) {
+        console.warn('Error en getActiveAdvisor:', e);
+      }
+      return null;
+    }
+
+    function getAdvisorWhatsAppUrl(baseMessage) {
+      const advisor = getActiveAdvisor();
+      const suffix = advisor ? ` ${advisor.tag}` : '';
+      const finalMsg = encodeURIComponent(baseMessage + suffix);
+      return `https://wa.me/${ADVISOR_PHONE}?text=${finalMsg}`;
+    }
+
+    function syncAllStaticWhatsAppLinks() {
+      const headerWaLink = document.getElementById('header-whatsapp-link');
+      if (headerWaLink) {
+        headerWaLink.href = getAdvisorWhatsAppUrl('Hola, deseo consultar sobre el inventario disponible');
+      }
+      const bottomWaLink = document.querySelector('.mobile-bottom-btn.wa');
+      if (bottomWaLink) {
+        bottomWaLink.href = getAdvisorWhatsAppUrl('Hola, deseo consultar sobre el inventario disponible');
+      }
+      const financeWaLink = document.querySelector('.btn-financing-cta');
+      if (financeWaLink) {
+        financeWaLink.href = getAdvisorWhatsAppUrl('Hola, deseo asesoría para pre-aprobar mi financiamiento bancario (Hipotecario / Auto) en Opportunity Intelligence');
+      }
+    }
 
     // ── INVENTARIO BASE (PRE-CONFIGURADO CON LOS EJEMPLOS DE LAS IMÁGENES) ──
     const DEFAULT_INVENTORY = [
@@ -2709,10 +2834,10 @@
         const formattedMarket = item.marketPrice ? '$' + Number(item.marketPrice).toLocaleString('en-US') : '';
 
         // Enlace de WhatsApp con mensaje personalizado (mensaje de búsqueda de similares si está vendido)
-        const waMsg = isSold
-          ? encodeURIComponent(`Hola, vi que "${item.title}" ya fue vendido. ¿Tienen alguna oportunidad similar disponible en inventario?`)
-          : encodeURIComponent(`Hola, vi en el catálogo el activo "${item.title}" (${formattedPrice} USD). Deseo más información.`);
-        const waUrl = `https://wa.me/${ADVISOR_PHONE}?text=${waMsg}`;
+        const waBaseText = isSold
+          ? `Hola, vi que "${item.title}" ya fue vendido. ¿Tienen alguna oportunidad similar disponible en inventario?`
+          : `Hola, vi en el catálogo el activo "${item.title}" (${formattedPrice} USD). Deseo más información.`;
+        const waUrl = getAdvisorWhatsAppUrl(waBaseText);
 
         // Link de landing: solo si está configurado en el activo y NO está vendido
         const isFile = window.location.protocol === 'file:';
@@ -3108,18 +3233,74 @@
       const text = document.getElementById('admin-mode-text');
       const addBtn = document.getElementById('btn-add-asset');
       const pwdBtn = document.getElementById('btn-change-pwd');
+      const affBtn = document.getElementById('btn-affiliates');
       const isMobile = window.innerWidth <= 768;
       if (isAdminMode) {
         text.textContent = isMobile ? 'Salir' : 'Cerrar Sesión';
         addBtn.style.display = 'inline-flex';
         if (pwdBtn) pwdBtn.style.display = 'inline-flex';
+        if (affBtn) affBtn.style.display = 'inline-flex';
       } else {
         text.textContent = isMobile ? 'Admin' : 'Acceso Admin';
         addBtn.style.display = 'none';
         if (pwdBtn) pwdBtn.style.display = 'none';
+        if (affBtn) affBtn.style.display = 'none';
       }
     }
     window.addEventListener('resize', updateAdminUI);
+
+    // ── GESTIÓN DE MODAL DE ENLACES DE AFILIADAS ──
+    function openAffiliatesModal() {
+      const modal = document.getElementById('affiliates-modal');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeAffiliatesModal() {
+      const modal = document.getElementById('affiliates-modal');
+      if (modal) modal.classList.remove('active');
+    }
+
+    function copyAffiliateText(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      input.select();
+      navigator.clipboard.writeText(input.value).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = '¡Copiado!';
+        btn.style.background = '#10B981';
+        setTimeout(() => {
+          btn.textContent = orig;
+          btn.style.background = '';
+        }, 2000);
+      });
+    }
+
+    function generateCustomAdvisorLink() {
+      const val = (document.getElementById('custom-advisor-input').value || '').trim();
+      const btn = document.getElementById('btn-copy-custom-advisor');
+      const preview = document.getElementById('custom-advisor-preview');
+      if (!val) {
+        btn.disabled = true;
+        preview.textContent = '';
+        return;
+      }
+      const slug = encodeURIComponent(val.toLowerCase().replace(/\s+/g, '-'));
+      const url = `https://opportunity.aizprua.com/catalogo?ref=${slug}`;
+      preview.textContent = url;
+      btn.disabled = false;
+    }
+
+    function copyCustomAdvisorLink(btn) {
+      const preview = document.getElementById('custom-advisor-preview');
+      if (!preview || !preview.textContent) return;
+      navigator.clipboard.writeText(preview.textContent).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = '¡Copiado!';
+        setTimeout(() => {
+          btn.textContent = orig;
+        }, 2000);
+      });
+    }
 
     // ── GESTIÓN DE GALERÍA DE FOTOS (HASTA 8 FOTOS) & FOTO PRINCIPAL ──
     let currentGalleryImages = [];
@@ -3701,11 +3882,11 @@
       // WhatsApp link directo (adaptado si el activo está vendido)
       const formattedPrice = '$' + Number(item.price).toLocaleString('en-US');
       const isSold = item.status === 'sold' || (item.badge && /vendid/i.test(item.badge));
-      const waMsg = isSold
-        ? encodeURIComponent(`Hola, vi que "${item.title}" ya fue vendido. ¿Tienen alguna oportunidad similar disponible en inventario?`)
-        : encodeURIComponent(`Hola, estoy viendo las fotos del activo "${item.title}" (${formattedPrice} USD) en el catálogo de Opportunity Intelligence. Deseo más detalles.`);
+      const waBaseText = isSold
+        ? `Hola, vi que "${item.title}" ya fue vendido. ¿Tienen alguna oportunidad similar disponible en inventario?`
+        : `Hola, estoy viendo las fotos del activo "${item.title}" (${formattedPrice} USD) en el catálogo de Opportunity Intelligence. Deseo más detalles.`;
       const waLink = document.getElementById('oi-lb-wa-link');
-      if (waLink) waLink.href = `https://wa.me/${ADVISOR_PHONE}?text=${waMsg}`;
+      if (waLink) waLink.href = getAdvisorWhatsAppUrl(waBaseText);
 
       // Mostrar/ocultar botones de navegación si hay más de 1 imagen
       const hasMultiple = activeLightboxImages.length > 1;
@@ -4328,6 +4509,7 @@
     }
 
     // Inicializar interfaz y sincronizar desde la nube
+    syncAllStaticWhatsAppLinks();
     updateAdminUI();
     renderCatalog();
     fetchCatalogFromCloud();

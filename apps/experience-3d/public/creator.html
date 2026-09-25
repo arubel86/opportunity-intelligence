@@ -166,37 +166,53 @@
       transform: translateY(-1px);
     }
 
-    @media (max-width: 540px) {
+    @media (max-width: 768px) {
       header {
-        padding: 16px 18px;
-        min-height: 68px;
-        background: rgba(18, 22, 32, 0.92);
+        padding: 12px 16px;
+        min-height: 60px;
+        background: rgba(18, 22, 32, 0.95);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       }
       .brand {
-        gap: 12px;
+        gap: 10px;
+        min-width: 0;
+        flex: 1;
       }
       .brand-logo {
-        width: 36px;
-        height: 36px;
-        font-size: 15px;
-        border-radius: 10px;
+        width: 34px;
+        height: 34px;
+        font-size: 14px;
+        border-radius: 9px;
+        flex-shrink: 0;
         box-shadow: 0 4px 14px rgba(30, 64, 175, 0.35);
       }
       .brand-text {
-        font-size: 15px;
+        font-size: 14px;
         font-weight: 700;
-        line-height: 1.25;
-        letter-spacing: 0.2px;
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       .brand-text span {
-        font-size: 11px;
-        margin-top: 2px;
+        font-size: 10.5px;
+        margin-top: 1px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       .header-actions {
-        gap: 12px;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+      .btn-gallery-link {
+        padding: 7px 10px;
+        font-size: 12px;
+      }
+      .btn-gallery-link span {
+        display: none;
       }
       .status-badge {
         background: transparent;
@@ -215,15 +231,15 @@
         animation: pulseGreen 2.2s infinite ease-in-out;
       }
       .btn-logout {
-        padding: 8px 14px;
+        padding: 7px 10px;
         font-size: 12px;
-        border-radius: 10px;
+        border-radius: 8px;
         background: rgba(239, 68, 68, 0.12);
         border: 1px solid rgba(239, 68, 68, 0.28);
-        gap: 6px;
+        gap: 5px;
       }
       .btn-logout .logout-text {
-        display: inline;
+        display: none;
       }
     }
 
