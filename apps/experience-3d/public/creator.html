@@ -17,7 +17,7 @@
     (function guardSession() {
       const token = localStorage.getItem('oi_access_token') || sessionStorage.getItem('oi_access_token');
       if (!token) {
-        window.location.href = '/login?returnUrl=' + encodeURIComponent(window.location.pathname + window.location.search);
+        window.location.href = 'login.html?returnUrl=' + encodeURIComponent(window.location.pathname + window.location.search);
       }
     })();
   </script>
@@ -790,7 +790,7 @@
       </div>
     </div>
     <div class="header-actions">
-      <a href="/galeria" class="btn-gallery-link" title="Ir a la Galería y Gestión de Almacenamiento">
+      <a href="gallery.html" class="btn-gallery-link" title="Ir a la Galería y Gestión de Almacenamiento">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
         <span>Mis Activos 3D</span>
       </a>
@@ -1441,7 +1441,7 @@
         localStorage.removeItem('oi_user_email');
         sessionStorage.removeItem('oi_access_token');
         sessionStorage.removeItem('oi_user_email');
-        window.location.href = '/login';
+        window.location.href = 'login.html';
       });
     }
   </script>

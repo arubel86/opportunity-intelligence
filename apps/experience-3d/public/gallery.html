@@ -35,7 +35,7 @@
     (function guardSession() {
       const token = localStorage.getItem('oi_access_token') || sessionStorage.getItem('oi_access_token');
       if (!token) {
-        window.location.href = '/login?returnUrl=' + encodeURIComponent(window.location.pathname);
+        window.location.href = 'login.html?returnUrl=' + encodeURIComponent(window.location.pathname + window.location.search);
       }
     })();
   </script>
@@ -900,7 +900,7 @@
 
   <!-- Header -->
   <header>
-    <a href="/galeria" class="brand">
+    <a href="gallery.html" class="brand">
       <div class="brand-logo">OI</div>
       <div class="brand-text">
         Opportunity 3D
@@ -909,7 +909,7 @@
     </a>
 
     <div class="header-actions">
-      <a href="/" class="btn-create-new">
+      <a href="creator.html" class="btn-create-new">
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
         Capturar Nueva Experiencia
       </a>
@@ -1493,7 +1493,7 @@
         btn.addEventListener('click', () => {
           localStorage.removeItem('oi_access_token');
           sessionStorage.removeItem('oi_access_token');
-          window.location.href = '/login';
+          window.location.href = 'login.html';
         });
       }
     }
