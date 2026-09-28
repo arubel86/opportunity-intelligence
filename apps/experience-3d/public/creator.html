@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Creador de Experiencias 3D — Opportunity Intelligence</title>
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23131722'/%3E%3Cstop offset='50%25' stop-color='%231e40af'/%3E%3Cstop offset='100%25' stop-color='%233b82f6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='25' fill='url(%23g)'/%3E%3Ctext x='50' y='56' font-family='Arial, sans-serif' font-weight='bold' font-size='56' fill='%23F1F5F9' text-anchor='middle' dominant-baseline='central'%3EOI%3C/text%3E%3C/svg%3E">
+
+  <!-- Tipografías -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <script>
+    // Guardián de sesión para proteger el Creador 3D
+    (function guardSession() {
+      const token = localStorage.getItem('oi_access_token') || sessionStorage.getItem('oi_access_token');
+      if (!token) {
+        window.location.href = 'login.html?returnUrl=' + encodeURIComponent(window.location.pathname + window.location.search);
+      }
+    })();
+  </script>
+
+  <style>
+    :root {
+      --bg: #0A0C10;
+      --surface: #121620;
+      --surface-elevated: #181E2C;
+      --surface-glass: rgba(18, 22, 32, 0.85);
+      --border: #232D3F;
+      --border-focus: #3B82F6;
+      --fg: #F8FAFC;
+      --fg-muted: #94A3B8;
+      
+      --color-comprar: #10B981;
+      --color-prioridad: #3B82F6;
+      --accent-celeste: #85CDFF;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--fg);
+      font-family: 'Inter', -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #1e40af, #3b82f6);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 15px;
+    }
+
+    .brand-text {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .brand-text span {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--accent-celeste);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--color-comprar);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      white-space: nowrap;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--color-comprar);
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
+    }
+
+    .btn-logout {
+      background: rgba(239, 68, 68, 0.1);
+      color: #F87171;
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .btn-logout:hover {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.45);
+      color: #EF4444;
+      transform: translateY(-1px);
+    }
+
+    .btn-gallery-link {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 7px 14px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-gallery-link:hover {
+      border-color: var(--color-prioridad);
+      color: #93C5FD;
+      background: rgba(59, 130, 246, 0.12);
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 768px) {
+      header {
+        padding: 12px 16px;
+        min-height: 60px;
+        background: rgba(18, 22, 32, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .brand {
+        gap: 10px;
+        min-width: 0;
+        flex: 1;
+      }
+      .brand-logo {
+        width: 34px;
+        height: 34px;
+        font-size: 14px;
+        border-radius: 9px;
+        flex-shrink: 0;
+        box-shadow: 0 4px 14px rgba(30, 64, 175, 0.35);
+      }
+      .brand-text {
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1.2;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .brand-text span {
+        font-size: 10.5px;
+        margin-top: 1px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .header-actions {
+        gap: 8px;
+        flex-shrink: 0;
+      }
+      .btn-gallery-link {
+        padding: 7px 10px;
+        font-size: 12px;
+      }
+      .btn-gallery-link span {
+        display: none;
+      }
+      .status-badge {
+        background: transparent;
+        border: none;
+        padding: 0;
+        margin: 0;
+        box-shadow: none;
+      }
+      .status-badge span:not(.status-dot) {
+        display: none;
+      }
+      .status-dot {
+        width: 9px;
+        height: 9px;
+        box-shadow: 0 0 10px #10B981, 0 0 18px rgba(16, 185, 129, 0.6);
+        animation: pulseGreen 2.2s infinite ease-in-out;
+      }
+      .btn-logout {
+        padding: 7px 10px;
+        font-size: 12px;
+        border-radius: 8px;
+        background: rgba(239, 68, 68, 0.12);
+        border: 1px solid rgba(239, 68, 68, 0.28);
+        gap: 5px;
+      }
+      .btn-logout .logout-text {
+        display: none;
+      }
+    }
+
+    @keyframes pulseGreen {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.25); opacity: 0.7; }
+    }
+
+    /* Contenedor Principal */
+    main {
+      flex: 1;
+      max-width: 640px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .step-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .step-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--color-prioridad);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .step-subtitle {
+      font-size: 13px;
+      color: var(--fg-muted);
+      margin-bottom: 16px;
+    }
+
+    /* Selector de Tipo de Activo */
+    .asset-types {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .asset-btn {
+      background: var(--surface-elevated);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      color: var(--fg);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .asset-btn.active {
+      border-color: var(--color-prioridad);
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    .asset-btn svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    /* Selector modular de Propiedades */
+    .property-options {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sub-chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .sub-chip {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      color: var(--fg-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sub-chip.selected {
+      border-color: var(--color-prioridad);
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--fg);
+    }
+
+    /* Campos de Entrada */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--fg-muted);
+      margin-bottom: 6px;
+    }
+
+    .form-input {
+      width: 100%;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: var(--fg);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus {
+      border-color: var(--border-focus);
+    }
+
+    /* Sección de Captura de Fotos */
+    .capture-methods {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .btn-action {
+      flex: 1;
+      height: 48px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .btn-camera {
+      background: linear-gradient(135deg, #2563EB, #1D4ED8);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-upload {
+      background: var(--surface-elevated);
+      color: var(--fg);
+      border: 1px solid var(--border);
+    }
+
+    /* Visor de Cámara en Vivo con Guía */
+    #camera-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+    }
+
+    #camera-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .camera-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px 16px 28px;
+      pointer-events: none;
+    }
+
+    .camera-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: auto;
+      gap: 8px;
+    }
+
+    .sector-badge {
+      background: rgba(18, 22, 32, 0.85);
+      backdrop-filter: blur(12px);
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.12);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .sector-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sector-title svg {
+      flex-shrink: 0;
+    }
+
+    .sector-sub {
+      font-size: 11px;
+      color: var(--accent-celeste);
+    }
+
+    .camera-tools {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-cam-tool {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .btn-cam-tool.active {
+      background: #F59E0B;
+      border-color: #F59E0B;
+      color: #000;
+    }
+
+    /* Nivel de Burbuja Digital */
+    .bubble-level-bar {
+      position: absolute;
+      top: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--fg-muted);
+      pointer-events: none;
+    }
+
+    .level-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #F59E0B;
+      transition: all 0.2s;
+    }
+
+    .level-indicator.leveled {
+      background: #10B981;
+      box-shadow: 0 0 10px #10B981;
+    }
+
+    /* Silueta Guía de Auto / Casa */
+    .ghost-guide {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 75%;
+      height: 45%;
+      border: 2px dashed rgba(255,255,255,0.25);
+      border-radius: 24px;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ghost-guide span {
+      background: rgba(0,0,0,0.5);
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+    }
+
+    /* Notificación de sector completado */
+    .sector-toast {
+      position: absolute;
+      top: 140px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(16, 185, 129, 0.95);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      display: none;
+      animation: toastPop 0.3s ease-out;
+      z-index: 50;
+      white-space: nowrap;
+    }
+
+    @keyframes toastPop {
+      from { transform: translateX(-50%) scale(0.8); opacity: 0; }
+      to { transform: translateX(-50%) scale(1); opacity: 1; }
+    }
+
+    /* Alerta de Calidad / Foto Movida */
+    .blur-modal-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 12, 16, 0.85);
+      backdrop-filter: blur(12px);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 100;
+      pointer-events: auto;
+    }
+
+    .blur-card {
+      background: var(--surface);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: 20px;
+      padding: 24px;
+      max-width: 320px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+    }
+
+    .blur-card h4 {
+      font-size: 16px;
+      color: #F59E0B;
+      margin-bottom: 8px;
+    }
+
+    .blur-card p {
+      font-size: 12px;
+      color: var(--fg-muted);
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    .blur-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-retake {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      background: #F59E0B;
+      color: #000;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .btn-keep {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      background: var(--surface-elevated);
+      color: var(--fg);
+      border: 1px solid var(--border);
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .camera-bottom {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 32px;
+      pointer-events: auto;
+    }
+
+    .btn-shutter {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 4px solid #fff;
+      background: rgba(255,255,255,0.3);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.1s;
+    }
+
+    .btn-shutter:active {
+      transform: scale(0.92);
+    }
+
+    .shutter-inner {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    /* Galería de Miniaturas */
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .photo-thumb {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .photo-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .photo-thumb .badge-tag {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      background: rgba(0,0,0,0.75);
+      font-size: 9px;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .photo-thumb .btn-del-photo {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: rgba(239, 68, 68, 0.85);
+      color: #fff;
+      border: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      font-size: 11px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Botón Publicar */
+    .btn-publish {
+      width: 100%;
+      height: 54px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+      transition: all 0.2s;
+    }
+
+    .btn-publish:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(16, 185, 129, 0.45);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-logo">OI</div>
+      <div class="brand-text">
+        Opportunity 3D
+        <span>Experiencias & Tours</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="gallery.html" class="btn-gallery-link" title="Ir a la Galería y Gestión de Almacenamiento">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+        <span>Mis Activos 3D</span>
+      </a>
+      <div class="status-badge" id="net-status" title="Conectado a InsForge BaaS">
+        <span class="status-dot"></span>
+        <span>Online</span><span class="badge-subtext"> (InsForge)</span>
+      </div>
+      <button id="btn-logout" class="btn-logout" title="Cerrar Sesión">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        <span class="logout-text">Salir</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Principal -->
+  <main>
+    <!-- Paso 1: Tipo de Activo -->
+    <section class="step-card">
+      <div class="step-title">
+        <div class="step-num">1</div>
+        Selecciona el Tipo de Activo
+      </div>
+      <div class="step-subtitle">Cada activo utiliza una guía de captura especializada</div>
+      
+      <div class="asset-types">
+        <button class="asset-btn active" id="btn-type-vehicle" data-type="vehicle">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path d="M5 17h-2v-6l2-5h9l4 5h1a2 2 0 012 2v4h-2m-4 0h-6"/></svg>
+          Vehículo / Auto
+        </button>
+        <button class="asset-btn" id="btn-type-property" data-type="property">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          Propiedad / Inmueble
+        </button>
+      </div>
+
+      <!-- Opciones modulares para propiedades -->
+      <div class="property-options" id="property-options">
+        <div class="form-label">Tipo de Propiedad:</div>
+        <div class="sub-chips-row">
+          <button class="sub-chip selected" data-ptype="apartment">Apartamento</button>
+          <button class="sub-chip" data-ptype="house1">Casa 1 Nivel</button>
+          <button class="sub-chip" data-ptype="house2">Casa 2 Niveles</button>
+        </div>
+        <div class="form-label" style="margin-top:6px;">Áreas Extra a Incluir:</div>
+        <div class="sub-chips-row">
+          <button class="sub-chip selected" data-extra="balcony">+ Balcón / Terraza</button>
+          <button class="sub-chip" data-extra="patio">+ Patio / Jardín</button>
+          <button class="sub-chip selected" data-extra="facade">+ Fachada & Calle</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Paso 2: Datos y Destino -->
+    <section class="step-card">
+      <div class="step-title">
+        <div class="step-num">2</div>
+        Información del Activo
+      </div>
+      <div class="step-subtitle">Para vincular a tu Landing Page y WhatsApp</div>
+
+      <div class="form-group">
+        <label class="form-label">Título del Proyecto</label>
+        <input type="text" id="project-title" class="form-input" placeholder="Ej: Toyota Prado TXL 2024">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Identificador URL (Slug)</label>
+        <input type="text" id="project-slug" class="form-input" placeholder="auto-toyota-prado-2024">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">URL de tu Landing Page</label>
+        <input type="url" id="project-landing" class="form-input" value="https://opportunity.aizprua.com">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">WhatsApp de Contacto (con código país)</label>
+        <input type="tel" id="project-whatsapp" class="form-input" value="50760000000">
+      </div>
+    </section>
+
+    <!-- Paso 3: Captura de Fotos Guiada -->
+    <section class="step-card">
+      <div class="step-title">
+        <div class="step-num">3</div>
+        Captura de Fotografías
+      </div>
+      <div class="step-subtitle" id="guide-text">
+        Flujo guiado paso a paso con detector de nitidez y nivelador digital.
+      </div>
+
+      <div class="capture-methods">
+        <button class="btn-action btn-camera" id="btn-open-camera">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          Abrir Cámara
+        </button>
+        <label class="btn-action btn-upload">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+          Subir Archivos
+          <input type="file" id="file-input" multiple accept="image/*" style="display: none;">
+        </label>
+      </div>
+
+      <!-- Conteo y Miniaturas -->
+      <div style="font-size: 13px; color: var(--fg-muted); margin-bottom: 8px; display:flex; justify-content:space-between;">
+        <span>Fotos capturadas: <strong id="photo-count" style="color: var(--fg);">0</strong></span>
+        <span id="storage-saved-hint" style="color: var(--color-comprar); font-size:11px;">Compresión WebP activa</span>
+      </div>
+      <div class="photo-grid" id="photo-grid"></div>
+    </section>
+
+    <!-- Paso 4: Publicación -->
+    <button class="btn-publish" id="btn-publish-exp">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+      Publicar Experiencia 3D
+    </button>
+  </main>
+
+  <!-- Modal de Cámara Guiada en Vivo -->
+  <div id="camera-modal">
+    <video id="camera-video" autoplay playsinline></video>
+
+    <!-- Silueta Guía de Alineación -->
+    <div class="ghost-guide">
+      <span id="ghost-guide-label">Mantén la cámara a la altura del pecho</span>
+    </div>
+
+    <!-- Nivel de Burbuja Digital -->
+    <div class="bubble-level-bar" id="bubble-level-bar">
+      <div class="level-indicator" id="level-dot"></div>
+      <span id="level-text">Nivelando...</span>
+    </div>
+
+    <!-- Toast de Notificación de Sector -->
+    <div class="sector-toast" id="sector-toast">¡Sector completado!</div>
+
+    <!-- Alerta de Foto Borrosa (Anti-Blur) -->
+    <div class="blur-modal-overlay" id="blur-modal">
+      <div class="blur-card">
+        <h4 style="display:flex;align-items:center;justify-content:center;gap:8px;">
+          <svg width="18" height="18" fill="none" stroke="#F59E0B" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Foto Posiblemente Borrosa
+        </h4>
+        <p>Detectamos movimiento o falta de nitidez en esta captura. Para un giro 3D impecable, te recomendamos repetirla.</p>
+        <div class="blur-actions">
+          <button class="btn-retake" id="btn-blur-retake" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+            Repetir Foto
+          </button>
+          <button class="btn-keep" id="btn-blur-keep" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+            Conservar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controles y Overlay de Cámara -->
+    <div class="camera-overlay">
+      <div class="camera-top">
+        <div class="sector-badge">
+          <span class="sector-title" id="cam-sector-title">Sector 1/4: Frente</span>
+          <span class="sector-sub" id="cam-sector-sub">Foto 1 de 4 (Faltan 3)</span>
+        </div>
+
+        <div class="camera-tools">
+          <button class="btn-cam-tool" id="btn-toggle-torch" title="Linterna para zonas oscuras">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          </button>
+          <button class="btn-cam-tool" id="btn-close-camera" title="Cerrar Cámara">
+            &times;
+          </button>
+        </div>
+      </div>
+
+      <div class="camera-bottom">
+        <div class="btn-shutter" id="btn-shutter">
+          <div class="shutter-inner"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { savePhotoOffline } from './offline-storage.js';
+
+    let selectedAssetType = 'vehicle';
+    const capturedItems = []; // { blob, category, name }
+    let mediaStream = null;
+    let videoTrack = null;
+    let torchActive = false;
+    let pendingBlob = null;
+
+    // Iconos SVG para los sectores guiados
+    const STAGE_ICONS = {
+      car: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9L2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>',
+      seat: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M3.5 12h6M14.5 12h6M12 14.5v6.5"/></svg>',
+      engine: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h2V8h3V6h8v2h3v2h2v5h-2v3h-3v2H8v-2H5v-3H3v-5z"/><path d="M9 10v4M12 9v5M15 10v4"/><path d="M1 12h2M21 12h2"/></svg>',
+      trunk: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15h15a1 1 0 0 0 1-1v-4a2 2 0 0 0-1.5-1.9L14 7H8L4 9.5V14a1 1 0 0 0 1 1z"/><circle cx="7" cy="16" r="2"/><circle cx="15" cy="16" r="2"/><path d="M14 7l4-4h3"/></svg>',
+      gauge: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.93 19.07A10 10 0 1 1 19.07 19.07"/><path d="M12 12l4-4"/><circle cx="12" cy="12" r="2"/><path d="M12 4v2M7 7l1.5 1.5M17 7l-1.5 1.5"/></svg>',
+      wheel: '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M12 2v7m0 6v7M2 12h7m6 0h7"/></svg>',
+      home: '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+      living: '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="9" rx="2"/><path d="M6 11V7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4"/><path d="M3 15h18"/></svg>',
+      kitchen: '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 2v20M6 2v20M2 7h8M2 12h8M14 7h8M14 17h8"/></svg>',
+      balcony: '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41m14.14-14.14l-1.41 1.41"/></svg>',
+      bed: '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"/></svg>',
+      bath: '<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12h16a1 1 0 0 1 1 1v3a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-3a1 1 0 0 1 1-1zM6 12V5a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v1"/></svg>'
+    };
+
+    // Sectores Guiados para Autos
+    const vehicleStages = [
+      { id: 'ext_front', title: 'Frente del Auto', icon: STAGE_ICONS.car, target: 4, desc: 'Toma 4 fotos a 3m del frente moviéndote hacia la derecha' },
+      { id: 'ext_right', title: 'Costado Derecho', icon: STAGE_ICONS.car, target: 4, desc: 'Toma 4 fotos al lateral (rueda delantera, puertas, rueda trasera)' },
+      { id: 'ext_rear', title: 'Parte Trasera', icon: STAGE_ICONS.car, target: 4, desc: 'Toma 4 fotos al maletero, luces y esquina trasera' },
+      { id: 'ext_left', title: 'Costado Izquierdo', icon: STAGE_ICONS.car, target: 4, desc: 'Toma 4 fotos cerrando la vuelta 360°' },
+      { id: 'int_cabin_front', title: 'Cabina (Hacia Adelante)', icon: STAGE_ICONS.seat, target: 1, desc: 'Siéntate en el asiento trasero central y captura el tablero y timón' },
+      { id: 'int_cabin_rear', title: 'Cabina (Hacia Atrás)', icon: STAGE_ICONS.seat, target: 1, desc: 'Gira la cámara y captura los asientos traseros y techo' },
+      { id: 'insp_engine', title: 'Motor (Capó Abierto)', icon: STAGE_ICONS.engine, target: 1, desc: 'Abre el capó y toma una foto nítida de todo el compartimento' },
+      { id: 'insp_trunk', title: 'Maletero (Baúl Abierto)', icon: STAGE_ICONS.trunk, target: 1, desc: 'Abre el maletero mostrando alfombra y espacio de carga' },
+      { id: 'insp_odometer', title: 'Kilometraje Verificado', icon: STAGE_ICONS.gauge, target: 1, desc: 'Foto de cerca al tablero encendido mostrando los kilómetros' },
+      { id: 'insp_wheel', title: 'Rines & Llantas', icon: STAGE_ICONS.wheel, target: 1, desc: 'Foto de cerca al dibujo del neumático y rin' }
+    ];
+
+    // Sectores Guiados para Casas
+    let propertyStages = [
+      { id: 'prop_facade', title: 'Fachada & Calle', icon: STAGE_ICONS.home, target: 1, desc: 'Párate a 5 metros frente a la propiedad mostrando acceso y calle' },
+      { id: 'prop_living', title: 'Sala & Comedor', icon: STAGE_ICONS.living, target: 1, desc: 'Párate en el centro de la sala y toma la panorámica 360°' },
+      { id: 'prop_kitchen', title: 'Cocina de Lujo', icon: STAGE_ICONS.kitchen, target: 1, desc: 'Párate en el área de cocina mostrando sobres y gabinetes' },
+      { id: 'prop_balcony', title: 'Balcón / Terraza', icon: STAGE_ICONS.balcony, target: 1, desc: 'Captura la vista hacia el exterior y área social' },
+      { id: 'prop_master', title: 'Recámara Principal', icon: STAGE_ICONS.bed, target: 1, desc: 'Centro de la habitación mostrando amplitud y luz natural' },
+      { id: 'prop_bathroom', title: 'Baño Principal', icon: STAGE_ICONS.bath, target: 1, desc: 'Muestra grifería, azulejos y ducha' }
+    ];
+
+    let currentStageIndex = 0;
+    let currentStagePhotos = 0;
+
+    // Selector de Activo
+    const btnProp = document.getElementById('btn-type-property');
+    const btnVeh = document.getElementById('btn-type-vehicle');
+    const propOptions = document.getElementById('property-options');
+    const projectTitleInput = document.getElementById('project-title');
+    const projectSlugInput = document.getElementById('project-slug');
+    const guideText = document.getElementById('guide-text');
+
+    function updatePlaceholdersAndGuide() {
+      if (selectedAssetType === 'property') {
+        const selectedPType = document.querySelector('.sub-chip[data-ptype].selected')?.dataset.ptype || 'apartment';
+        if (selectedPType === 'apartment') {
+          projectTitleInput.placeholder = 'Ej: Apartamento PH Vista del Mar, San Francisco';
+          projectSlugInput.placeholder = 'propiedad-ph-vista-del-mar';
+        } else {
+          projectTitleInput.placeholder = 'Ej: Residencia Unifamiliar en Brisas del Golf';
+          projectSlugInput.placeholder = 'propiedad-residencia-brisas-del-golf';
+        }
+        guideText.textContent = 'Flujo de inspección guiada para inmuebles (Fachada, Sala, Cocina, Balcón, Recámaras) con detector de nitidez y nivelador digital.';
+      } else {
+        projectTitleInput.placeholder = 'Ej: Toyota Prado TXL 2024';
+        projectSlugInput.placeholder = 'auto-toyota-prado-2024';
+        guideText.textContent = 'Flujo guiado paso a paso para vehículos (Exterior 360°, Cabina, Motor, Baúl, Kilometraje) con detector de nitidez y nivelador digital.';
+      }
+
+      // Si el título está vacío, limpiar el valor del slug para mostrar el nuevo placeholder correspondiente
+      if (!projectTitleInput.value.trim()) {
+        projectSlugInput.value = '';
+      } else {
+        syncSlugFromTitle();
+      }
+    }
+
+    function syncSlugFromTitle() {
+      const raw = projectTitleInput.value.toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
+      if (!raw) {
+        projectSlugInput.value = '';
+        return;
+      }
+
+      // Limpiar prefijo anterior si existía para adaptarlo al tipo activo actual
+      let clean = raw.replace(/^(auto-|propiedad-)/, '');
+      const prefix = selectedAssetType === 'property' ? 'propiedad-' : 'auto-';
+      projectSlugInput.value = `${prefix}${clean}`;
+    }
+
+    btnProp.addEventListener('click', () => {
+      selectedAssetType = 'property';
+      btnProp.classList.add('active');
+      btnVeh.classList.remove('active');
+      propOptions.style.display = 'flex';
+      currentStageIndex = 0;
+      currentStagePhotos = 0;
+      updatePlaceholdersAndGuide();
+    });
+
+    btnVeh.addEventListener('click', () => {
+      selectedAssetType = 'vehicle';
+      btnVeh.classList.add('active');
+      btnProp.classList.remove('active');
+      propOptions.style.display = 'none';
+      currentStageIndex = 0;
+      currentStagePhotos = 0;
+      updatePlaceholdersAndGuide();
+    });
+
+    // Subchips de propiedad (Tipos de inmueble exclusivos vs áreas adicionales acumulativas)
+    document.querySelectorAll('.sub-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        if (chip.dataset.ptype) {
+          document.querySelectorAll('.sub-chip[data-ptype]').forEach(c => c.classList.remove('selected'));
+          chip.classList.add('selected');
+        } else {
+          chip.classList.toggle('selected');
+        }
+        updatePlaceholdersAndGuide();
+      });
+    });
+
+    // Auto-generar slug con prefijo inteligente según activo
+    projectTitleInput.addEventListener('input', () => {
+      syncSlugFromTitle();
+    });
+
+    // Cámara Web Guiada
+    const cameraModal = document.getElementById('camera-modal');
+    const video = document.getElementById('camera-video');
+
+    document.getElementById('btn-open-camera').addEventListener('click', async () => {
+      try {
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: { ideal: 'environment' },
+            width: { ideal: 3840 },
+            height: { ideal: 2160 }
+          },
+          audio: false
+        });
+        video.srcObject = mediaStream;
+        videoTrack = mediaStream.getVideoTracks()[0];
+        cameraModal.style.display = 'flex';
+        initSensors();
+        updateStageUI();
+      } catch (err) {
+        alert('No se pudo acceder a la cámara trasera. Asegúrate de otorgar permisos.');
+      }
+    });
+
+    document.getElementById('btn-close-camera').addEventListener('click', () => {
+      stopCamera();
+    });
+
+    function stopCamera() {
+      if (mediaStream) {
+        mediaStream.getTracks().forEach(track => track.stop());
+      }
+      cameraModal.style.display = 'none';
+    }
+
+    // Linterna / Flash
+    document.getElementById('btn-toggle-torch').addEventListener('click', async () => {
+      if (!videoTrack) return;
+      try {
+        torchActive = !torchActive;
+        await videoTrack.applyConstraints({
+          advanced: [{ torch: torchActive }]
+        });
+        document.getElementById('btn-toggle-torch').classList.toggle('active', torchActive);
+      } catch(e) {
+        console.warn('Linterna no soportada en este dispositivo');
+      }
+    });
+
+    // Nivel de Burbuja Digital
+    function initSensors() {
+      if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientation', handleOrientation, true);
+      }
+    }
+
+    function handleOrientation(e) {
+      const gamma = e.gamma || 0; // Inclinación lateral
+      const levelDot = document.getElementById('level-dot');
+      const levelText = document.getElementById('level-text');
+      
+      const isLeveled = Math.abs(gamma) <= 3;
+      if (isLeveled) {
+        levelDot.classList.add('leveled');
+        levelText.textContent = '✓ Nivelado';
+        levelText.style.color = '#10B981';
+      } else {
+        levelDot.classList.remove('leveled');
+        levelText.textContent = `${Math.round(gamma)}° inclinación`;
+        levelText.style.color = 'var(--fg-muted)';
+      }
+    }
+
+    function getCurrentStage() {
+      const stages = selectedAssetType === 'vehicle' ? vehicleStages : propertyStages;
+      return stages[currentStageIndex] || stages[stages.length - 1];
+    }
+
+    function updateStageUI() {
+      const stage = getCurrentStage();
+      const stages = selectedAssetType === 'vehicle' ? vehicleStages : propertyStages;
+      
+      document.getElementById('cam-sector-title').innerHTML = `${stage.icon || ''} <span>${stage.title} (${currentStageIndex + 1}/${stages.length})</span>`;
+      const remaining = stage.target - currentStagePhotos;
+      document.getElementById('cam-sector-sub').textContent = remaining > 0 ? `Foto ${currentStagePhotos + 1} de ${stage.target} (Faltan ${remaining})` : '¡Sector completado!';
+      document.getElementById('ghost-guide-label').textContent = stage.desc;
+    }
+
+    // Disparador de Captura
+    document.getElementById('btn-shutter').addEventListener('click', () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0);
+
+      // 1. Análisis de Nitidez / Anti-Blur (Varianza Laplaciana simplificada)
+      const isSharp = checkSharpness(ctx, canvas.width, canvas.height);
+
+      // 2. Estampar Marca de Agua Protectora
+      ctx.save();
+      ctx.font = 'bold 22px Inter, sans-serif';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.textAlign = 'right';
+      ctx.fillText('Opportunity Intelligence • 3d.aizprua.com', canvas.width - 24, canvas.height - 24);
+      ctx.restore();
+
+      // 3. Comprimir a WebP
+      canvas.toBlob((blob) => {
+        pendingBlob = blob;
+        if (!isSharp) {
+          // Mostrar alerta de foto borrosa
+          document.getElementById('blur-modal').style.display = 'flex';
+        } else {
+          acceptPendingPhoto();
+        }
+      }, 'image/webp', 0.88);
+    });
+
+    document.getElementById('btn-blur-retake').addEventListener('click', () => {
+      document.getElementById('blur-modal').style.display = 'none';
+      pendingBlob = null;
+    });
+
+    document.getElementById('btn-blur-keep').addEventListener('click', () => {
+      document.getElementById('blur-modal').style.display = 'none';
+      acceptPendingPhoto();
+    });
+
+    function acceptPendingPhoto() {
+      if (!pendingBlob) return;
+      const stage = getCurrentStage();
+      
+      const item = {
+        blob: pendingBlob,
+        category: stage.id,
+        name: stage.title
+      };
+
+      capturedItems.push(item);
+      addPhotoThumb(item.blob, capturedItems.length, stage.title);
+      document.getElementById('photo-count').textContent = capturedItems.length;
+      
+      // Guardar respaldo offline
+      savePhotoOffline('draft', selectedAssetType, stage.id, pendingBlob);
+
+      currentStagePhotos++;
+      if (currentStagePhotos >= stage.target) {
+        showToast(`¡${stage.title} completado!`);
+        currentStagePhotos = 0;
+        const stages = selectedAssetType === 'vehicle' ? vehicleStages : propertyStages;
+        if (currentStageIndex < stages.length - 1) {
+          currentStageIndex++;
+        }
+      }
+
+      updateStageUI();
+      pendingBlob = null;
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('sector-toast');
+      toast.textContent = msg;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 2400);
+    }
+
+    function checkSharpness(ctx, width, height) {
+      try {
+        // Muestra de píxeles para calcular gradiente rápido
+        const sampleW = Math.min(width, 400);
+        const sampleH = Math.min(height, 300);
+        const imgData = ctx.getImageData((width - sampleW) / 2, (height - sampleH) / 2, sampleW, sampleH).data;
+        
+        let sumGradient = 0;
+        for (let i = 0; i < imgData.length - 8; i += 8) {
+          const lum1 = 0.299 * imgData[i] + 0.587 * imgData[i+1] + 0.114 * imgData[i+2];
+          const lum2 = 0.299 * imgData[i+4] + 0.587 * imgData[i+5] + 0.114 * imgData[i+6];
+          sumGradient += Math.abs(lum1 - lum2);
+        }
+        const avgGradient = sumGradient / (imgData.length / 8);
+        return avgGradient > 6.5; // Umbral de nitidez calibrado
+      } catch (e) {
+        return true;
+      }
+    }
+
+    function addPhotoThumb(blobOrFile, idx, tag) {
+      const grid = document.getElementById('photo-grid');
+      const thumb = document.createElement('div');
+      thumb.className = 'photo-thumb';
+      
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(blobOrFile);
+      
+      const badge = document.createElement('div');
+      badge.className = 'badge-tag';
+      badge.textContent = tag || `#${idx}`;
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'btn-del-photo';
+      delBtn.innerHTML = '&times;';
+      delBtn.onclick = (e) => {
+        e.stopPropagation();
+        thumb.remove();
+        const foundIdx = capturedItems.findIndex(ci => ci.blob === blobOrFile);
+        if (foundIdx >= 0) capturedItems.splice(foundIdx, 1);
+        document.getElementById('photo-count').textContent = capturedItems.length;
+      };
+
+      thumb.appendChild(img);
+      thumb.appendChild(badge);
+      thumb.appendChild(delBtn);
+      grid.appendChild(thumb);
+    }
+
+    // Subida de archivos externos
+    document.getElementById('file-input').addEventListener('change', (e) => {
+      const files = Array.from(e.target.files);
+      files.forEach(file => {
+        capturedItems.push({ blob: file, category: 'upload', name: 'Archivo' });
+        addPhotoThumb(file, capturedItems.length, 'Subida');
+      });
+      document.getElementById('photo-count').textContent = capturedItems.length;
+    });
+
+    // Publicación
+    document.getElementById('btn-publish-exp').addEventListener('click', async () => {
+      const title = document.getElementById('project-title').value.trim();
+      const slug = document.getElementById('project-slug').value.trim();
+      const status = 'available';
+      const landing = document.getElementById('project-landing').value.trim();
+      const whatsapp = document.getElementById('project-whatsapp').value.trim();
+
+      if (!title || !slug) {
+        alert('Por favor ingresa un título y slug para la experiencia.');
+        return;
+      }
+
+      if (capturedItems.length === 0) {
+        alert('Debes capturar o subir al menos una foto para crear la experiencia 3D.');
+        return;
+      }
+
+      const publishBtn = document.getElementById('btn-publish-exp');
+      publishBtn.disabled = true;
+      publishBtn.innerHTML = 'Subiendo y Publicando en 3D...';
+
+      try {
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('slug', slug);
+        formData.append('asset_type', selectedAssetType);
+        formData.append('status', status);
+        formData.append('landing_url', landing);
+        formData.append('whatsapp_phone', whatsapp);
+
+        // Mapear fotos categorizadas
+        const exteriorIndices = [];
+        const indices = {};
+        const propertyScenes = [];
+
+        capturedItems.forEach((item, idx) => {
+          formData.append('photos', item.blob, `capture_${idx}.webp`);
+          if (selectedAssetType === 'property') {
+            const matchedStage = propertyStages.find(s => s.id === item.category);
+            propertyScenes.push({
+              id: item.category || `scene_${idx}`,
+              name: matchedStage ? matchedStage.title : (item.name || `Espacio ${idx + 1}`),
+              photoIndex: idx
+            });
+          } else {
+            if (item.category.startsWith('ext_')) {
+              exteriorIndices.push(idx);
+            } else if (item.category === 'int_cabin_front') {
+              indices.interior = idx;
+            } else if (item.category === 'insp_engine') {
+              indices.engine = idx;
+            } else if (item.category === 'insp_trunk') {
+              indices.trunk = idx;
+            } else if (item.category === 'insp_odometer') {
+              indices.odometer = idx;
+            } else if (item.category === 'insp_wheel') {
+              indices.wheel = idx;
+            }
+          }
+        });
+
+        if (selectedAssetType === 'property') {
+          indices.scenes = propertyScenes;
+        } else {
+          indices.exterior = exteriorIndices.length > 0 ? exteriorIndices : capturedItems.map((_, i) => i);
+        }
+        formData.append('inspection_indices', JSON.stringify(indices));
+
+        const token = localStorage.getItem('oi_access_token') || sessionStorage.getItem('oi_access_token') || '';
+        const res = await fetch('/api/experiences', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          alert(`¡Experiencia 3D publicada con éxito!\nURL Pública: https://3d.aizprua.com/${slug}`);
+          window.location.href = `/${slug}`;
+        } else {
+          alert('Hubo un inconveniente al guardar: ' + (data.error || 'Error desconocido'));
+        }
+      } catch(e) {
+        console.error('Error al publicar:', e);
+        alert('Error de conexión al servidor.');
+      } finally {
+        publishBtn.disabled = false;
+        publishBtn.innerHTML = '<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg> Publicar Experiencia 3D';
+      }
+    });
+
+    // Cerrar Sesión
+    const logoutBtn = document.getElementById('btn-logout');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('oi_access_token');
+        localStorage.removeItem('oi_user_email');
+        sessionStorage.removeItem('oi_access_token');
+        sessionStorage.removeItem('oi_user_email');
+        window.location.href = 'login.html';
+      });
+    }
+  </script>
+</body>
+</html>

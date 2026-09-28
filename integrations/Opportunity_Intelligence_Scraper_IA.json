@@ -1,0 +1,517 @@
+{
+  "name": "HOIE - Scraper Inteligente de Activos con Motor de Reconocimiento Web & IA (Producción)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 12
+            }
+          ]
+        }
+      },
+      "id": "511a9e2d-1759-41ee-be74-ca474ac62326",
+      "name": "Auto-Cron Trigger (12h)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        1312,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "oie-scrape",
+        "options": {}
+      },
+      "id": "55146569-9709-4ea6-ba18-dcab6bec8b74",
+      "name": "Webhook Disparo Dashboard",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        1312,
+        608
+      ],
+      "webhookId": "hoie-scrape-trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Enrutamiento dinámico de fuentes de scraping\nconst input = $input.first().json;\n\n// 1. Si el Webhook proporciona una URL específica, procesar solo esa URL\nif (input.targetUrl && typeof input.targetUrl === 'string' && input.targetUrl.startsWith('http')) {\n  const target = input.targetUrl.trim();\n  const isPdf = target.toLowerCase().endsWith('.pdf') || target.toLowerCase().includes('/pdf/');\n  return [{\n    json: {\n      url: target,\n      source_name: input.sourceName || (isPdf ? 'Documento PDF Bancario' : 'Portal Personalizado'),\n      vertical: input.vertical || 'real_estate',\n      is_pdf: isPdf,\n      is_custom_trigger: true\n    }\n  }];\n}\n\n// 2. Si es ejecución de Cron o sin URL específica, procesar el catálogo bancario completo\nconst defaultCatalog = [\n  {\n    url: 'https://www.banconal.com.pa/index.php/bienes-y-remates/bienes-adquiridos',\n    source_name: 'Banco Nacional',\n    vertical: 'real_estate',\n    is_pdf: false\n  },\n  {\n    url: 'https://www.cajadeahorros.com.pa/propiedades-reposeidas/propiedades-reposeidas/',\n    source_name: 'Caja de Ahorros',\n    vertical: 'real_estate',\n    is_pdf: false\n  },\n  {\n    url: 'https://www.cajadeahorros.com.pa/propiedades-reposeidas/autos-reposeidos/',\n    source_name: 'Caja de Ahorros Autos',\n    vertical: 'vehicles',\n    is_pdf: false\n  },\n  {\n    url: 'https://www.baccredomatic.com/es-pa/personas/bienes-adquiridos',\n    source_name: 'BAC Panama',\n    vertical: 'real_estate',\n    is_pdf: false\n  }\n];\n\nreturn defaultCatalog.map(item => ({ json: item }));"
+      },
+      "id": "fe3c7495-81aa-4d2d-93b6-ba68e10c07f5",
+      "name": "Enrutador Dinámico de Fuentes",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1552,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "check_is_pdf_direct",
+              "leftValue": "={{ $json.is_pdf }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "52f60c86-9e42-409b-8615-0c3d56281b5b",
+      "name": "¿Es URL Directa de PDF?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+            },
+            {
+              "name": "Accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "es-PA,es-ES;q=0.9,es;q=0.8,en;q=0.7"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "a9a9bdc8-9dd1-480b-9c3a-3ec02ba40aa5",
+      "name": "Descargar Página Web",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2000,
+        560
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ ($env.N8N_WEBHOOK_BASE_URL || $env.N8N_HOST || 'https://n8n.aizprua.com').replace(/\\/+$/, '') }}/webhook/oie-upload-pdf",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ pdf_url: $json.url, source_name: $json.source_name, vertical: $json.vertical }) }}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "df41aed9-fa53-487d-a03b-7535505702e2",
+      "name": "Delegar al Flujo 2 (LlamaParse PDF)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2000,
+        336
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "check_html_ok",
+              "leftValue": "={{ $json.error != null || $json.data == null }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "eb252d5f-0a07-4bb5-b96d-1d515cee3aa5",
+      "name": "¿Descarga Exitosa?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2224,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "html": "={{ $json.data }}",
+        "options": {
+          "ignore": "img,svg,script,style,nav,footer,iframe"
+        }
+      },
+      "id": "83f8ef5c-a269-4ada-aa31-ad2b88239288",
+      "name": "Sanitizar HTML a Markdown",
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        2448,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.data }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=Eres un analista experto en extracción estructurada de activos inmobiliarios y vehículos en Panamá para la plataforma HOIE (Opportunity Intelligence).\n\nAnaliza el texto Markdown extraído del portal '{{ $('Enrutador Dinámico de Fuentes').item.json.source_name }}' (URL: {{ $('Enrutador Dinámico de Fuentes').item.json.url }}).\n\nREGLAS ESTRICTAS DE EXTRACCIÓN:\n1. 'price_amount': Extrae únicamente números enteros o decimales en dólares USD (ej: 185000). Si el precio no aparece o es 'A consultar', coloca null.\n2. 'vertical': Usa '{{ $('Enrutador Dinámico de Fuentes').item.json.vertical }}' o infiere 'real_estate' (propiedades) o 'vehicles' (autos).\n3. 'location': Normaliza la provincia panameña ('Panamá', 'Colón', 'Chiriquí', 'Panamá Oeste', 'Coclé', 'Herrera', 'Los Santos', 'Veraguas') y el corregimiento ('Bella Vista', 'Costa del Este', 'San Francisco', 'David', 'Boquete', 'Pueblo Nuevo', 'Barrio Balboa', etc.).\n4. 'specs': Extrae habitaciones, baños, metraje (area_m2), estacionamientos o año, kilometraje y transmisión.\n5. 'source_listing_url': Si el anuncio tiene un link específico úsalo; de lo contrario usa '{{ $('Enrutador Dinámico de Fuentes').item.json.url }}'.\n\nDevuelve exclusivamente un JSON estructurado con la lista de activos encontrados."
+            }
+          ]
+        }
+      },
+      "id": "b170d815-be95-45bf-b824-54203a8085f3",
+      "name": "Extracción Estructurada IA",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        2672,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {
+          "temperature": 0.1
+        }
+      },
+      "id": "caaf53b2-acc6-4362-80d5-ba1aadeac01e",
+      "name": "Groq Llama 3.3 (Cero Bloqueo VPS)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        2656,
+        688
+      ]
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"assets\": [\n    {\n      \"title\": \"Apartamento en Bella Vista\",\n      \"price_amount\": 185000,\n      \"currency\": \"USD\",\n      \"vertical\": \"real_estate\",\n      \"location\": {\n        \"province\": \"Panamá\",\n        \"district\": \"Panamá\",\n        \"corregimiento\": \"Bella Vista\"\n      },\n      \"specs\": {\n        \"bedrooms\": 2,\n        \"bathrooms\": 2,\n        \"area_m2\": 95,\n        \"parking\": 1\n      },\n      \"source_listing_url\": \"https://ejemplo.com/propiedad/123\",\n      \"description\": \"Excelente oportunidad céntrica cerca del Metro.\"\n    }\n  ]\n}"
+      },
+      "id": "ce5715d8-208d-40ce-b9e3-1db9808e81e0",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        2832,
+        688
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalizar schema HOIE y calcular hash determinista inmutable para InsForge\nconst parsed = $json.output || $json;\nconst list = Array.isArray(parsed.assets) ? parsed.assets : [];\nconst validItems = [];\n\nfor (const item of list) {\n  const price = Number(item.price_amount);\n  if (!item.title || isNaN(price) || price <= 0) continue;\n\n  const rawSource = $('Enrutador Dinámico de Fuentes').item.json.source_name || 'Desconocido';\n  const sourceId = rawSource.toLowerCase().replace(/[^a-z0-9]+/g, '-');\n  const listingUrl = (item.source_listing_url && item.source_listing_url.startsWith('http')) \n    ? item.source_listing_url.trim() \n    : $('Enrutador Dinámico de Fuentes').item.json.url;\n\n  // Hash determinista inmutable (basado en fuente, url y título, SIN precio)\n  const hashSeed = sourceId + '::' + listingUrl + '::' + String(item.title).trim();\n  let hash = 0;\n  for (let i = 0; i < hashSeed.length; i++) {\n    hash = ((hash << 5) - hash) + hashSeed.charCodeAt(i);\n    hash |= 0;\n  }\n  const assetId = 'ast_' + Math.abs(hash).toString(16);\n\n  const loc = item.location || {};\n  const province = loc.province || 'Panamá';\n  const corregimiento = loc.corregimiento || 'Bella Vista';\n  const district = loc.district || (province === 'Panamá' ? 'Panamá' : corregimiento);\n\n  validItems.push({\n    asset_id: assetId,\n    vertical: item.vertical === 'vehicles' ? 'vehicles' : 'real_estate',\n    title: String(item.title).trim(),\n    price_amount: price,\n    currency: 'USD',\n    location: {\n      province: province,\n      district: district,\n      corregimiento: corregimiento\n    },\n    raw_data: {\n      specs: item.specs || {},\n      description: item.description || '',\n      extracted_by: 'n8n_groq_pipeline',\n      extracted_at: new Date().toISOString()\n    },\n    source_id: sourceId,\n    source_listing_url: listingUrl,\n    status: 'active',\n    updated_at: new Date().toISOString()\n  });\n}\n\nreturn validItems.map(obj => ({ json: obj }));"
+      },
+      "id": "604290a1-efda-4de8-a4af-db762042103a",
+      "name": "Normalizar & Hash Inmutable",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2928,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ ($env.INSFORGE_URL || 'https://insforge.aizprua.com').replace(/\\/+$/, '') }}/api/database/records/assets?on_conflict=asset_id",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.INSFORGE_API_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.INSFORGE_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "4c0f976c-c860-4081-a3da-f14a59878791",
+      "name": "Guardar en InsForge (PostgREST)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3152,
+        496
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "check_opportunity_alert",
+              "leftValue": "={{ Number($('Normalizar & Hash Inmutable').item.json.price_amount) }}",
+              "rightValue": 180000,
+              "operator": {
+                "type": "number",
+                "operation": "lte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "95defd88-0f12-451b-b56d-89faedda50b5",
+      "name": "¿Es Oportunidad Crítica?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        3360,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "=🚀 <b>¡NUEVA OPORTUNIDAD DETECTADA!</b>\n\n📌 <b>{{ $('Normalizar & Hash Inmutable').item.json.title }}</b>\n💰 <b>Precio:</b> ${{ Number($('Normalizar & Hash Inmutable').item.json.price_amount).toLocaleString('en-US') }} USD\n📍 <b>Ubicación:</b> {{ $('Normalizar & Hash Inmutable').item.json.location.corregimiento }}, {{ $('Normalizar & Hash Inmutable').item.json.location.province }}\n🏛️ <b>Fuente:</b> {{ $('Normalizar & Hash Inmutable').item.json.source_id }}\n🔗 <a href=\"{{ $('Normalizar & Hash Inmutable').item.json.source_listing_url }}\">Ver Anuncio Original</a>\n\n<i>Analizado por Opportunity Intelligence</i>",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "a83188e2-1227-4537-9d38-6cd14d5e4e9f",
+      "name": "Alerta Telegram Inversionistas",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3584,
+        416
+      ],
+      "webhookId": "5311b249-9f33-4e2e-ab32-feac1abe2858",
+      "continueOnFail": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Auto-Cron Trigger (12h)": {
+      "main": [
+        [
+          {
+            "node": "Enrutador Dinámico de Fuentes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Disparo Dashboard": {
+      "main": [
+        [
+          {
+            "node": "Enrutador Dinámico de Fuentes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enrutador Dinámico de Fuentes": {
+      "main": [
+        [
+          {
+            "node": "¿Es URL Directa de PDF?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es URL Directa de PDF?": {
+      "main": [
+        [
+          {
+            "node": "Delegar al Flujo 2 (LlamaParse PDF)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Descargar Página Web",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar Página Web": {
+      "main": [
+        [
+          {
+            "node": "¿Descarga Exitosa?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Descarga Exitosa?": {
+      "main": [
+        [
+          {
+            "node": "Sanitizar HTML a Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sanitizar HTML a Markdown": {
+      "main": [
+        [
+          {
+            "node": "Extracción Estructurada IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Llama 3.3 (Cero Bloqueo VPS)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Extracción Estructurada IA",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Extracción Estructurada IA",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extracción Estructurada IA": {
+      "main": [
+        [
+          {
+            "node": "Normalizar & Hash Inmutable",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar & Hash Inmutable": {
+      "main": [
+        [
+          {
+            "node": "Guardar en InsForge (PostgREST)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar en InsForge (PostgREST)": {
+      "main": [
+        [
+          {
+            "node": "¿Es Oportunidad Crítica?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es Oportunidad Crítica?": {
+      "main": [
+        [
+          {
+            "node": "Alerta Telegram Inversionistas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "daedd41b-2b56-48ff-9aaf-65d267dcacbb",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "97b3608fad2e9cc78c54d5daa88a84f4acbcb1114166419a849034a52745bc04"
+  },
+  "id": "kNx5CVbK0AE8NWRl",
+  "tags": []
+}

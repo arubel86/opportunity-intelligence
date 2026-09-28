@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title id="view-title">Experiencia 3D Interactiva — Opportunity Intelligence</title>
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23131722'/%3E%3Cstop offset='50%25' stop-color='%231e40af'/%3E%3Cstop offset='100%25' stop-color='%233b82f6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='25' fill='url(%23g)'/%3E%3Ctext x='50' y='56' font-family='Arial, sans-serif' font-weight='bold' font-size='56' fill='%23F1F5F9' text-anchor='middle' dominant-baseline='central'%3EOI%3C/text%3E%3C/svg%3E">
+
+  <!-- Open Graph / WhatsApp / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="es_PA" />
+  <meta property="og:site_name" content="Opportunity Intelligence 3D" />
+  <meta property="og:title" content="Experiencia 3D Interactiva | Opportunity Intelligence" />
+  <meta property="og:description" content="Visualizador 3D inmersivo de vehículos y propiedades. Inspección interactiva 360° y realidad virtual de activos de inversión en Panamá." />
+  <meta property="og:image" content="https://insforge.aizprua.com/api/storage/buckets/catalog-assets/objects/og-logo-3d-1790318336704-8sm9wv.png" />
+  <meta property="og:image:secure_url" content="https://insforge.aizprua.com/api/storage/buckets/catalog-assets/objects/og-logo-3d-1790318336704-8sm9wv.png" />
+  <meta property="og:image:width" content="1080" />
+  <meta property="og:image:height" content="1080" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:alt" content="Opportunity Intelligence - Experiencia 3D" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Experiencia 3D Interactiva | Opportunity Intelligence" />
+  <meta name="twitter:description" content="Visualizador 3D inmersivo de vehículos y propiedades. Inspección interactiva 360° y realidad virtual de activos de inversión en Panamá." />
+  <meta name="twitter:image" content="https://insforge.aizprua.com/api/storage/buckets/catalog-assets/objects/og-logo-3d-1790318336704-8sm9wv.png" />
+
+  <!-- Tipografías de la marca Hermes / Opportunity Intelligence -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- Librería QR ligera -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+
+  <!-- Marzipano: Motor WebGL para Panoramas 360° -->
+  <script src="https://cdn.jsdelivr.net/npm/marzipano@0.10.2/dist/marzipano.js"></script>
+
+  <style>
+    :root {
+      --bg: #0A0C10;
+      --surface: #121620;
+      --surface-glass: rgba(18, 22, 32, 0.85);
+      --border: #232D3F;
+      --border-glow: rgba(59, 130, 246, 0.3);
+      --fg: #F8FAFC;
+      --fg-muted: #94A3B8;
+      
+      --color-comprar: #10B981;
+      --color-prioridad: #3B82F6;
+      --accent-celeste: #85CDFF;
+      --color-whatsapp: #25D366;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg);
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: var(--fg);
+    }
+
+    /* Contenedor Principal del Visor */
+    #viewer-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at center, #161C28 0%, #0A0C10 100%);
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Vista de Imagen Estática HD (Motor, Baúl, Odómetro) */
+    .static-inspect-view {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: #080A0E;
+      z-index: 2;
+    }
+
+    .static-inspect-view img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    /* Vista dividida de Odómetro y Llantas */
+    .split-inspect-view {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      flex-direction: row;
+      background: #080A0E;
+      z-index: 2;
+      padding: 70px 16px 90px;
+      gap: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .split-inspect-view {
+        flex-direction: column;
+        overflow-y: auto;
+      }
+    }
+
+    .split-card {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .split-card-header {
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.02);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .split-card-img {
+      flex: 1;
+      position: relative;
+      background: #05070A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 200px;
+    }
+
+    .split-card-img img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: cover;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Barra Superior Minimalista */
+    .top-bar {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .brand-pill {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface-glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 8px 14px;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+
+    .brand-icon {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #1e40af, #3b82f6);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .brand-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--fg);
+      letter-spacing: 0.2px;
+      max-width: 220px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .status-badge-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #10B981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .views-pill {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--fg-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 4px;
+    }
+
+    .corner-actions {
+      pointer-events: auto;
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--surface-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+
+    .btn-icon:hover {
+      border-color: var(--color-prioridad);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px var(--border-glow);
+    }
+
+    /* Barra de Navegación de Modos para Vehículos / Estancias */
+    .mode-nav-bar {
+      position: absolute;
+      top: 74px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 15;
+      display: flex;
+      gap: 8px;
+      background: rgba(18, 22, 32, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 6px;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      max-width: calc(100% - 32px);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .mode-nav-bar::-webkit-scrollbar { display: none; }
+
+    .mode-chip {
+      background: transparent;
+      border: none;
+      color: var(--fg-muted);
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .mode-chip svg {
+      flex-shrink: 0;
+      transition: transform 0.2s ease;
+    }
+
+    .mode-chip:hover svg {
+      transform: scale(1.12);
+    }
+
+    .mode-chip:hover {
+      color: var(--fg);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .mode-chip.active {
+      background: var(--color-prioridad);
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(59, 130, 246, 0.4);
+    }
+
+    /* Barra Inferior con CTAs */
+    .bottom-bar {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      display: flex;
+      gap: 12px;
+      width: calc(100% - 32px);
+      max-width: 520px;
+    }
+
+    .btn-cta {
+      flex: 1;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 6px 25px rgba(0,0,0,0.5);
+    }
+
+    .btn-landing {
+      background: linear-gradient(135deg, #1E293B, #0F172A);
+      color: var(--fg);
+      border: 1px solid var(--border);
+    }
+
+    .btn-landing:hover {
+      background: linear-gradient(135deg, #3B82F6, #2563EB);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-whatsapp {
+      background: #128C7E;
+      color: #fff;
+      max-width: 140px;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .btn-whatsapp:hover {
+      background: var(--color-whatsapp);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(37, 211, 102, 0.35);
+    }
+
+    /* Indicador sutil de interacción */
+    .hint-drag {
+      position: absolute;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 5;
+      background: rgba(10, 12, 16, 0.7);
+      backdrop-filter: blur(10px);
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 12px;
+      color: var(--fg-muted);
+      pointer-events: none;
+      animation: pulseHint 3s infinite ease-in-out;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    @keyframes pulseHint {
+      0%, 100% { opacity: 0.9; }
+      50% { opacity: 0.4; }
+    }
+
+    /* Marca de Agua Protectora Anti-Piratería */
+    .watermark-badge {
+      position: absolute;
+      bottom: 24px;
+      left: 20px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(10, 12, 16, 0.6);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.06);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      font-family: 'JetBrains Mono', monospace;
+      pointer-events: none;
+      letter-spacing: 0.3px;
+    }
+
+    @media (max-width: 600px) {
+      .watermark-badge {
+        display: none; /* Ocultar en móviles para no chocar con la barra de botones */
+      }
+    }
+
+    /* Modal de Código QR y Enlace */
+    .qr-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(5, 6, 9, 0.85);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .qr-modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+    }
+
+    .qr-modal h3 {
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+
+    .qr-modal p {
+      font-size: 13px;
+      color: var(--fg-muted);
+      margin-bottom: 20px;
+    }
+
+    #qr-canvas-holder {
+      background: #fff;
+      padding: 16px;
+      border-radius: 12px;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+
+    .qr-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-secondary {
+      background: var(--surface-glass);
+      color: var(--fg);
+      border: 1px solid var(--border);
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--color-prioridad);
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: none;
+      border: none;
+      color: var(--fg-muted);
+      font-size: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra Superior -->
+  <div class="top-bar">
+    <div class="brand-pill">
+      <div class="brand-icon">OI</div>
+      <div class="brand-title" id="asset-name">Cargando experiencia...</div>
+      <span class="status-badge-live" id="status-tag">DISPONIBLE</span>
+      <span class="views-pill" id="views-tag">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        <span id="views-num">--</span>
+      </span>
+    </div>
+
+    <div class="corner-actions">
+      <button class="btn-icon" id="btn-toggle-gyro" title="Giroscopio Móvil 1:1" style="display:none;">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16.24 7.76l-2.12 6.36-6.36 2.12 2.12-6.36z"/></svg>
+      </button>
+      <button class="btn-icon" id="btn-open-qr" title="Compartir y Código QR">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 3h6v6H3zM15 3h6v6h-6zM3 15h6v6H3zM15 15h2v2h-2zM19 15h2v2h-2zM15 19h2v2h-2zM19 19h2v2h-2z"/></svg>
+      </button>
+      <button class="btn-icon" id="btn-fullscreen" title="Pantalla Completa">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Barra de Modos de Navegación (Vehículos / Propiedades) -->
+  <div id="mode-nav-bar" class="mode-nav-bar"></div>
+
+  <!-- Contenedor del Visor Interactivo (Canvas Exterior / Marzipano 360) -->
+  <div id="viewer-container">
+    <canvas id="viewer-canvas"></canvas>
+  </div>
+
+  <!-- Vista Estática de Motor -->
+  <div id="inspect-engine" class="static-inspect-view">
+    <img id="img-engine" src="" alt="Motor del Vehículo">
+  </div>
+
+  <!-- Vista Estática de Maletero -->
+  <div id="inspect-trunk" class="static-inspect-view">
+    <img id="img-trunk" src="" alt="Maletero del Vehículo">
+  </div>
+
+  <!-- Vista Dividida de Odómetro y Llantas -->
+  <div id="inspect-details" class="split-inspect-view">
+    <div class="split-card">
+      <div class="split-card-header">
+        <span style="display:inline-flex;align-items:center;gap:7px;">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4.93 19.07A10 10 0 1 1 19.07 19.07"/><path d="M12 12l4-4"/><circle cx="12" cy="12" r="2"/><path d="M12 4v2M7 7l1.5 1.5M17 7l-1.5 1.5"/></svg>
+          Kilometraje Verificado
+        </span>
+        <span style="color: var(--color-comprar);" id="spec-odometer">28,450 km</span>
+      </div>
+      <div class="split-card-img">
+        <img id="img-odometer" src="" alt="Odómetro">
+      </div>
+    </div>
+    <div class="split-card">
+      <div class="split-card-header">
+        <span style="display:inline-flex;align-items:center;gap:7px;">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M12 2v7m0 6v7M2 12h7m6 0h7"/></svg>
+          Inspección de Neumáticos & Rines
+        </span>
+        <span style="color: var(--accent-celeste);">Huella Óptima</span>
+      </div>
+      <div class="split-card-img">
+        <img id="img-wheel" src="" alt="Neumático y Rin">
+      </div>
+    </div>
+  </div>
+
+  <!-- Marca de Agua Protectora Anti-Piratería -->
+  <div class="watermark-badge">
+    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Opportunity Intelligence • 3d.aizprua.com
+  </div>
+
+  <!-- Indicador sutil de interacción -->
+  <div class="hint-drag" id="hint-drag">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 7h8M8 12h8M8 17h8"/></svg>
+    <span>Arrastra para girar 360°</span>
+  </div>
+
+  <!-- Barra Inferior de Acciones -->
+  <div class="bottom-bar">
+    <a href="#" id="cta-landing" class="btn-cta btn-landing" target="_blank">
+      <span>Ver Oportunidad Completa</span>
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+    </a>
+    <a href="#" id="cta-whatsapp" class="btn-cta btn-whatsapp" target="_blank">
+      <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.694.073-2.029-.479-1.579-.652-2.583-2.278-2.661-2.383-.079-.105-.644-.86-.644-1.637 0-.777.407-1.161.551-1.32.144-.159.314-.199.419-.199.105 0 .21.001.302.006.098.005.228-.037.356.27.132.316.452 1.106.491 1.186.04.08.066.173.013.279-.053.106-.079.172-.158.265-.079.093-.166.208-.237.279-.079.079-.161.165-.069.324.092.158.409.675.877 1.092.604.538 1.112.705 1.27.784.158.079.251.066.345-.04.093-.105.397-.463.503-.622.106-.159.211-.132.355-.079.144.053.916.432 1.074.511.158.079.264.119.303.185.039.066.039.384-.105.789z"/></svg>
+      <span>WhatsApp</span>
+    </a>
+  </div>
+
+  <!-- Modal QR -->
+  <div class="qr-modal-overlay" id="qr-modal">
+    <div class="qr-modal">
+      <button class="modal-close" id="btn-close-qr">&times;</button>
+      <h3>Código QR Oficial</h3>
+      <p>Escanea con cualquier celular para abrir la experiencia interactiva</p>
+      
+      <div id="qr-canvas-holder"></div>
+
+      <div class="qr-actions">
+        <button class="btn-secondary" id="btn-copy-url">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          <span id="copy-text">Copiar Enlace</span>
+        </button>
+        <button class="btn-secondary" id="btn-download-qr">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Descargar QR (PNG)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { CarSpinViewer } from './car-spin-viewer.js';
+    import { SphereTourViewer } from './sphere-tour-viewer.js';
+
+    // Obtener slug de la URL actual
+    const pathParts = window.location.pathname.split('/').filter(Boolean);
+    const slug = pathParts[pathParts.length - 1] || 'demo';
+
+    let sphereViewer = null;
+    let carViewer = null;
+    let currentExperience = null;
+
+    async function loadExperience() {
+      try {
+        const res = await fetch(`/api/experiences/${slug}`);
+        const data = await res.json();
+        currentExperience = data;
+        
+        document.getElementById('asset-name').textContent = data.title || 'Experiencia 3D';
+        document.getElementById('view-title').textContent = `${data.title} — Opportunity Intelligence`;
+
+        // Estado
+        const statusTag = document.getElementById('status-tag');
+        if (data.status === 'sold') {
+          statusTag.textContent = 'VENDIDO';
+          statusTag.style.background = 'rgba(239, 68, 68, 0.15)';
+          statusTag.style.color = '#EF4444';
+          statusTag.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+        } else if (data.status === 'reserved') {
+          statusTag.textContent = 'RESERVADO';
+          statusTag.style.background = 'rgba(245, 158, 11, 0.15)';
+          statusTag.style.color = '#F59E0B';
+          statusTag.style.borderColor = 'rgba(245, 158, 11, 0.3)';
+        } else {
+          statusTag.textContent = 'DISPONIBLE';
+        }
+
+        // Vistas en vivo
+        document.getElementById('views-num').textContent = data.views || 1;
+
+        // Registrar incremento de visita en backend y reflejarlo en tiempo real
+        fetch(`/api/experiences/${slug}/view`, { method: 'POST' })
+          .then(r => r.json())
+          .then(resData => {
+            if (resData && resData.views) {
+              document.getElementById('views-num').textContent = resData.views;
+            }
+          })
+          .catch(() => {});
+
+        // Configurar CTAs
+        const landingBtn = document.getElementById('cta-landing');
+        landingBtn.href = data.landing_url || 'https://opportunity.aizprua.com';
+
+        const waBtn = document.getElementById('cta-whatsapp');
+        const waNumber = data.whatsapp_phone || '50760000000';
+        const waMsg = encodeURIComponent(`Hola, estoy interesado en ver más información sobre: ${data.title} (Ref: ${slug})`);
+        waBtn.href = `https://wa.me/${waNumber}?text=${waMsg}`;
+
+        // Generar QR en modal
+        generateQR(window.location.href);
+
+        // Configurar Navegación según activo
+        if (data.asset_type === 'vehicle') {
+          setupVehicleExperience(data);
+        } else {
+          setupPropertyExperience(data);
+        }
+
+      } catch (err) {
+        console.error('Error cargando experiencia:', err);
+      }
+    }
+
+    function setupVehicleExperience(data) {
+      const navBar = document.getElementById('mode-nav-bar');
+      navBar.innerHTML = '';
+      navBar.style.display = 'flex';
+
+      const modes = [
+        { 
+          id: 'exterior', 
+          label: 'Exterior 360°', 
+          svg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9L2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>'
+        },
+        { 
+          id: 'interior', 
+          label: 'Cabina 360°', 
+          svg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5"/><path d="M3.5 12h6M14.5 12h6M12 14.5v6.5"/></svg>'
+        },
+        { 
+          id: 'engine', 
+          label: 'Motor', 
+          svg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h2V8h3V6h8v2h3v2h2v5h-2v3h-3v2H8v-2H5v-3H3v-5z"/><path d="M9 10v4M12 9v5M15 10v4"/><path d="M1 12h2M21 12h2"/></svg>'
+        },
+        { 
+          id: 'trunk', 
+          label: 'Maletero', 
+          svg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15h15a1 1 0 0 0 1-1v-4a2 2 0 0 0-1.5-1.9L14 7H8L4 9.5V14a1 1 0 0 0 1 1z"/><circle cx="7" cy="16" r="2"/><circle cx="15" cy="16" r="2"/><path d="M14 7l4-4h3"/></svg>'
+        },
+        { 
+          id: 'details', 
+          label: 'Kilometraje & Llantas', 
+          svg: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.93 19.07A10 10 0 1 1 19.07 19.07"/><path d="M12 12l4-4"/><circle cx="12" cy="12" r="2"/><path d="M12 4v2M7 7l1.5 1.5M17 7l-1.5 1.5"/></svg>'
+        }
+      ];
+
+      modes.forEach((m, idx) => {
+        const btn = document.createElement('button');
+        btn.className = `mode-chip ${idx === 0 ? 'active' : ''}`;
+        btn.innerHTML = `${m.svg}<span>${m.label}</span>`;
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.mode-chip').forEach(c => c.classList.remove('active'));
+          btn.classList.add('active');
+          switchVehicleMode(m.id, data);
+        });
+        navBar.appendChild(btn);
+      });
+
+      // Cargar modo por defecto: Exterior
+      switchVehicleMode('exterior', data);
+    }
+
+    async function switchVehicleMode(mode, data) {
+      const container = document.getElementById('viewer-container');
+      const inspectEngine = document.getElementById('inspect-engine');
+      const inspectTrunk = document.getElementById('inspect-trunk');
+      const inspectDetails = document.getElementById('inspect-details');
+      const hint = document.getElementById('hint-drag');
+      const gyroBtn = document.getElementById('btn-toggle-gyro');
+
+      // Ocultar vistas estáticas
+      inspectEngine.style.display = 'none';
+      inspectTrunk.style.display = 'none';
+      inspectDetails.style.display = 'none';
+      if (gyroBtn) gyroBtn.style.display = 'none';
+
+      if (mode === 'exterior') {
+        container.style.display = 'flex';
+        hint.style.display = 'flex';
+        hint.querySelector('span').textContent = 'Arrastra para girar 360° el auto';
+        
+        container.innerHTML = '<canvas id="viewer-canvas"></canvas>';
+        const canvas = document.getElementById('viewer-canvas');
+        carViewer = new CarSpinViewer(canvas, { autoRotate: true, autoRotateSpeed: 300 });
+        await carViewer.loadImages(data.images || []);
+
+      } else if (mode === 'interior') {
+        container.style.display = 'flex';
+        hint.style.display = 'flex';
+        hint.querySelector('span').textContent = 'Gira en 360° dentro de la cabina';
+        
+        container.innerHTML = '';
+        sphereViewer = new SphereTourViewer(container);
+        const interiorUrl = data.interior_image || '/prado-360/interior.jpg';
+        await sphereViewer.loadPanorama(interiorUrl);
+
+        if (gyroBtn) {
+          gyroBtn.style.display = 'flex';
+          gyroBtn.onclick = async () => {
+            const active = await sphereViewer.toggleGyro();
+            gyroBtn.style.color = active ? '#3B82F6' : '';
+            gyroBtn.style.borderColor = active ? '#3B82F6' : '';
+          };
+        }
+
+      } else if (mode === 'engine') {
+        container.style.display = 'none';
+        hint.style.display = 'none';
+        inspectEngine.style.display = 'flex';
+        const engineImg = (data.inspection && data.inspection.engine) ? data.inspection.engine : '/prado-360/engine.jpg';
+        document.getElementById('img-engine').src = engineImg;
+
+      } else if (mode === 'trunk') {
+        container.style.display = 'none';
+        hint.style.display = 'none';
+        inspectTrunk.style.display = 'flex';
+        const trunkImg = (data.inspection && data.inspection.trunk) ? data.inspection.trunk : '/prado-360/trunk.jpg';
+        document.getElementById('img-trunk').src = trunkImg;
+
+      } else if (mode === 'details') {
+        container.style.display = 'none';
+        hint.style.display = 'none';
+        inspectDetails.style.display = 'flex';
+        
+        const odoImg = (data.inspection && data.inspection.odometer) ? data.inspection.odometer : '/prado-360/odometer.jpg';
+        const wheelImg = (data.inspection && data.inspection.wheel) ? data.inspection.wheel : '/prado-360/wheel.jpg';
+        
+        document.getElementById('img-odometer').src = odoImg;
+        document.getElementById('img-wheel').src = wheelImg;
+        
+        if (data.specs && data.specs.mileage) {
+          document.getElementById('spec-odometer').textContent = data.specs.mileage;
+        }
+      }
+    }
+
+    function setupPropertyExperience(data) {
+      const navBar = document.getElementById('mode-nav-bar');
+      navBar.innerHTML = '';
+      
+      const container = document.getElementById('viewer-container');
+      container.innerHTML = '';
+      sphereViewer = new SphereTourViewer(container);
+
+      const hint = document.getElementById('hint-drag');
+      hint.style.display = 'flex';
+      hint.querySelector('span').textContent = 'Arrastra para recorrer la estancia en 360°';
+
+      const gyroBtn = document.getElementById('btn-toggle-gyro');
+      if (gyroBtn) {
+        gyroBtn.style.display = 'flex';
+        gyroBtn.onclick = async () => {
+          const active = await sphereViewer.toggleGyro();
+          gyroBtn.style.color = active ? '#3B82F6' : '';
+          gyroBtn.style.borderColor = active ? '#3B82F6' : '';
+        };
+      }
+
+      if (data.scenes && data.scenes.length > 0) {
+        sphereViewer.loadScenes(data.scenes);
+        navBar.style.display = 'flex';
+
+        data.scenes.forEach((sc, idx) => {
+          const chip = document.createElement('button');
+          chip.className = `mode-chip ${idx === 0 ? 'active' : ''}`;
+
+          // SVG arquitectónico relevante según la estancia y limpieza de emojis
+          const cleanId = (sc.id || '').toLowerCase();
+          const rawName = sc.name || '';
+          const cleanName = rawName.replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '').trim();
+          const lowerName = cleanName.toLowerCase();
+
+          let svgIcon = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>'; // Default casa
+
+          if (cleanId.includes('sala') || lowerName.includes('sala') || lowerName.includes('living') || lowerName.includes('comedor')) {
+            svgIcon = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="9" rx="2"/><path d="M6 11V7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4"/><path d="M3 15h18"/></svg>'; // Sofá sala
+          } else if (cleanId.includes('balcon') || lowerName.includes('balcon') || lowerName.includes('terraza') || lowerName.includes('vista')) {
+            svgIcon = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="4"/><path d="M12 2v2M4.93 4.93l1.41 1.41M2 10h2M20 10h2M17.66 4.93l-1.41 1.41"/><path d="M3 18h18M5 18v4M12 18v4M19 18v4"/></svg>'; // Balcón y sol
+          } else if (cleanId.includes('cocina') || lowerName.includes('cocina') || lowerName.includes('kitchen')) {
+            svgIcon = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2v20M6 2v20M2 7h8M2 12h8M14 7h8M14 17h8"/></svg>'; // Cocina
+          } else if (cleanId.includes('recamara') || cleanId.includes('dormitorio') || lowerName.includes('recamara') || lowerName.includes('habitacion')) {
+            svgIcon = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"/></svg>'; // Cama
+          } else if (cleanId.includes('bano') || lowerName.includes('baño') || lowerName.includes('bath')) {
+            svgIcon = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16a1 1 0 0 1 1 1v3a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-3a1 1 0 0 1 1-1zM6 12V5a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v1"/></svg>'; // Baño
+          }
+
+          chip.innerHTML = `${svgIcon}<span>${cleanName}</span>`;
+          chip.addEventListener('click', () => {
+            document.querySelectorAll('.mode-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            sphereViewer.switchScene(sc.id);
+          });
+          navBar.appendChild(chip);
+        });
+      } else {
+        const panoUrl = (data.images && data.images.length > 0) ? data.images[0] : '/sample-san-francisco-360.jpg';
+        sphereViewer.loadPanorama(panoUrl);
+      }
+    }
+
+    function generateQR(url) {
+      const qr = qrcode(0, 'M');
+      qr.addData(url);
+      qr.make();
+      const qrHolder = document.getElementById('qr-canvas-holder');
+      qrHolder.innerHTML = qr.createImgTag(5, 8);
+    }
+
+    // Eventos UI
+    document.getElementById('btn-open-qr').addEventListener('click', () => {
+      document.getElementById('qr-modal').style.display = 'flex';
+    });
+
+    document.getElementById('btn-close-qr').addEventListener('click', () => {
+      document.getElementById('qr-modal').style.display = 'none';
+    });
+
+    document.getElementById('btn-copy-url').addEventListener('click', () => {
+      navigator.clipboard.writeText(window.location.href);
+      const txt = document.getElementById('copy-text');
+      txt.textContent = '¡Enlace Copiado!';
+      setTimeout(() => txt.textContent = 'Copiar Enlace', 2000);
+    });
+
+    document.getElementById('btn-fullscreen').addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    });
+
+    // Iniciar
+    loadExperience();
+  </script>
+</body>
+</html>
