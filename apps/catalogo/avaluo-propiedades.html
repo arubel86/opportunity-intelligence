@@ -130,15 +130,19 @@
       width: 36px;
       height: 36px;
       border-radius: 10px;
-      background: linear-gradient(135deg, #131722 0%, #1e40af 50%, #3b82f6 100%);
+      background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      font-size: 15px;
+      font-family: 'Manrope', -apple-system, sans-serif;
+      font-size: 17px;
+      letter-spacing: -0.3px;
       color: #FFF;
-      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      flex-shrink: 0;
+      user-select: none;
     }
     .brand-text {
       display: flex;
@@ -825,6 +829,11 @@
     @media (max-width: 640px) {
       header {
         padding: 12px 14px;
+      }
+      .brand-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 14.5px;
       }
       .brand-name {
         font-size: 13.5px;
