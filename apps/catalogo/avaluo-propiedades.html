@@ -376,12 +376,18 @@
       font-weight: 700;
       color: var(--fg-muted);
       letter-spacing: 0.2px;
+      display: flex;
+      align-items: center;
+      gap: 2px;
     }
     .field-label .req {
       color: #EF4444;
-      margin-left: 2px;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
     }
     .field-label .opt {
+      margin-left: auto;
       color: var(--fg-subtle);
       font-weight: 400;
       font-size: 11px;
@@ -961,7 +967,7 @@
 
         <div class="form-grid">
           <div class="field-group">
-            <label class="field-label">Tipo de Inmueble <span class="req">*</span></label>
+            <label class="field-label">Tipo de Inmueble<span class="req">*</span></label>
             <select name="property_type" id="f-type" class="form-select" onchange="autoSaveDraft()">
               <option value="Apartamento / PH Residencial">Apartamento / PH Residencial</option>
               <option value="Casa Unifamiliar / Dúplex">Casa Unifamiliar / Dúplex</option>
@@ -973,22 +979,22 @@
           </div>
 
           <div class="field-group">
-            <label class="field-label">Zona / Corregimiento <span class="req">*</span></label>
+            <label class="field-label">Zona / Corregimiento<span class="req">*</span></label>
             <input type="text" name="zone" id="f-zone" class="form-input" placeholder="Ej: Bella Vista, San Francisco, Costa del Este, Punta Pacífica, Clayton" required oninput="autoSaveDraft()">
           </div>
 
           <div class="field-group">
-            <label class="field-label">Edificio / PH / Residencial <span class="req">*</span></label>
+            <label class="field-label">Edificio / PH / Residencial<span class="req">*</span></label>
             <input type="text" name="complex" id="f-complex" class="form-input" placeholder="Ej: PH Grand Tower, Residencial Versalles, etc." required oninput="autoSaveDraft()">
           </div>
 
           <div class="field-group">
-            <label class="field-label">Precio Pretendido o Estimado (USD) <span class="req">*</span></label>
+            <label class="field-label">Precio Pretendido o Estimado (USD)<span class="req">*</span></label>
             <input type="number" name="price" id="f-price" class="form-input" placeholder="Ej: 245000" min="1000" required oninput="autoSaveDraft()">
           </div>
 
           <div class="field-group">
-            <label class="field-label">Metraje de Construcción (m²) <span class="req">*</span></label>
+            <label class="field-label">Metraje de Construcción (m²)<span class="req">*</span></label>
             <input type="number" name="area_const" id="f-area-const" class="form-input" placeholder="Ej: 145" required oninput="autoSaveDraft()">
           </div>
 

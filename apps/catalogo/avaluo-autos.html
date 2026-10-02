@@ -370,13 +370,16 @@
       color: #E2E8F0;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 2px;
     }
     .field-label span.req {
-      color: #F87171;
+      color: #EF4444;
       font-size: 13px;
+      font-weight: 700;
+      line-height: 1;
     }
     .field-label span.opt {
+      margin-left: auto;
       font-size: 11px;
       font-weight: 400;
       color: var(--fg-subtle);
@@ -964,22 +967,22 @@
 
         <div class="form-grid">
           <div class="field-group">
-            <label class="field-label">Marca <span class="req">*</span></label>
+            <label class="field-label">Marca<span class="req">*</span></label>
             <input type="text" name="brand" id="f-brand" class="form-input" placeholder="Ej: Toyota, Nissan, Hyundai" required oninput="autoSaveDraft()">
           </div>
 
           <div class="field-group">
-            <label class="field-label">Modelo <span class="req">*</span></label>
+            <label class="field-label">Modelo<span class="req">*</span></label>
             <input type="text" name="model" id="f-model" class="form-input" placeholder="Ej: Prado TXL, Rav4, Frontier" required oninput="autoSaveDraft()">
           </div>
 
           <div class="field-group">
-            <label class="field-label">Año de Fabricación <span class="req">*</span></label>
+            <label class="field-label">Año de Fabricación<span class="req">*</span></label>
             <input type="number" name="year" id="f-year" class="form-input" placeholder="Ej: 2018" min="1990" max="2027" required oninput="autoSaveDraft()">
           </div>
 
           <div class="field-group">
-            <label class="field-label">Precio Deseado (USD) <span class="req">*</span></label>
+            <label class="field-label">Precio Deseado (USD)<span class="req">*</span></label>
             <input type="text" name="price" id="f-price" class="form-input" placeholder="Ej: 14,500" required oninput="autoSaveDraft()">
           </div>
 
@@ -1016,7 +1019,7 @@
           </div>
 
           <div class="field-group col-full">
-            <label class="field-label">Ubicación para ver el auto en Panamá <span class="req">*</span></label>
+            <label class="field-label">Ubicación para ver el auto en Panamá<span class="req">*</span></label>
             <input type="text" name="location" id="f-location" class="form-input" placeholder="Ej: Bella Vista, Betania, Brisas del Golf, La Chorrera, etc." required oninput="autoSaveDraft()">
           </div>
         </div>
@@ -1036,7 +1039,7 @@
 
         <div class="form-grid">
           <div class="field-group">
-            <label class="field-label">Kilometraje Actual (km) <span class="req">*</span></label>
+            <label class="field-label">Kilometraje Actual (km)<span class="req">*</span></label>
             <input type="text" name="mileage" id="f-mileage" class="form-input" placeholder="Ej: 85,400 km" required oninput="autoSaveDraft()">
           </div>
 
@@ -1234,7 +1237,7 @@
           </div>
 
           <div class="field-group">
-            <label class="field-label">Inscrito en Municipio de: <span class="req">*</span></label>
+            <label class="field-label">Inscrito en Municipio de:<span class="req">*</span></label>
             <select name="municipality" id="f-muni" class="form-select" onchange="autoSaveDraft()">
               <option value="Panamá (Capital)">Panamá (Capital)</option>
               <option value="San Miguelito">San Miguelito</option>
