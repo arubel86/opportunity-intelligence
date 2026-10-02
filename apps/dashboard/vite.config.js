@@ -12,6 +12,10 @@ function cleanUrlsPlugin(envConfig) {
     '/login': resolve(__dirname, 'login.html'),
     '/dashboard': resolve(__dirname, 'index.html'),
     '/catalogo': resolve(__dirname, '../catalogo/index.html'),
+    '/catalogo/avaluo-autos': resolve(__dirname, '../catalogo/avaluo-autos.html'),
+    '/catalogo/avaluo-propiedades': resolve(__dirname, '../catalogo/avaluo-propiedades.html'),
+    '/avaluo-autos': resolve(__dirname, '../catalogo/avaluo-autos.html'),
+    '/avaluo-propiedades': resolve(__dirname, '../catalogo/avaluo-propiedades.html'),
     '/propiedades': resolve(__dirname, '../landings/landing1.html'),
     '/autos': resolve(__dirname, '../landings/landing2.html'),
     '/landings/landing1': resolve(__dirname, '../landings/landing1.html'),
@@ -69,7 +73,15 @@ function copyStaticPagesPlugin(envConfig) {
           return content
         }
 
+        const catalogoDir = resolve(distDir, 'catalogo')
+        if (!fs.existsSync(catalogoDir)) fs.mkdirSync(catalogoDir, { recursive: true })
+
         fs.writeFileSync(resolve(distDir, 'catalogo.html'), injectEnv(resolve(__dirname, '../catalogo/index.html')))
+        fs.writeFileSync(resolve(catalogoDir, 'index.html'), injectEnv(resolve(__dirname, '../catalogo/index.html')))
+        fs.writeFileSync(resolve(catalogoDir, 'avaluo-autos.html'), injectEnv(resolve(__dirname, '../catalogo/avaluo-autos.html')))
+        fs.writeFileSync(resolve(catalogoDir, 'avaluo-propiedades.html'), injectEnv(resolve(__dirname, '../catalogo/avaluo-propiedades.html')))
+        fs.writeFileSync(resolve(distDir, 'avaluo-autos.html'), injectEnv(resolve(__dirname, '../catalogo/avaluo-autos.html')))
+        fs.writeFileSync(resolve(distDir, 'avaluo-propiedades.html'), injectEnv(resolve(__dirname, '../catalogo/avaluo-propiedades.html')))
         fs.writeFileSync(resolve(distDir, 'landing1.html'), injectEnv(resolve(__dirname, '../landings/landing1.html')))
         fs.writeFileSync(resolve(distDir, 'landing2.html'), injectEnv(resolve(__dirname, '../landings/landing2.html')))
         const llmsFile = resolve(__dirname, 'public/llms.txt')
