@@ -40,10 +40,47 @@
     "url": "https://opportunity.aizprua.com/autos",
     "description": "Compra autos de remate y liquidación en Panamá bajo precio de mercado. Inspeccionados mecánicamente, sin gravamen y listos para traspaso. ¡Ver inventario!",
     "image": "https://insforge.aizprua.com/api/storage/buckets/catalog-assets/objects/og-logo-landing2-1790318336112-hknyai.png",
+    "brand": {
+      "@type": "Brand",
+      "name": "Toyota"
+    },
     "offers": {
       "@type": "Offer",
+      "price": 24500,
       "priceCurrency": "USD",
-      "availability": "https://schema.org/InStock"
+      "availability": "https://schema.org/InStock",
+      "hasMerchantReturnPolicy": {
+        "@type": "MerchantReturnPolicy",
+        "applicableCountry": "PA",
+        "returnPolicyCategory": "https://schema.org/MerchantReturnNotPermitted"
+      },
+      "shippingDetails": {
+        "@type": "OfferShippingDetails",
+        "shippingRate": {
+          "@type": "MonetaryAmount",
+          "value": 0,
+          "currency": "USD"
+        },
+        "shippingDestination": {
+          "@type": "DefinedRegion",
+          "addressCountry": "PA"
+        },
+        "deliveryTime": {
+          "@type": "ShippingDeliveryTime",
+          "handlingTime": {
+            "@type": "QuantitativeValue",
+            "minValue": 0,
+            "maxValue": 1,
+            "unitCode": "DAY"
+          },
+          "transitTime": {
+            "@type": "QuantitativeValue",
+            "minValue": 0,
+            "maxValue": 1,
+            "unitCode": "DAY"
+          }
+        }
+      }
     }
   }
   </script>
